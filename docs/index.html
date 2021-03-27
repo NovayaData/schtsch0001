@@ -97,7 +97,17 @@
             const svg = d3.select("#bub")
                 .append("svg")
                 .attr("width", width)
-                .attr("height", height);
+                .attr("height", height)
+                .call(d3.zoom()
+                    .scaleExtent([1, 3])
+                    .on("zoom", function (event) {
+                        svg.attr("transform", event.transform);
+                        console.log()
+                    }))
+                .append("g")
+                .attr("id", "bg");
+
+            const g = d3.select("#bg");
 
             const tooltip = d3.select("#bub")
                 .append("div")
@@ -131,16 +141,9 @@
 
             function bubblesUpdate() {
                 bubbles.transition().attr("r", d => d[year]);
-            };
+            };  
 
-            // function sider(d) {
-            //     if (d3.pointer(d, this)[0] > width/2) {
-            //         return ["right", width-(d3.pointer(d, this)[0]-20)+"px", "text-align"];
-            //     } else {
-            //         return ["left", (d3.pointer(d, this)[0]+20)+"px", "text-align"];
-            // }};
-
-            const bubbles = svg.selectAll("circle")
+            const bubbles = g.selectAll("circle")
                 .data(data)
                 .enter().append("circle")
                 .attr("class", "animated")
@@ -150,9 +153,6 @@
                 .on("mouseover", function(d) {
                     tooltip
                         .style("opacity", 1)
-                    // d3.select(this)
-                    //     .attr("stroke-width", 1)
-                    //     .attr("stroke", "white");
                     d3.selectAll("circle").attr("opacity", 0.7)
                     d3.select(this).attr("opacity", 1)
                 })
@@ -160,14 +160,15 @@
                 .on("mousemove", function(d) {
                     tooltip
                         .html(d.srcElement.__data__.name)
-                        .style("left", (d3.pointer(d, this)[0]+20)+"px")
-                        // .style(sider(d)[2], sider(d)[0])
-                        .style("top", (d3.pointer(d, this)[1]) + "px")
+                        // .style("left", (d3.pointer(d, this)[0]+20)+"px")
+                        // .style("top", (d3.pointer(d, this)[1]) + "px")
+                        .style("left", (d.clientX+20)+"px")
+                        .style("top", (d.clientY) + "px")
+                        // console.log(this);
+                        // console.log(d.clientX);
                 })
                 .on("mouseleave", function(d) {
                     tooltip.style("opacity", 0)
-                    // d3.select(this)
-                    //     .attr("stroke-width", 0);
                     d3.selectAll("circle").attr("opacity", 1)
                 });
 
