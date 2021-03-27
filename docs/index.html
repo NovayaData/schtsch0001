@@ -60,17 +60,19 @@
             const center = [width / 2, height / 2];
             const scale = 1.5;
 
+            console.log(width)
+
             const colors = {
                 "1": "rgb(191,56,29)",
                 "2": "rgb(0,172,229)",
                 "3": "rgb(226,226,226)"
             };
 
-            const minR;
-            const sizer = width*0.75;
+            var minR;
+            const sizer = height*0.72;
 
             if (height < 400 || width <400 ) {
-                minR = 1;
+                minR = 1.25;
             } else {
                 minR = 3;
             };
@@ -104,7 +106,7 @@
             const simulation = d3.forceSimulation(data)
                 .force("x", d3.forceX(center[0]).strength(0.007))
                 .force("y", d3.forceY(center[1]).strength(0.007))
-                .force("collide", d3.forceCollide().radius(d => d[year]+minR));
+                .force("collide", d3.forceCollide().radius(d => d[year]+minR*1.5));
 
             simulation.nodes(data)
                 .on("tick", ticked);
@@ -116,12 +118,17 @@
             };
 
             function simulationUpdate() {
+                // simulation.restart();
                 simulation
-                    .alpha(0.5)
-                    .alphaTarget(0.5)
+                    .alpha(0.2)
+                    .alphaTarget(0.2)
                     .restart();
                 simulation.force("x").initialize(data);
                 simulation.force("collide").initialize(data);
+                // setTimeout(() => {
+                //     simulation.stop();
+                // }, 5000);
+                
             };
 
             // function bubblesUpdate() {
