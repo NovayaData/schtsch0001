@@ -60,8 +60,6 @@
             const center = [width / 2, height / 2];
             const scale = 1.5;
 
-            console.log(width)
-
             const colors = {
                 "1": "rgb(191,56,29)",
                 "2": "rgb(0,172,229)",
@@ -79,6 +77,7 @@
 
             d3.csv("./data/data.csv", function(d) {
                 return {
+                    "name": d.name,
                     "color": colors[d.group],
                     "2011" : parseFloat(d["2011"])*sizer*0.1+minR,
                     "2012" : parseFloat(d["2012"])*sizer*0.2+minR,
@@ -93,13 +92,17 @@
                 };
                 }).then(function(data) {
 
-            // console.log(data);
             const rescale = isNaN(data[0].x);
 
             const svg = d3.select("#bub")
                 .append("svg")
                 .attr("width", width)
                 .attr("height", height);
+
+            const tooltip = d3.select("#bub")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip");
 
             var year = "2011";
 
@@ -118,48 +121,46 @@
             };
 
             function simulationUpdate() {
-                // simulation.restart();
                 simulation
                     .alpha(0.2)
                     .alphaTarget(0.2)
                     .restart();
                 simulation.force("x").initialize(data);
                 simulation.force("collide").initialize(data);
-                // setTimeout(() => {
-                //     simulation.stop();
-                // }, 5000);
-                
             };
-
-            // function bubblesUpdate() {
-            //     bubbles.attr("fill", function(d) {
-            //             if (d[year] > minR) {
-            //                 return d.color;
-            //             } else {
-            //                 return "#212226";
-            //             }
-            //     });
-            //     bubbles.transition().attr("r", d => d[year]);
-            // };
 
             function bubblesUpdate() {
                 bubbles.transition().attr("r", d => d[year]);
             };
+
+            // function sider(d) {
+            //     if (d3.pointer(d, this)[0] > width/2) {
+            //         return ["right", width-(d3.pointer(d, this)[0]-20)+"px", "text-align"];
+            //     } else {
+            //         return ["left", (d3.pointer(d, this)[0]+20)+"px", "text-align"];
+            // }};
 
             const bubbles = svg.selectAll("circle")
                 .data(data)
                 .enter().append("circle")
                 .attr("class", "animated")
                 .attr("r", 0)
-                // .style("stroke", d => d.color)
-                .attr("fill", d => d.color);
-                // .attr("fill", function(d) {
-                //     if (d[year] > minR) {
-                //         return d.color;
-                //     } else {
-                //         return "#212226";
-                //     }
-                // });
+                .attr("fill", d => d.color)
+
+                .on("mouseover", function(d) {
+                    tooltip.style("opacity", 1)
+                })
+                .on("mousemove", function(d) {
+                    // console.log(d3.pointer(d, this)
+                    tooltip
+                    .html(d.srcElement.__data__.name)
+                    .style("left", (d3.pointer(d, this)[0]+20)+"px")
+                    // .style(sider(d)[2], sider(d)[0])
+                    .style("top", (d3.pointer(d, this)[1]) + "px")
+                })
+                .on("mouseleave", function(d) {
+                    tooltip.style("opacity", 0)
+                });
 
             setTimeout(() => {
                     simulationUpdate();
