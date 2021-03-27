@@ -107,8 +107,8 @@
             var year = "2011";
 
             const simulation = d3.forceSimulation(data)
-                .force("x", d3.forceX(center[0]).strength(0.004))
-                .force("y", d3.forceY(center[1]).strength(0.004))
+                .force("x", d3.forceX(center[0]).strength(0.008))
+                .force("y", d3.forceY(center[1]).strength(0.008))
                 .force("collide", d3.forceCollide().radius(d => d[year]+minR*1.6));
 
             simulation.nodes(data)
@@ -122,8 +122,8 @@
 
             function simulationUpdate() {
                 simulation
-                    .alpha(0.3)
-                    .alphaTarget(0.3)
+                    .alpha(0.2)
+                    .alphaTarget(0.2)
                     .restart();
                 simulation.force("x").initialize(data);
                 simulation.force("collide").initialize(data);
