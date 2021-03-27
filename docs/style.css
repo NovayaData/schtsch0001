@@ -1,0 +1,149 @@
+.animated {
+    transition-duration: 0.15s;
+}
+
+#slidecontainer {
+    position: absolute; 
+    margin: 0; 
+    height: 50px;
+    width: 40%;
+    left: 50%; 
+    bottom: 5%; 
+    transform: translate(-50%, 0%);
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 1px;
+    background: white;
+    /* background: #212226; */
+    outline: none;
+    opacity: 1;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+.sliderticks {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+}
+
+.sliderticks p {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    color: white;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 0;
+    /* background: #D3D3D3; */
+    /* height: 10px; */
+    line-height: 60px;
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+#logo {
+    margin-top: 14;
+    left: 30px;
+    /* width: 11%;  */
+    height: 14px;
+    vertical-align:top;
+}
+
+#star {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    max-width: 30%;
+}
+
+#headers {
+    position: absolute;
+    top: 0px;
+    left: 30px;
+}
+
+#header1 {
+    color: white;
+    font-size: 48px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:700;
+    margin-top: 30;
+    margin-bottom: 10;
+}
+
+#header2 {
+    color: white;
+    font-size: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+#info {
+    margin: 0;
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.text0 {
+    margin-top: 14;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+.textWhite {
+    color: white;
+}
+
+#source {
+    position: absolute;
+    right: 30px;
+    bottom: 30px;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+  }

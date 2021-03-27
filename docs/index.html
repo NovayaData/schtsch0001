@@ -1,0 +1,172 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+</head>
+<body bgcolor="#212226">
+    <div id="headers">
+        <h1 id="header1">Пригожинские дрожжи</h1>
+        <!-- <h2 id="header2">Граф соинициаторов* законопроектов, внесенных на рассмотрение в VI созыве Государственной Думы</h2> -->
+    </div>
+    <div id="info" class=text0>
+        <p>
+            <span style="color: rgb(0,172,229);">⬤</span>
+            <span class=textWhite> — не евоные</span>
+        </p>
+        <p>
+            <span style="color: rgb(191,56,29);">⬤</span>
+            <span class=textWhite> — евоные</span>
+        </p>
+        <!-- <p>
+            <span class=textWhite>◯ — доля рынка меньше 0,01%</span>
+        </p> -->
+    </div>
+    <div id="source" class=text0>
+        <span class=textWhite>Источник: <a href="./data/data.csv">Госзакупки</a></span>
+    </div>
+    <div id="star" class=text0>
+        <!-- <span class=textWhite>*пары у которых больше четырёх совместных инициатив</span> -->
+        
+        <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
+    </div>
+    <div id="slidecontainer">
+        <input type="range" min="2011" max="2020" step="1" value="2011" class="slider" id="myRange">
+        <div class="sliderticks">
+            <p>2011</p>
+            <p>2012</p>
+            <p>2013</p>
+            <p>2014</p>
+            <p>2015</p>
+            <p>2016</p>
+            <p>2017</p>
+            <p>2018</p>
+            <p>2019</p>
+            <p>2020</p>
+          </div>
+        <p><span id="demo"></span></p>
+    </div>
+
+    <div id="bub" style="height: 100%;width: 100%;">
+        <script>
+            const slider = document.getElementById("myRange");
+            const output = document.getElementById("demo");
+
+            const height = document.getElementById('bub').clientHeight;
+            const width = document.getElementById('bub').clientWidth;
+            const center = [width / 2, height / 2];
+            const scale = 1.5;
+
+            const colors = {
+                "1": "rgb(191,56,29)",
+                "2": "rgb(0,172,229)",
+                "3": "rgb(226,226,226)"
+            };
+
+            const minR = 3;
+
+            d3.csv("./data/data.csv", function(d) {
+                return {
+                    "color": colors[d.group],
+                    "2011" : parseFloat(d["2011"])*500*0.1+minR,
+                    "2012" : parseFloat(d["2012"])*500*0.2+minR,
+                    "2013" : parseFloat(d["2013"])*500*0.3+minR,
+                    "2014" : parseFloat(d["2014"])*500*0.4+minR,
+                    "2015" : parseFloat(d["2015"])*500*0.5+minR,
+                    "2016" : parseFloat(d["2016"])*500*0.6+minR,
+                    "2017" : parseFloat(d["2017"])*500*0.7+minR,
+                    "2018" : parseFloat(d["2018"])*500*0.8+minR,
+                    "2019" : parseFloat(d["2019"])*500*0.9+minR,
+                    "2020" : parseFloat(d["2020"])*500*1+minR
+                };
+                }).then(function(data) {
+
+            // console.log(data);
+            const rescale = isNaN(data[0].x);
+
+            const svg = d3.select("#bub")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            var year = "2011";
+
+            const simulation = d3.forceSimulation(data)
+                .force("x", d3.forceX(center[0]).strength(0.007))
+                .force("y", d3.forceY(center[1]).strength(0.007))
+                .force("collide", d3.forceCollide().radius(d => d[year]+minR));
+
+            simulation.nodes(data)
+                .on("tick", ticked);
+
+            function ticked() {
+                bubbles
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y)
+            };
+
+            function simulationUpdate() {
+                simulation
+                    .alpha(0.5)
+                    .alphaTarget(0.5)
+                    .restart();
+                simulation.force("x").initialize(data);
+                simulation.force("collide").initialize(data);
+            };
+
+            // function bubblesUpdate() {
+            //     bubbles.attr("fill", function(d) {
+            //             if (d[year] > minR) {
+            //                 return d.color;
+            //             } else {
+            //                 return "#212226";
+            //             }
+            //     });
+            //     bubbles.transition().attr("r", d => d[year]);
+            // };
+
+            function bubblesUpdate() {
+                bubbles.transition().attr("r", d => d[year]);
+            };
+
+            const bubbles = svg.selectAll("circle")
+                .data(data)
+                .enter().append("circle")
+                .attr("class", "animated")
+                .attr("r", 0)
+                // .style("stroke", d => d.color)
+                .attr("fill", d => d.color);
+                // .attr("fill", function(d) {
+                //     if (d[year] > minR) {
+                //         return d.color;
+                //     } else {
+                //         return "#212226";
+                //     }
+                // });
+
+            setTimeout(() => {
+                    simulationUpdate();
+                    bubblesUpdate();
+            }, 750);
+
+            if (rescale) {
+                for (const node of data) {
+                node.x = node.x * scale + center[0];
+                node.y = node.y * scale + center[1];
+                }
+            }
+
+            slider.oninput = function() {
+                
+                year = this.value;
+                simulationUpdate();
+                bubblesUpdate();
+            };
+            });
+
+        </script>
+    </div>
+</body>
