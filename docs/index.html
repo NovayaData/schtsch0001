@@ -58,7 +58,7 @@
             const height = document.getElementById('bub').clientHeight;
             const width = document.getElementById('bub').clientWidth;
             const center = [width / 2, height / 2];
-            const scale = 1.5;
+            const scale = 1.2;
 
             const colors = {
                 "1": "rgb(191,56,29)",
@@ -107,9 +107,9 @@
             var year = "2011";
 
             const simulation = d3.forceSimulation(data)
-                .force("x", d3.forceX(center[0]).strength(0.007))
-                .force("y", d3.forceY(center[1]).strength(0.007))
-                .force("collide", d3.forceCollide().radius(d => d[year]+minR*1.5));
+                .force("x", d3.forceX(center[0]).strength(0.004))
+                .force("y", d3.forceY(center[1]).strength(0.004))
+                .force("collide", d3.forceCollide().radius(d => d[year]+minR*1.6));
 
             simulation.nodes(data)
                 .on("tick", ticked);
@@ -122,8 +122,8 @@
 
             function simulationUpdate() {
                 simulation
-                    .alpha(0.2)
-                    .alphaTarget(0.2)
+                    .alpha(0.3)
+                    .alphaTarget(0.3)
                     .restart();
                 simulation.force("x").initialize(data);
                 simulation.force("collide").initialize(data);
@@ -148,18 +148,27 @@
                 .attr("fill", d => d.color)
 
                 .on("mouseover", function(d) {
-                    tooltip.style("opacity", 1)
-                })
-                .on("mousemove", function(d) {
-                    // console.log(d3.pointer(d, this)
                     tooltip
-                    .html(d.srcElement.__data__.name)
-                    .style("left", (d3.pointer(d, this)[0]+20)+"px")
-                    // .style(sider(d)[2], sider(d)[0])
-                    .style("top", (d3.pointer(d, this)[1]) + "px")
+                        .style("opacity", 1)
+                    // d3.select(this)
+                    //     .attr("stroke-width", 1)
+                    //     .attr("stroke", "white");
+                    d3.selectAll("circle").attr("opacity", 0.7)
+                    d3.select(this).attr("opacity", 1)
+                })
+                    // d3.selectAll(this).attr("opacity", 1)
+                .on("mousemove", function(d) {
+                    tooltip
+                        .html(d.srcElement.__data__.name)
+                        .style("left", (d3.pointer(d, this)[0]+20)+"px")
+                        // .style(sider(d)[2], sider(d)[0])
+                        .style("top", (d3.pointer(d, this)[1]) + "px")
                 })
                 .on("mouseleave", function(d) {
                     tooltip.style("opacity", 0)
+                    // d3.select(this)
+                    //     .attr("stroke-width", 0);
+                    d3.selectAll("circle").attr("opacity", 1)
                 });
 
             setTimeout(() => {

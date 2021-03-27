@@ -197,4 +197,5 @@ a:hover {
     pointer-events: none;
     /* margin-bottom: 15px;		
     margin-left: 15px;	 */
+    text-shadow: 1px 1px 0px black;
 }
