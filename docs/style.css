@@ -6,9 +6,9 @@
     position: absolute; 
     margin: 0; 
     height: 50px;
-    width: 40%;
+    width: 75%;
     left: 50%; 
-    bottom: 5%; 
+    bottom: 7.5%; 
     transform: translate(-50%, 0%);
 }
 
@@ -21,8 +21,10 @@
     /* background: #212226; */
     outline: none;
     opacity: 1;
+    margin-bottom: 10px;
     -webkit-transition: .2s;
     transition: opacity .2s;
+    cursor: pointer;
 }
 
 .slider:hover {
@@ -69,7 +71,7 @@
     width: 0;
     /* background: #D3D3D3; */
     /* height: 10px; */
-    line-height: 60px;
+    line-height: 40px;
     margin: 0 0 20px 0;
     font-size: 16px;
     font-family: 'Roboto', sans-serif;
@@ -86,44 +88,75 @@
 
 #star {
     position: absolute;
-    bottom: 30px;
-    left: 30px;
-    max-width: 30%;
+    bottom: 2.5%;
+    left: 3%;
+    max-width: 10%;
 }
 
 #headers {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     position: absolute;
-    top: 0px;
-    left: 30px;
+    color: white;
+    top: 2.5%;
+    left: 3%;
+    margin: 0;
 }
 
 #header1 {
-    color: white;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     font-size: 48px;
     font-family: 'Roboto', sans-serif;
     font-weight:700;
-    margin-top: 30;
-    margin-bottom: 10;
+    margin-top: 0;
+    margin-bottom: 10px;
 }
 
 #header2 {
-    color: white;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     font-size: 20px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
+    margin: 0;
 }
 
 #info {
-    margin: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     position: absolute;
-    left: 30px;
-    top: 50%;
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
+    left: 3%;
+    top: 50%;
+    margin: 0;
 }
 
-.text0 {
-    margin-top: 14;
+.textSmall {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin-top: 14px;
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
@@ -135,8 +168,8 @@
 
 #source {
     position: absolute;
-    right: 30px;
-    bottom: 30px;
+    right: 3%;
+    bottom: 2.5%;
 }
 
 a {

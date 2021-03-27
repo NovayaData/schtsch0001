@@ -10,25 +10,25 @@
 <body bgcolor="#212226">
     <div id="headers">
         <h1 id="header1">Пригожинские дрожжи</h1>
-        <!-- <h2 id="header2">Граф соинициаторов* законопроектов, внесенных на рассмотрение в VI созыве Государственной Думы</h2> -->
+        <!-- <h2 id="header2"></h2> -->
     </div>
-    <div id="info" class=text0>
+    <div id="info" class=textSmall>
+        <p>
+            <span style="color: rgb(191,56,29);">⬤</span>
+            <span class=textWhite> — евоные</span>
+        </p>
         <p>
             <span style="color: rgb(0,172,229);">⬤</span>
             <span class=textWhite> — не евоные</span>
         </p>
         <p>
-            <span style="color: rgb(191,56,29);">⬤</span>
-            <span class=textWhite> — евоные</span>
+            <span class=textWhite>⬤ — ничейная</span>
         </p>
-        <!-- <p>
-            <span class=textWhite>◯ — доля рынка меньше 0,01%</span>
-        </p> -->
     </div>
-    <div id="source" class=text0>
+    <div id="source" class=textSmall>
         <span class=textWhite>Источник: <a href="./data/data.csv">Госзакупки</a></span>
     </div>
-    <div id="star" class=text0>
+    <div id="star" class=textSmall>
         <!-- <span class=textWhite>*пары у которых больше четырёх совместных инициатив</span> -->
         
         <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
@@ -66,21 +66,30 @@
                 "3": "rgb(226,226,226)"
             };
 
-            const minR = 3;
+            var minR;
+            var sizer;
+
+            if (height < 400 || width <400 ) {
+                sizer = 225;
+                minR = 1.25;
+            } else {
+                sizer = 500;
+                minR = 3;
+            };
 
             d3.csv("./data/data.csv", function(d) {
                 return {
                     "color": colors[d.group],
-                    "2011" : parseFloat(d["2011"])*500*0.1+minR,
-                    "2012" : parseFloat(d["2012"])*500*0.2+minR,
-                    "2013" : parseFloat(d["2013"])*500*0.3+minR,
-                    "2014" : parseFloat(d["2014"])*500*0.4+minR,
-                    "2015" : parseFloat(d["2015"])*500*0.5+minR,
-                    "2016" : parseFloat(d["2016"])*500*0.6+minR,
-                    "2017" : parseFloat(d["2017"])*500*0.7+minR,
-                    "2018" : parseFloat(d["2018"])*500*0.8+minR,
-                    "2019" : parseFloat(d["2019"])*500*0.9+minR,
-                    "2020" : parseFloat(d["2020"])*500*1+minR
+                    "2011" : parseFloat(d["2011"])*sizer*0.1+minR,
+                    "2012" : parseFloat(d["2012"])*sizer*0.2+minR,
+                    "2013" : parseFloat(d["2013"])*sizer*0.3+minR,
+                    "2014" : parseFloat(d["2014"])*sizer*0.4+minR,
+                    "2015" : parseFloat(d["2015"])*sizer*0.5+minR,
+                    "2016" : parseFloat(d["2016"])*sizer*0.6+minR,
+                    "2017" : parseFloat(d["2017"])*sizer*0.7+minR,
+                    "2018" : parseFloat(d["2018"])*sizer*0.8+minR,
+                    "2019" : parseFloat(d["2019"])*sizer*0.9+minR,
+                    "2020" : parseFloat(d["2020"])*sizer*1+minR
                 };
                 }).then(function(data) {
 
@@ -95,8 +104,8 @@
             var year = "2011";
 
             const simulation = d3.forceSimulation(data)
-                .force("x", d3.forceX(center[0]).strength(0.007))
-                .force("y", d3.forceY(center[1]).strength(0.007))
+                .force("x", d3.forceX(center[0]).strength(0.008))
+                .force("y", d3.forceY(center[1]).strength(0.008))
                 .force("collide", d3.forceCollide().radius(d => d[year]+minR));
 
             simulation.nodes(data)
