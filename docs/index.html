@@ -66,14 +66,12 @@
                 "3": "rgb(226,226,226)"
             };
 
-            var minR;
-            var sizer;
+            const minR;
+            const sizer = width*0.75;
 
             if (height < 400 || width <400 ) {
-                sizer = 225;
-                minR = 1.25;
+                minR = 1;
             } else {
-                sizer = 500;
                 minR = 3;
             };
 
