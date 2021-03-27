@@ -170,6 +170,8 @@
                         .style("opacity", 1)
                     d3.selectAll("circle").attr("opacity", 0.7)
                     d3.select(this).attr("opacity", 1)
+                    d3.select(this).style("stroke", d3.select(this).attr("fill"))
+                    d3.select(this).style("stroke-width", minR/4)
                     d3.select("#info").style("opacity", 0.5)
                 })
                 .on("mousemove", function(d) {
@@ -181,6 +183,7 @@
                         .style("top", (d.clientY) + "px")
                 })
                 .on("mouseleave", function(d) {
+                    d3.select(this).style("stroke-width", 0)
                     tooltip.style("opacity", 0)
                     d3.selectAll("circle").attr("opacity", 1)
                     d3.select("#info").style("opacity", 1)
