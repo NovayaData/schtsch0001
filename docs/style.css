@@ -186,10 +186,10 @@ a:hover {
     position: absolute;
     color: white;
     text-align: left;	
-    max-width: 60%;				
+    /* min-width: 49%;			 */
     height: 28px;					
     padding: 2px;				
-    font: 14px sans-serif;	
+    font: 12px sans-serif;	
     font-family: 'Roboto', sans-serif;
     font-weight:400;
     border: 0px;		
