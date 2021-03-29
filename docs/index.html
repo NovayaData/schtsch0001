@@ -56,8 +56,9 @@
             var year = "2011";
             document.getElementById("p"+year.toString()).setAttribute("style", "visibility: visible;")
 
-            const height = document.getElementById('bub').clientHeight;
+            // const height = document.getElementById('bub').clientHeight;
             const width = document.getElementById('bub').clientWidth;
+            const height =width
             const scale = 1.2;
 
             const colors = {
@@ -66,32 +67,39 @@
                 "3": "rgb(226,226,226)"
             };
 
-            var minR;
-            const sizer = height*0.25;
+            var minR = 1.5;
+            const sizer = height*0.4;
 
             if (height <= 400 || width <= 400 ) {
-                minR = 1.5;
+                minR = 1;
                 document.getElementById("sliderticks").setAttribute("style", "visibility: hidden;");
-                center = [width / 2, height / 2 - 30];
+                center = [width / 2, height / 2 - 20];
             } else {
-                minR = 3;
                 center = [width / 2, height / 2];
+            };
+
+            function getValue(i) {
+                if (i > 0) {
+                    return i/100000000000*sizer+minR;
+                } else {
+                    return 0;
+                }
             };
 
             d3.csv("./data/data.csv", function(d) {
                 return {
                     "name": d.name,
-                    "color": colors[d.group],
-                    "2011" : parseFloat(d["2011"])*sizer+minR,
-                    "2012" : parseFloat(d["2012"])*sizer+minR,
-                    "2013" : parseFloat(d["2013"])*sizer+minR,
-                    "2014" : parseFloat(d["2014"])*sizer+minR,
-                    "2015" : parseFloat(d["2015"])*sizer+minR,
-                    "2016" : parseFloat(d["2016"])*sizer+minR,
-                    "2017" : parseFloat(d["2017"])*sizer+minR,
-                    "2018" : parseFloat(d["2018"])*sizer+minR,
-                    "2019" : parseFloat(d["2019"])*sizer+minR,
-                    "2020" : parseFloat(d["2020"])*sizer+minR
+                    "color": colors[d.group].toString(),
+                    "2011" : getValue(parseInt(d["2011"])),
+                    "2012" : getValue(parseInt(d["2012"])),
+                    "2013" : getValue(parseInt(d["2013"])),
+                    "2014" : getValue(parseInt(d["2014"])),
+                    "2015" : getValue(parseInt(d["2015"])),
+                    "2016" : getValue(parseInt(d["2016"])),
+                    "2017" : getValue(parseInt(d["2017"])),
+                    "2018" : getValue(parseInt(d["2018"])),
+                    "2019" : getValue(parseInt(d["2019"])),
+                    "2020" : getValue(parseInt(d["2020"]))
                 };
                 }).then(function(data) {
 
@@ -132,7 +140,7 @@
             const simulation = d3.forceSimulation(data)
                 .force("x", d3.forceX(center[0]).strength(0.008))
                 .force("y", d3.forceY(center[1]).strength(0.008))
-                .force("collide", d3.forceCollide().radius(d => d[year]+minR*1.6));
+                .force("collide", d3.forceCollide().radius(d => d[year]+minR*2));
 
             simulation.nodes(data)
                 .on("tick", ticked);
