@@ -9,7 +9,7 @@
 </head>
 <body bgcolor="#212226">
     <div id="headers">
-        <h1 id="header1">Пригожинские дрожжи</h1>
+        <!-- <h1 id="header1">Пригожинские дрожжи</h1> -->
         <!-- <h2 id="header2"></h2> -->
     </div>
     <div id="info" class=textSmall>
@@ -34,7 +34,7 @@
         <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
     </div>
     <div id="slidecontainer">
-        <input type="range" min="2011" max="2020" step="1" value="2011" class="slider" id="myRange">
+        <input type="range" class="on" id="sliderYear" value="2011" min="2011" max="2020" step="1">
         <div class="sliderticks">
             <p>2011</p>
             <p>2012</p>
@@ -46,22 +46,19 @@
             <p>2018</p>
             <p>2019</p>
             <p>2020</p>
-          </div>
-        <p><span id="demo"></span></p>
+        </div>
     </div>
 
     <div id="bub" style="height: 100%;width: 100%;">
         <script>
-            const slider = document.getElementById("myRange");
-            const output = document.getElementById("demo");
+            const slider = document.getElementById("sliderYear");
+            const maxStep = 2020;
+
+            var year = "2011";
 
             const height = document.getElementById('bub').clientHeight;
             const width = document.getElementById('bub').clientWidth;
             const center = [width / 2, height / 2];
-
-            const center1 = [width / 2 + 20, height / 2 + 20];
-            const center2 = [width / 2 - 20, height / 2 - 20];
-
             const scale = 1.2;
 
             const colors = {
@@ -73,8 +70,8 @@
             var minR;
             const sizer = height*0.72;
 
-            if (height < 400 || width <400 ) {
-                minR = 1.25;
+            if (height < 400 || width < 400 ) {
+                minR = 1.5;
             } else {
                 minR = 3;
             };
@@ -98,20 +95,28 @@
 
             const rescale = isNaN(data[0].x);
 
+            var svg_dx = 100;
+            var svg_dy = 100;
+
+            var zoom = d3.zoom()
+                .scaleExtent([1, 4])
+                .translateExtent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
+                .extent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
+                .on("zoom", function(event){
+                    svg_dx = svg.node().getBBox().x
+                    svg_dy = svg.node().getBBox().y
+                    // console.log(this.zoom.translateExtent)
+                    d3.select("#bg").attr("transform", event.transform);
+                });
+
             const svg = d3.select("#bub")
                 .append("svg")
-                .attr("width", width)
-                .attr("height", height)
-                .call(d3.zoom()
-                    .scaleExtent([1, 2])
-                    .translateExtent([[0, 0], [width, height]])
-                    .extent([[0, 0], [width, height]])
-                    .on("zoom", function (event) {
-                        svg.attr("transform", event.transform)
-                    }))
+                .attr("viewBox", [0, 0, width, height])
+                .call(zoom)
+                // .on("wheel", event => event.preventDefault())
                 .append("g")
                 .attr("id", "bg");
-
+            
             const g = d3.select("#bg");
 
             const tooltip = d3.select("#bub")
@@ -119,8 +124,6 @@
                 .style("opacity", 0)
                 .attr("class", "tooltip")
                 .attr("id", "tt");
-
-            var year = "2011";
 
             const simulation = d3.forceSimulation(data)
                 .force("x", d3.forceX(center[0]).strength(0.008))
@@ -138,16 +141,19 @@
 
             function simulationUpdate() {
                 simulation
-                    .alpha(0.2)
-                    .alphaTarget(0.2)
+                    .alpha(0.3)
+                    .alphaTarget(0.3)
                     .restart();
                 simulation.force("x").initialize(data);
                 simulation.force("collide").initialize(data);
             };
-
             function bubblesUpdate() {
                 bubbles.transition().attr("r", d => d[year]);
             };
+            function updateAll() {
+                simulationUpdate();
+                bubblesUpdate();
+            }
 
             function smartTooltip(d) {
                 x = d.clientX+20;
@@ -169,11 +175,10 @@
                 .attr("class", "animated")
                 .attr("r", 0)
                 .attr("fill", d => d.color)
-
                 .on("mouseover", function(d) {
                     tooltip
                         .style("opacity", 1)
-                    d3.selectAll("circle").attr("opacity", 0.7)
+                    d3.selectAll("circle").attr("opacity", 0.5)
                     d3.select(this).attr("opacity", 1)
                     d3.select(this).style("stroke", d3.select(this).attr("fill"))
                     d3.select(this).style("stroke-width", minR/4)
@@ -207,13 +212,46 @@
             }
 
             slider.oninput = function() {
-                
+                slider.setAttribute('class', "off");
                 year = this.value;
-                simulationUpdate();
-                bubblesUpdate();
+                updateAll();
             };
-            });
 
+            function sliderPlus() {
+                var oldValue = parseInt(slider.getAttribute('value'));
+
+                if (oldValue < maxStep & slider.getAttribute('class') == "on") {
+                    var newValue = oldValue+1;
+                    slider.setAttribute('value', newValue);
+                    year = newValue.toString();
+                    updateAll()
+                } else if (oldValue == maxStep) {
+                    slider.setAttribute('class', "off");
+                    slider.setAttribute('value', 2011);
+                    year = "2011";
+                    updateAll();
+                }
+            };
+
+            function sliderPlay() {
+                var currentValue = slider.getAttribute('value');
+                var timer;
+        
+                function fantomClick() {
+                        timer = setTimeout( function(){
+                        sliderPlus();
+                        if (slider.getAttribute('class') == "on") {
+                            timer = setTimeout(arguments.callee, 1000)
+                        }
+                    },1000);
+                };
+
+                fantomClick();
+            };
+
+            sliderPlay();
+
+            });
         </script>
     </div>
 </body>
