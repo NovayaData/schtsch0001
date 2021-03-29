@@ -55,7 +55,7 @@
     left: 3%;
     bottom: 2.5%;
     height: 8px;
-    vertical-align:top;
+    /* vertical-align:top; */
 }
 
 #header1 {
@@ -144,7 +144,7 @@
     text-align: center;
     width: 0;
     font-size: 8px;
-    stroke: white;
+    /* line-height: 16px; */
     margin: 0 0 0 0;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
