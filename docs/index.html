@@ -7,47 +7,46 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
 
 </head>
-<body bgcolor="#212226">
+<body bgcolor="#212226" style="overflow: hidden;">
     <div id="headers">
-        <!-- <h1 id="header1">Пригожинские дрожжи</h1> -->
+        <h1 id="header1">Пригожинские дрожжи</h1>
         <!-- <h2 id="header2"></h2> -->
     </div>
     <div id="info" class=textSmall>
-        <p>
+        <span>
             <span style="color: rgb(191,56,29);">⬤</span>
             <span class=textWhite> — евоные</span>
-        </p>
-        <p>
+        </span>
+        <br class="infoBreak">
+        <span>
             <span style="color: rgb(0,172,229);">⬤</span>
             <span class=textWhite> — не евоные</span>
-        </p>
-        <p>
+        </span>
+        <br class="infoBreak">
+        <span>
             <span class=textWhite>⬤ — ничейная</span>
-        </p>
+        </span>
     </div>
     <div id="source" class=textSmall>
         <span class=textWhite>Источник: <a href="./data/data.csv">Госзакупки</a></span>
     </div>
-    <div id="star" class=textSmall>
-        <!-- <span class=textWhite>*пары у которых больше четырёх совместных инициатив</span> -->
-        
-        <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
-    </div>
+    <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
     <div id="slidecontainer">
         <input type="range" class="on" id="sliderYear" value="2011" min="2011" max="2020" step="1">
-        <div class="sliderticks">
-            <p>2011</p>
-            <p>2012</p>
-            <p>2013</p>
-            <p>2014</p>
-            <p>2015</p>
-            <p>2016</p>
-            <p>2017</p>
-            <p>2018</p>
-            <p>2019</p>
-            <p>2020</p>
+        <div class="sliderticks" id="sliderticks">
+            <p id="p2011">2011</p>
+            <p id="p2012">2012</p>
+            <p id="p2013">2013</p>
+            <p id="p2014">2014</p>
+            <p id="p2015">2015</p>
+            <p id="p2016">2016</p>
+            <p id="p2017">2017</p>
+            <p id="p2018">2018</p>
+            <p id="p2019">2019</p>
+            <p id="p2020">2020</p>
         </div>
     </div>
+    <!-- <button id="Play">▷</button> -->
 
     <div id="bub" style="height: 100%;width: 100%;">
         <script>
@@ -55,10 +54,10 @@
             const maxStep = 2020;
 
             var year = "2011";
+            document.getElementById("p"+year.toString()).setAttribute("style", "visibility: visible;")
 
             const height = document.getElementById('bub').clientHeight;
             const width = document.getElementById('bub').clientWidth;
-            const center = [width / 2, height / 2];
             const scale = 1.2;
 
             const colors = {
@@ -68,28 +67,31 @@
             };
 
             var minR;
-            const sizer = height*0.72;
+            const sizer = height*0.25;
 
-            if (height < 400 || width < 400 ) {
+            if (height <= 400 || width <= 400 ) {
                 minR = 1.5;
+                document.getElementById("sliderticks").setAttribute("style", "visibility: hidden;");
+                center = [width / 2, height / 2 - 40];
             } else {
                 minR = 3;
+                center = [width / 2, height / 2];
             };
 
             d3.csv("./data/data.csv", function(d) {
                 return {
                     "name": d.name,
                     "color": colors[d.group],
-                    "2011" : parseFloat(d["2011"])*sizer*0.1+minR,
-                    "2012" : parseFloat(d["2012"])*sizer*0.2+minR,
-                    "2013" : parseFloat(d["2013"])*sizer*0.3+minR,
-                    "2014" : parseFloat(d["2014"])*sizer*0.4+minR,
-                    "2015" : parseFloat(d["2015"])*sizer*0.5+minR,
-                    "2016" : parseFloat(d["2016"])*sizer*0.6+minR,
-                    "2017" : parseFloat(d["2017"])*sizer*0.7+minR,
-                    "2018" : parseFloat(d["2018"])*sizer*0.8+minR,
-                    "2019" : parseFloat(d["2019"])*sizer*0.9+minR,
-                    "2020" : parseFloat(d["2020"])*sizer*1+minR
+                    "2011" : parseFloat(d["2011"])*sizer+minR,
+                    "2012" : parseFloat(d["2012"])*sizer+minR,
+                    "2013" : parseFloat(d["2013"])*sizer+minR,
+                    "2014" : parseFloat(d["2014"])*sizer+minR,
+                    "2015" : parseFloat(d["2015"])*sizer+minR,
+                    "2016" : parseFloat(d["2016"])*sizer+minR,
+                    "2017" : parseFloat(d["2017"])*sizer+minR,
+                    "2018" : parseFloat(d["2018"])*sizer+minR,
+                    "2019" : parseFloat(d["2019"])*sizer+minR,
+                    "2020" : parseFloat(d["2020"])*sizer+minR
                 };
                 }).then(function(data) {
 
@@ -100,11 +102,13 @@
 
             var zoom = d3.zoom()
                 .scaleExtent([1, 4])
-                .translateExtent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
-                .extent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
+                // .translateExtent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
+                // .extent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
+                .translateExtent([[0, 0], [width, height]])
+                .extent([[0, 0], [width, height]])
                 .on("zoom", function(event){
-                    svg_dx = svg.node().getBBox().x
-                    svg_dy = svg.node().getBBox().y
+                    // svg_dx = svg.node().getBBox().x
+                    // svg_dy = svg.node().getBBox().y
                     // console.log(this.zoom.translateExtent)
                     d3.select("#bg").attr("transform", event.transform);
                 });
@@ -122,7 +126,7 @@
             const tooltip = d3.select("#bub")
                 .append("div")
                 .style("opacity", 0)
-                .attr("class", "tooltip")
+                .attr("class", "textSmall")
                 .attr("id", "tt");
 
             const simulation = d3.forceSimulation(data)
@@ -211,9 +215,15 @@
                 }
             }
 
+            function yearMobile(newYear) {
+                document.getElementById("p"+year.toString()).removeAttribute("style", "visibility: visible;")
+                year = newYear;
+                document.getElementById("p"+year.toString()).setAttribute("style", "visibility: visible;")
+            };
+
             slider.oninput = function() {
                 slider.setAttribute('class', "off");
-                year = this.value;
+                yearMobile(this.value)
                 updateAll();
             };
 
@@ -223,20 +233,21 @@
                 if (oldValue < maxStep & slider.getAttribute('class') == "on") {
                     var newValue = oldValue+1;
                     slider.setAttribute('value', newValue);
-                    year = newValue.toString();
-                    updateAll()
+                    yearMobile(newValue.toString())
+                    updateAll();
                 } else if (oldValue == maxStep) {
                     slider.setAttribute('class', "off");
-                    slider.setAttribute('value', 2011);
-                    year = "2011";
                     updateAll();
                 }
             };
 
             function sliderPlay() {
-                var currentValue = slider.getAttribute('value');
+                // yearMobile(2011);
+                // slider.setAttribute('value', 2011);
+                // slider.setAttribute('class', "on");
+
                 var timer;
-        
+
                 function fantomClick() {
                         timer = setTimeout( function(){
                         sliderPlus();
@@ -251,7 +262,11 @@
 
             sliderPlay();
 
+            // document.getElementById("Play").onclick = function(){
+            //     sliderPlay();
+            // };
+
             });
-        </script>
+        </script>;
     </div>
 </body>
