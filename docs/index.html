@@ -9,22 +9,22 @@
 </head>
 <body bgcolor="#212226" style="overflow: hidden;">
     <div id="headers">
-        <h1 id="header1">Пригожинские дрожжи</h1>
+        <h1 class="header1">Захват рынка школьного питания с&#160;2011 по 2020 годы</h1>
         <!-- <h2 id="header2"></h2> -->
     </div>
     <div id="info" class=textSmall>
         <span>
             <span style="color: rgb(191,56,29);">⬤</span>
-            <span class=textWhite> — евоные</span>
+            <span class=textWhite> — картель</span>
         </span>
         <br class="infoBreak">
         <span>
             <span style="color: rgb(0,172,229);">⬤</span>
-            <span class=textWhite> — не евоные</span>
+            <span class=textWhite> — другие</span>
         </span>
         <br class="infoBreak">
         <span>
-            <span class=textWhite>⬤ — ничейная</span>
+            <span class=textWhite>⬤ — неизвестно</span>
         </span>
     </div>
     <div id="source" class=textSmall>
@@ -46,22 +46,21 @@
             <p id="p2020">2020</p>
         </div>
     </div>
-    <div id="bigNumber"></div>
-    <!-- <button id="Play">▷</button> -->
+    <div id="bigNumberF" class="textWhite">
+        <span class="textSmall">За всё время:</span>
+        <br>
+        <span id="bigNumber" class="header1"></span>
+    </div>
 
-    <div id="bub" style="height: 100%; width: 100%;">
+    <div id="bub" style = "height: 100%;  width: 100%;">
         <script>
             var slider = document.getElementById("sliderYear");
             const maxStep = 2020;
 
             var year = "2011";
             document.getElementById("p"+year.toString()).setAttribute("style", "visibility: visible;")
-
-            // const height = document.getElementById('bub').clientHeight;
             const width = document.getElementById('bub').clientWidth;
             const height = document.getElementById('bub').clientHeight;
-
-            console.log(width);
 
             const scale = 1.2;
 
@@ -73,6 +72,7 @@
 
             var minR = 1.5;
             const sizer = height*0.4;
+            var center;
 
             if (height <= 400 || width <= 400 ) {
                 minR = 1;
@@ -84,6 +84,14 @@
 
             const delimiter = 100000000000;
 
+            function getBigNumberText(number) {
+                if (number < 1000000000) {
+                    return (Math.round(number / 1000000)) + " млн.";
+                } else {
+                    return (Math.round(number / 1000000000)) + " млрд.";
+                }
+            }
+
             function getValue(i) {
                 if (i > 0) {
                     return i/delimiter*sizer+minR;
@@ -92,38 +100,63 @@
                 }
             };
 
-            d3.csv("./data/data.csv", function(d) {
-                return {
-                    "name": d.name,
-                    "color": colors[d.group].toString(),
-                    "2011" : getValue(parseInt(d["2011"])),
-                    "2012" : getValue(parseInt(d["2012"])),
-                    "2013" : getValue(parseInt(d["2013"])),
-                    "2014" : getValue(parseInt(d["2014"])),
-                    "2015" : getValue(parseInt(d["2015"])),
-                    "2016" : getValue(parseInt(d["2016"])),
-                    "2017" : getValue(parseInt(d["2017"])),
-                    "2018" : getValue(parseInt(d["2018"])),
-                    "2019" : getValue(parseInt(d["2019"])),
-                    "2020" : getValue(parseInt(d["2020"]))
+            bigNumberYear = {};
+
+            function getBubbleData(d) {
+
+                bubbleData = {}
+
+                for (let i = 2011; i <= 2020; i++) {
+                    yearName = i.toString();
+                    yearNumber = parseInt(d[yearName]);
+
+                    yearValue = getValue(yearNumber);
+                    yearValueText = getBigNumberText(yearNumber);
+                    
+                    if (!(yearName in bigNumberYear)) {
+                        bigNumberYear[yearName] = yearNumber
+                    } else {
+                        bigNumberYear[yearName] += yearNumber;
+                    };
+
+                    bubbleData[yearName]=yearValue;
+                    bubbleData["s"+yearName]=yearValueText;
                 };
+
+                bubbleData["name"] = d.name;
+                bubbleData["color"] = colors[d.group];
+
+                return bubbleData;
+            };
+
+            d3.csv("./data/data.csv", function(d) {
+
+                    return getBubbleData(d);
+                    
                 }).then(function(data) {
+
+            for (let i = 2011; i <= 2020; i++) {
+                bigNumberYear[i.toString()] = getBigNumberText(bigNumberYear[i.toString()])
+            };
 
             const rescale = isNaN(data[0].x);
 
-            var svg_dx = 100;
-            var svg_dy = 100;
+            // var svg_dx = 100;
+            // var svg_dy = 100;
 
             var zoom = d3.zoom()
                 .scaleExtent([1, 4])
+
                 // .translateExtent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
                 // .extent([[svg_dx, svg_dy], [width-(svg_dx*0.75), height-(svg_dy*0.75)]])
+
                 .translateExtent([[0, 0], [width, height]])
                 .extent([[0, 0], [width, height]])
                 .on("zoom", function(event){
+
                     // svg_dx = svg.node().getBBox().x
                     // svg_dy = svg.node().getBBox().y
-                    // console.log(this.zoom.translateExtent)
+                    
                     d3.select("#bg").attr("transform", event.transform);
                 });
 
@@ -133,6 +166,8 @@
                 .call(zoom)
                 .append("g")
                 .attr("id", "bg");
+
+            console.log(svg);
             
             const g = d3.select("#bg");
 
@@ -183,6 +218,7 @@
             };
 
             function updateAll() {
+                bigNumber.innerHTML = bigNumberYear[year];
                 simulationUpdate();
                 bubblesUpdate();
             }
@@ -201,7 +237,7 @@
                 }
             };
 
-            // const bigNumber = document.getElementById("bigNumber");
+            const bigNumber = document.getElementById("bigNumber");
 
             const bubbles = g.selectAll("circle")
                 .data(data)
@@ -210,8 +246,9 @@
                 .attr("r", 0)
                 .attr("fill", d => d.color)
                 .on("mouseover", function(d) {
-                    // var currentBigNumber = d.srcElement.__data__[year];
-                    // bigNumber.innerHTML = (currentBigNumber-minR*100000000000).toString();
+                    var currentBigNumber = d.srcElement.__data__["s"+year];
+                    bigNumber.innerHTML = (currentBigNumber).toString();
+                    // bigNumber.setAttribute("style", "color:"+d.srcElement.__data__.color)
                     tooltip
                         .style("opacity", 1)
                     d3.selectAll("circle").attr("opacity", 0.5)
@@ -230,9 +267,10 @@
                         .style("top", (d.clientY) + "px")
                 })
                 .on("mouseleave", function(d) {
-                    // bigNumber.innerHTML = ""
+                    bigNumber.innerHTML = bigNumberYear[year];
                     d3.select(this).style("stroke-width", 0)
                     tooltip.style("opacity", 0)
+                    // bigNumber.removeAttribute("style")
                     d3.selectAll("circle").attr("opacity", 1)
                     d3.select("#info").style("opacity", 1)
                 });
@@ -281,6 +319,7 @@
                 yearMobile(2011);
                 slider.setAttribute('value', "2011");
                 slider.setAttribute('class', "on");
+                updateAll();
 
                 function fantomClick() {
                         timer = setTimeout( function(){
@@ -295,13 +334,6 @@
             };
 
             sliderPlay();
-
-            // document.getElementById("Play").onclick = function(){
-            //     if (timer) {
-            //         clearTimeout(timer);
-            //     };
-            //     sliderPlay();
-            // };
 
             });
         </script>;
