@@ -86,9 +86,9 @@
 
             function getBigNumberText(number) {
                 if (number < 1000000000) {
-                    return (Math.round(number / 1000000)) + " млн.";
+                    return ((number / 1000000).toFixed(1)).replace(".", ",").replace(",0", "") + " млн";
                 } else {
-                    return (Math.round(number / 1000000000)) + " млрд.";
+                    return ((number / 1000000000).toFixed(1)).replace(".", ",").replace(",0", "") + " млрд";
                 }
             }
 
