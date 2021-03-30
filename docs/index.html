@@ -32,7 +32,7 @@
     </div>
     <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
     <div id="slidecontainer">
-        <input type="range" class="on" id="sliderYear" value="2011" min="2011" max="2020" step="1">
+        <input type="range" class="on" id="sliderYear" min="2011" max="2020" step="1">
         <div class="sliderticks" id="sliderticks">
             <p id="p2011">2011</p>
             <p id="p2012">2012</p>
@@ -46,11 +46,12 @@
             <p id="p2020">2020</p>
         </div>
     </div>
+    <div id="bigNumber"></div>
     <!-- <button id="Play">▷</button> -->
 
-    <div id="bub" style="height: 100%;width: 100%;">
+    <div id="bub" style="height: 100%; width: 100%;">
         <script>
-            const slider = document.getElementById("sliderYear");
+            var slider = document.getElementById("sliderYear");
             const maxStep = 2020;
 
             var year = "2011";
@@ -58,7 +59,10 @@
 
             // const height = document.getElementById('bub').clientHeight;
             const width = document.getElementById('bub').clientWidth;
-            const height =width
+            const height = document.getElementById('bub').clientHeight;
+
+            console.log(width);
+
             const scale = 1.2;
 
             const colors = {
@@ -78,9 +82,11 @@
                 center = [width / 2, height / 2];
             };
 
+            const delimiter = 100000000000;
+
             function getValue(i) {
                 if (i > 0) {
-                    return i/100000000000*sizer+minR;
+                    return i/delimiter*sizer+minR;
                 } else {
                     return 0;
                 }
@@ -125,7 +131,6 @@
                 .append("svg")
                 .attr("viewBox", [0, 0, width, height])
                 .call(zoom)
-                // .on("wheel", event => event.preventDefault())
                 .append("g")
                 .attr("id", "bg");
             
@@ -151,17 +156,32 @@
                     .attr("cy", d => d.y)
             };
 
+            var simulationTimer;
+
             function simulationUpdate() {
+
+                if (simulationTimer) {
+                    clearTimeout(simulationTimer);
+                };
+
+                simulation.restart();
                 simulation
                     .alpha(0.2)
                     .alphaTarget(0.2)
                     .restart();
                 simulation.force("x").initialize(data);
                 simulation.force("collide").initialize(data);
+
+                simulationTimer = setTimeout( function(){
+                    simulation.stop();
+                } ,20000);
+
             };
+
             function bubblesUpdate() {
                 bubbles.transition().attr("r", d => d[year]);
             };
+
             function updateAll() {
                 simulationUpdate();
                 bubblesUpdate();
@@ -181,6 +201,8 @@
                 }
             };
 
+            // const bigNumber = document.getElementById("bigNumber");
+
             const bubbles = g.selectAll("circle")
                 .data(data)
                 .enter().append("circle")
@@ -188,10 +210,13 @@
                 .attr("r", 0)
                 .attr("fill", d => d.color)
                 .on("mouseover", function(d) {
+                    // var currentBigNumber = d.srcElement.__data__[year];
+                    // bigNumber.innerHTML = (currentBigNumber-minR*100000000000).toString();
                     tooltip
                         .style("opacity", 1)
                     d3.selectAll("circle").attr("opacity", 0.5)
                     d3.select(this).attr("opacity", 1)
+                    d3.select(this).attr("margin", 1)
                     d3.select(this).style("stroke", d3.select(this).attr("fill"))
                     d3.select(this).style("stroke-width", minR/4)
                     d3.select("#info").style("opacity", 0.5)
@@ -205,6 +230,7 @@
                         .style("top", (d.clientY) + "px")
                 })
                 .on("mouseleave", function(d) {
+                    // bigNumber.innerHTML = ""
                     d3.select(this).style("stroke-width", 0)
                     tooltip.style("opacity", 0)
                     d3.selectAll("circle").attr("opacity", 1)
@@ -249,12 +275,12 @@
                 }
             };
 
-            function sliderPlay() {
-                // yearMobile(2011);
-                // slider.setAttribute('value', 2011);
-                // slider.setAttribute('class', "on");
+            var timer;
 
-                var timer;
+            function sliderPlay() {
+                yearMobile(2011);
+                slider.setAttribute('value', "2011");
+                slider.setAttribute('class', "on");
 
                 function fantomClick() {
                         timer = setTimeout( function(){
@@ -271,6 +297,9 @@
             sliderPlay();
 
             // document.getElementById("Play").onclick = function(){
+            //     if (timer) {
+            //         clearTimeout(timer);
+            //     };
             //     sliderPlay();
             // };
 
