@@ -13,9 +13,9 @@
     margin: 0;
 }
 
-/* #tree {
-    margin-top:50px;
-} */
+#tree {
+    margin-top:40px;
+}
 
 .legendRectSvg {
     height: 8px;
@@ -121,6 +121,9 @@ a:hover {
     #logo {
         height: 12px;
     }
+    #tree {
+        margin-top:80px;
+    }
     .infoPadding {
         padding-right: 12;
     }
@@ -145,6 +148,9 @@ a:hover {
     }
     #logo {
         height: 16px;
+    }
+    #tree {
+        margin-top:140px;
     }
     .infoPadding {
         padding-right: 16;
