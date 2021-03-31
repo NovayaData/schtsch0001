@@ -1,0 +1,189 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+</head>
+<body bgcolor="#212226" style="overflow: hidden;">
+    <div id="headers">
+        <h1 class="header1">На чем зарабатывает «империя» Пригожина </h1>
+    </div>
+    <div id="info" class=textSmall>
+        <span>
+            <span id="lr1"></span>
+            <span class="textWhite"> образование</span>
+        </span>
+        <span class="infoPadding"></span>
+        <span>
+            <span id="lr2"></span>
+            <span class="textWhite"> здравоохранение</span>
+        </span>
+        <span class="infoPadding"></span>
+        <span>
+            <span id="lr3"></span>
+            <span class="textWhite"> другое</span>
+        </span>
+    </div>
+    <div id="source" class="textSmall">
+        <span class="textWhite">Источник: <a id="chatdata">Госзакупки</a></span>
+    </div>
+    <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
+    <div id="tree" style = "height: 73%;  width: 94%; margin-left: 3%; margin-top: 20%;">
+        <script>
+            const DataPath = "../data/na-chem-zarabatavaet-imperiya-prigozhina.csv";
+            document.getElementById("chatdata").setAttribute("href", DataPath)
+            const width = document.getElementById('tree').clientWidth;
+            const height = document.getElementById('tree').clientHeight;
+
+            const colors = {
+                "образование": "rgb(191,56,29)",
+                "здравоохранение": "rgb(0,172,229)",
+                "другое": "rgb(151,152,153)"
+            };
+
+            var zoom = d3.zoom()
+                .scaleExtent([1, 6])
+                .translateExtent([[0, 0], [width, height]])
+                .extent([[0, 0], [width, height]])
+                .on("zoom", function(event){
+                    svg.attr("transform", event.transform);
+                });
+
+            var margin = {top: 10, right: 10, bottom: 10, left: 10};
+
+            function getBigNumberText(number) {
+                if (number < 1000000000) {
+                    return ((number / 1000000).toFixed(1)).replace(".", ",").replace(",0", "") + " млн";
+                } else {
+                    return ((number / 1000000000).toFixed(1)).replace(".", ",").replace(",0", "") + " млрд";
+                }
+            };
+
+            function addLegend(i) {
+                d3.select("#lr"+i)
+                    .append("svg")
+                    .attr("class", "legendRectSvg")
+                    .append("rect")
+                    .attr("class", "legendRectSvg")
+                    .attr("fill", Object.values(colors)[i-1]);
+            };
+
+            for (let i = 1; i <= 3; i++) {
+                addLegend(i);
+            };
+
+            var svg = d3.select("#tree")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .call(zoom)
+                .append("g");
+
+            const tooltip = d3.select("#tree")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "textSmall")
+                .attr("id", "tt");
+
+            function smartTooltip(d) {
+                x = d.clientX+20;
+
+                if (d.clientX > width/2) {
+                    strLen  = document.getElementById("tt").clientWidth
+                    d3.select("#tt").style("max-width", width - (width - x + 40))
+                    x = x - strLen;
+                    return (x-20) + "px";
+                } else {
+                    d3.select("#tt").style("max-width", width - x - 40)
+                    return (x+10) + "px";
+                }
+            };
+
+            var treedata = {}
+
+            function combineChildren(row) {
+                var groupName = row.group;
+                var groupSubName = row.subGroup;
+                var value = parseInt(row.sum);
+
+                if (!(groupName in treedata)) {
+                    treedata[groupName] = 
+                        {
+                            name : groupName,
+                            colname : "level2",
+                            children: [
+                                {
+                                    name: groupSubName,
+                                    value: value,
+                                    valueText: getBigNumberText(value),
+                                    colname: "level3"
+                                }
+                            ]
+                        }
+                } else {
+                    treedata[groupName].children.push(
+                        {
+                            name: groupSubName,
+                            value: value,
+                            valueText: getBigNumberText(value),
+                            colname: "level3"
+                        }
+                    )
+                }
+            };
+
+            d3.csv(DataPath, function(row) {
+                combineChildren(row);
+            }).then( function(data) {
+
+            TreeData = {
+                "children": Object.values(treedata)
+            }
+
+            var root = d3.hierarchy(TreeData).sum(function(d){ return d.value})
+            
+            d3.treemap()
+                .size([width, height])
+                .padding(2)
+                (root)
+
+            svg
+                .selectAll("rect")
+                .data(root.leaves())
+                .enter()
+                .append("rect")
+                .attr('x', function (d) { return d.x0; })
+                .attr('y', function (d) { return d.y0; })
+                .attr('width', function (d) { return d.x1 - d.x0; })
+                .attr('height', function (d) { return d.y1 - d.y0; })
+                .style("fill", function (d) { return colors[d.parent.data.name]; })
+                .attr("class", "Sq")
+                .on("mouseover", function(d) {
+                    tooltip
+                        .style("opacity", 1)
+                    d3.selectAll(".Sq").attr("opacity", 0.5)
+                    d3.select(this).attr("opacity", 1)
+                    d3.select(this).style("stroke", d3.select(this).attr("fill"))
+                    d3.select(this).style("stroke-width", 2)
+                })
+                .on("mousemove", function(d) {
+                    tooltip
+                        .html(
+                            d.srcElement.__data__.data.name+"<br>"+d.srcElement.__data__.data.valueText
+                            )
+                        .style("left", smartTooltip(d))
+                        .style("top", (d.clientY) + "px")
+                })
+                .on("mouseleave", function(d) {
+                    d3.select(this).style("stroke-width", 0)
+                    tooltip.style("opacity", 0)
+                    d3.selectAll(".Sq").attr("opacity", 1)
+                });
+            });
+        </script>
+    </div>
+</body>
+        

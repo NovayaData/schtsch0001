@@ -9,26 +9,31 @@
 </head>
 <body bgcolor="#212226" style="overflow: hidden;">
     <div id="headers">
-        <h1 class="header1">Захват рынка школьного питания с&#160;2011 по 2020 годы</h1>
+        <h1 class="header1">Захват рынка школьного питания в&#160;Москве</h1>
         <!-- <h2 id="header2"></h2> -->
     </div>
     <div id="info" class=textSmall>
         <span>
-            <span style="color: rgb(191,56,29);">⬤</span>
-            <span class=textWhite> — картель</span>
+            <span id="lc1"></span>
+            <span class=textWhite> картель</span>
         </span>
+        <span class="infoPadding"></span>
+        <br class="infoBreak">
         <br class="infoBreak">
         <span>
-            <span style="color: rgb(0,172,229);">⬤</span>
-            <span class=textWhite> — другие</span>
+            <span id="lc2"></span>
+            <span class=textWhite> другие</span>
         </span>
+        <span class="infoPadding"></span>
+        <br class="infoBreak">
         <br class="infoBreak">
         <span>
-            <span class=textWhite>⬤ — неизвестно</span>
+            <span id="lc3"></span>
+            <span class=textWhite> неизвестно</span>
         </span>
     </div>
     <div id="source" class=textSmall>
-        <span class=textWhite>Источник: <a href="./data/data.csv">Госзакупки</a></span>
+        <span class=textWhite>Источник: <a id="chatdata">Госзакупки</a></span>
     </div>
     <img id="logo" src="https://raw.githubusercontent.com/Schtschennikow/gdProject/main/docs/pics/Logo.svg">
     <div id="slidecontainer">
@@ -54,6 +59,9 @@
 
     <div id="bub" style = "height: 100%;  width: 100%;">
         <script>
+            const DataPath = "../data/zakhvat-rynka-shkolnogo-pitaniya-v-moskve.csv";
+            document.getElementById("chatdata").setAttribute("href", DataPath)
+
             var slider = document.getElementById("sliderYear");
             const maxStep = 2020;
 
@@ -65,21 +73,48 @@
             const scale = 1.2;
 
             const colors = {
-                "1": "rgb(191,56,29)",
-                "2": "rgb(0,172,229)",
-                "3": "rgb(226,226,226)"
+                "картель": "rgb(191,56,29)",
+                "другие": "rgb(0,172,229)",
+                "неизвестно": "rgb(151,152,153)"
             };
 
+            function addLegend(i) {
+                d3.select("#lc"+i)
+                    .append("svg")
+                    .attr("class", "legendRectSvg")
+                    .append("circle")
+                    .attr("class", "legendRectSvg")
+                    .attr("fill", Object.values(colors)[i-1])
+                    .attr("r", document.getElementsByClassName("legendRectSvg")[0].clientHeight/2)
+                    .attr("cx", document.getElementsByClassName("legendRectSvg")[0].clientHeight/2)
+                    .attr("cy", document.getElementsByClassName("legendRectSvg")[0].clientHeight/2);
+            };
+
+            for (let i = 1; i <= 3; i++) {
+                addLegend(i);
+            };
+
+            
+            // console.log();
+
+            // for (let i = 1; i <= 3; i++) {
+            //     d3.select("#lc"+i)
+            //         .select("circle")
+                    
+            // };
+
             var minR = 1.5;
-            const sizer = height*0.4;
-            var center;
+            var sizer;
+            var center = [width / 2, height / 2];;
 
             if (height <= 400 || width <= 400 ) {
                 minR = 1;
                 document.getElementById("sliderticks").setAttribute("style", "visibility: hidden;");
-                center = [width / 2, height / 2 - 20];
+                sizer = height*0.33;
+                // center = [width / 2, height / 2 - 20];
             } else {
-                center = [width / 2, height / 2];
+                // center = [width / 2, height / 2];
+                sizer = height*0.4;
             };
 
             const delimiter = 100000000000;
@@ -90,7 +125,7 @@
                 } else {
                     return ((number / 1000000000).toFixed(1)).replace(".", ",").replace(",0", "") + " млрд";
                 }
-            }
+            };
 
             function getValue(i) {
                 if (i > 0) {
@@ -129,7 +164,7 @@
                 return bubbleData;
             };
 
-            d3.csv("./data/data.csv", function(d) {
+            d3.csv(DataPath, function(d) {
 
                     return getBubbleData(d);
                     
@@ -166,8 +201,6 @@
                 .call(zoom)
                 .append("g")
                 .attr("id", "bg");
-
-            console.log(svg);
             
             const g = d3.select("#bg");
 
@@ -241,17 +274,17 @@
 
             const bubbles = g.selectAll("circle")
                 .data(data)
-                .enter().append("circle")
-                .attr("class", "animated")
+                .enter()
+                .append("circle")
+                .attr("class", "animatedbub")
                 .attr("r", 0)
                 .attr("fill", d => d.color)
                 .on("mouseover", function(d) {
                     var currentBigNumber = d.srcElement.__data__["s"+year];
                     bigNumber.innerHTML = (currentBigNumber).toString();
-                    // bigNumber.setAttribute("style", "color:"+d.srcElement.__data__.color)
                     tooltip
                         .style("opacity", 1)
-                    d3.selectAll("circle").attr("opacity", 0.5)
+                    d3.selectAll(".animatedbub").attr("opacity", 0.5)
                     d3.select(this).attr("opacity", 1)
                     d3.select(this).attr("margin", 1)
                     d3.select(this).style("stroke", d3.select(this).attr("fill"))
@@ -270,8 +303,7 @@
                     bigNumber.innerHTML = bigNumberYear[year];
                     d3.select(this).style("stroke-width", 0)
                     tooltip.style("opacity", 0)
-                    // bigNumber.removeAttribute("style")
-                    d3.selectAll("circle").attr("opacity", 1)
+                    d3.selectAll(".animatedbub").attr("opacity", 1)
                     d3.select("#info").style("opacity", 1)
                 });
 
@@ -336,6 +368,6 @@
             sliderPlay();
 
             });
-        </script>;
+        </script>
     </div>
 </body>
