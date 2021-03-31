@@ -7,7 +7,7 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
 
 </head>
-<body bgcolor="#212226" style="overflow: hidden;">
+<body bgcolor="#212226" style="overflow: hidden;" id="body">
     <div id="headers">
         <h1 class="header1">На чем зарабатывает «империя» Пригожина </h1>
     </div>
@@ -31,13 +31,21 @@
         <span class="textWhite">Источник: <a id="chatdata">Госзакупки</a></span>
     </div>
     <img id="logo" src="https://raw.githubusercontent.com/NovayaData/pics/main/Logo.svg">
-    <div id="tree" style = "height: 73%;  width: 94%; margin-left: 3%;">
+    <div id="treeContainer">
+    </div>
+    <div id="tree">
         <script>
             const DataPath = "../data/na-chem-zarabatavaet-imperiya-prigozhina.csv";
             document.getElementById("chatdata").setAttribute("href", DataPath)
-            const width = document.getElementById('tree').clientWidth;
-            const height = document.getElementById('tree').clientHeight;
+            
+            const width = document.getElementById('treeContainer').clientWidth;
+            const height = document.getElementById('treeContainer').clientHeight;
 
+            const transW = document.getElementById('body').clientWidth - width;
+            const transH = document.getElementById('body').clientHeight - height;
+
+            console.log(transH);
+            
             const colors = {
                 "образование": "rgb(191,56,29)",
                 "здравоохранение": "rgb(0,172,229)",
@@ -51,8 +59,6 @@
                 .on("zoom", function(event){
                     svg.attr("transform", event.transform);
                 });
-
-            var margin = {top: 10, right: 10, bottom: 10, left: 10};
 
             function getBigNumberText(number) {
                 if (number < 1000000000) {
@@ -89,7 +95,7 @@
                 .attr("id", "tt");
 
             function smartTooltip(d) {
-                x = d.clientX+20;
+                x = d.clientX+20-transW;
 
                 if (d.clientX > width/2) {
                     strLen  = document.getElementById("tt").clientWidth
@@ -147,7 +153,7 @@
             
             d3.treemap()
                 .size([width, height])
-                .padding(2)
+                .padding(1)
                 (root)
 
             svg
@@ -175,7 +181,7 @@
                             d.srcElement.__data__.data.name+"<br>"+d.srcElement.__data__.data.valueText
                             )
                         .style("left", smartTooltip(d))
-                        .style("top", (d.clientY) + "px")
+                        .style("top", (d.clientY-transH) + "px")
                 })
                 .on("mouseleave", function(d) {
                     d3.select(this).style("stroke-width", 0)
