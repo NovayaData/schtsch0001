@@ -36,15 +36,20 @@
     <div id="tree">
         <script>
             const DataPath = "../data/na-chem-zarabatavaet-imperiya-prigozhina.csv";
+            
+
             document.getElementById("chatdata").setAttribute("href", DataPath)
             
             const width = document.getElementById('treeContainer').clientWidth;
             const height = document.getElementById('treeContainer').clientHeight;
 
+            console.log(width);
+
+            document.getElementById('tree').setAttribute("width", width);
+            document.getElementById('tree').setAttribute("height", height);
+
             const transW = document.getElementById('body').clientWidth - width;
             const transH = document.getElementById('body').clientHeight - height;
-
-            console.log(transH);
             
             const colors = {
                 "образование": "rgb(191,56,29)",

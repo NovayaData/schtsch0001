@@ -23,9 +23,7 @@
 }
 
 #tree {
-    position: absolute; 
-    height: 100%; 
-    width: 100%;
+    position: absolute;
     margin-top: 45px;
     left: 3%;
 }
