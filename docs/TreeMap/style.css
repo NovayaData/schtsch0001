@@ -14,8 +14,7 @@
 }
 
 #tree {
-    -ms-transform: translateY(40px);
-    transform: translateY(40px);
+    margin-top: 40px;
 }
 
 .legendRectSvg {
@@ -120,8 +119,7 @@ a:hover {
         height: 12px;
     }
     #tree {
-        -ms-transform: translateY(80px);
-        transform: translateY(80px);
+        margin-top: 80px;
     }
     .infoPadding {
         padding-right: 12;
@@ -152,8 +150,7 @@ a:hover {
         margin-top:140px;
     } */
     #tree {
-        -ms-transform: translateY(140px);
-        transform: translateY(140px);
+        margin-top: 140px;
     }
     .infoPadding {
         padding-right: 16px;
