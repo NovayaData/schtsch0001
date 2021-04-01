@@ -77,6 +77,8 @@
                     .append("svg")
                     .attr("class", "legendRectSvg")
                     .append("rect")
+                    .attr("rx", 1.5)
+                    .attr("ry", 1.5)
                     .attr("class", "legendRectSvg")
                     .attr("fill", Object.values(colors)[i-1]);
             };
@@ -153,11 +155,11 @@
                 "children": Object.values(treedata)
             }
 
-            var root = d3.hierarchy(TreeData).sum(function(d){ return d.value})
+            var root = d3.hierarchy(TreeData).sum(function(d){ return d.value })
             
             d3.treemap()
                 .size([width, height])
-                .padding(1)
+                .padding(1.5)
                 (root)
 
             svg
@@ -165,6 +167,8 @@
                 .data(root.leaves())
                 .enter()
                 .append("rect")
+                .attr("rx", 1.5)
+                .attr("ry", 1.5)
                 .attr('x', function (d) { return d.x0; })
                 .attr('y', function (d) { return d.y0; })
                 .attr('width', function (d) { return d.x1 - d.x0; })
