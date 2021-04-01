@@ -8,8 +8,10 @@
 
 </head>
 <body bgcolor="#212226" style="overflow: hidden;" id="body">
-    <div id="headers">
+    <div id="header">
+        <div id="header1">
         <h1 class="header1">На чем зарабатывает «империя» Пригожина </h1>
+        </div>
     </div>
     <div id="info" class=textSmall>
         <span>
@@ -36,20 +38,17 @@
     <div id="tree">
         <script>
             const DataPath = "../data/na-chem-zarabatavaet-imperiya-prigozhina.csv";
-            
-
             document.getElementById("chatdata").setAttribute("href", DataPath)
             
             const width = document.getElementById('treeContainer').clientWidth;
             const height = document.getElementById('treeContainer').clientHeight;
 
-            console.log(width);
-
             document.getElementById('tree').setAttribute("width", width);
             document.getElementById('tree').setAttribute("height", height);
 
-            const transW = document.getElementById('body').clientWidth - width;
-            const transH = document.getElementById('body').clientHeight - height;
+            const bodyWidth = document.getElementById('body').clientWidth 
+            const bodyHeight = document.getElementById('body').clientHeight
+            const transH = document.getElementById('header').clientHeight
             
             const colors = {
                 "образование": "rgb(191,56,29)",
@@ -100,13 +99,13 @@
                 .attr("id", "tt");
 
             function smartTooltip(d) {
-                x = d.clientX+20-transW;
+                x = d.clientX - bodyWidth*0.03;
 
                 if (d.clientX > width/2) {
                     strLen  = document.getElementById("tt").clientWidth
                     d3.select("#tt").style("max-width", width - (width - x + 40))
                     x = x - strLen;
-                    return (x-20) + "px";
+                    return (x-10) + "px";
                 } else {
                     d3.select("#tt").style("max-width", width - x - 40)
                     return (x+10) + "px";
@@ -186,7 +185,9 @@
                             d.srcElement.__data__.data.name+"<br>"+d.srcElement.__data__.data.valueText
                             )
                         .style("left", smartTooltip(d))
-                        .style("top", (d.clientY-transH) + "px")
+                        .style("top", (
+                            d.clientY - document.getElementById("tt").clientHeight/2 - transH
+                            ) + "px")
                 })
                 .on("mouseleave", function(d) {
                     d3.select(this).style("stroke-width", 0)

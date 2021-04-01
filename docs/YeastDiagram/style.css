@@ -177,7 +177,7 @@ a:hover {
 #tt {	
     position: absolute;
     color: white;
-    text-align: left;
+    /* text-align: left; */
     height: 28px;					
     padding: 2px;
     font-family: 'Roboto', sans-serif;

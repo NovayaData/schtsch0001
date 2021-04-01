@@ -1,16 +1,22 @@
-#headers {
+#header {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    position: absolute;
+    position: fixed;
     color: white;
-    top: 2.5%;
+    top: 0px;
+    height: 45px;
     width: 94%;
     left: 3%;
+    right: 3%;
     margin: 0;
+}
+
+#header1 {
+    margin-top: 3%;
 }
 
 #treeContainer {
@@ -24,7 +30,7 @@
 
 #tree {
     position: absolute;
-    margin-top: 45px;
+    top: 45px;
     left: 3%;
 }
 
@@ -108,7 +114,7 @@ a:hover {
 #tt {	
     position: absolute;
     color: white;
-    text-align: left;
+    /* text-align: left; */
     height: 28px;					
     padding: 2px;
     font-family: 'Roboto', sans-serif;
@@ -129,12 +135,15 @@ a:hover {
     #logo {
         height: 12px;
     }
+    #header {
+        height: 85px;
+    }
     #treeContainer {
         top: 85px;
         bottom: 32px;
     }
     #tree {
-        margin-top: 85px;
+        top: 85px;
     }
     .infoPadding {
         padding-right: 12;
@@ -161,12 +170,15 @@ a:hover {
     #logo {
         height: 16px;
     }
+    #header {
+    height: 140px;
+    }
     #treeContainer {
         top: 140px;
         bottom: 48px;
     }
     #tree {
-        margin-top: 140px;
+        top: 140px;
     }
     .infoPadding {
         padding-right: 16px;

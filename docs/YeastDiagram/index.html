@@ -257,13 +257,13 @@
             }
 
             function smartTooltip(d) {
-                x = d.clientX+20;
+                x = d.clientX;
 
                 if (d.clientX > width/2) {
                     strLen  = document.getElementById("tt").clientWidth
                     d3.select("#tt").style("max-width", width - (width - x + 40))
                     x = x - strLen;
-                    return (x-20) + "px";
+                    return (x-10) + "px";
                 } else {
                     d3.select("#tt").style("max-width", width - x - 40)
                     return (x+10) + "px";
@@ -294,10 +294,10 @@
                 .on("mousemove", function(d) {
                     tooltip
                         .html(d.srcElement.__data__.name)
-                        // .style("left", (d3.pointer(d, this)[0]+20)+"px")
-                        // .style("top", (d3.pointer(d, this)[1]) + "px")
                         .style("left", smartTooltip(d))
-                        .style("top", (d.clientY) + "px")
+                        .style("top", (
+                            d.clientY - document.getElementById("tt").clientHeight/2
+                            ) + "px")
                 })
                 .on("mouseleave", function(d) {
                     bigNumber.innerHTML = bigNumberYear[year];
