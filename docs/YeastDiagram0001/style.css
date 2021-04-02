@@ -92,6 +92,7 @@
     left: 3%;
     bottom: 2.5%;
     height: 6px;
+    vertical-align: text-bottom;
 }
 
 #info {
