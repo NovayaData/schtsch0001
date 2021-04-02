@@ -58,7 +58,7 @@
     position: absolute;
     left: 3%;
     bottom: 2.5%;
-    height: 8px;
+    height: 6px;
 }
 
 #info {
@@ -98,6 +98,18 @@
     font-weight:400;
 }
 
+.textSmaller {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 6px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
 .textWhite {
     color: white;
 }
@@ -133,7 +145,7 @@ a:hover {
         top: 70px;
     }
     #logo {
-        height: 12px;
+        height: 10px;
     }
     #header {
         height: 85px;
@@ -150,6 +162,9 @@ a:hover {
     }
     .textSmall {
         font-size: 12px;
+    }
+    .textSmaller {
+        font-size: 10px;
     }
     .legendRectSvg {
         height: 12px;
@@ -168,7 +183,7 @@ a:hover {
         top: 120px;
     }
     #logo {
-        height: 16px;
+        height: 14px;
     }
     #header {
     height: 140px;
@@ -185,6 +200,9 @@ a:hover {
     }
     .textSmall {
         font-size: 16px;
+    }
+    .textSmaller {
+        font-size: 14px;
     }
     .legendRectSvg {
         height: 16px;
