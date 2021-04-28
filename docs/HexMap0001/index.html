@@ -138,6 +138,7 @@
               };
 
             const slider = document.getElementById("sliderYear");
+            const maxStep = 2020;
             const bigNumber = document.getElementById("bigNumber");
 
             const svgConst = d3.select("#hex")
@@ -220,13 +221,46 @@
                     };
 
                     slider.oninput = function() {
-                        // year = this.value;
+                        slider.setAttribute('class', "off");
                         yearMobile(this.value)
                         initYear();
                     };
 
-                    yearMobile(2011);
-                    initYear();
+                    function sliderPlus() {
+                        var oldValue = parseInt(slider.getAttribute('value'));
+
+                        if (oldValue < maxStep & slider.getAttribute('class') == "on") {
+                            var newValue = oldValue+1;
+                            slider.setAttribute('value', newValue);
+                            yearMobile(newValue.toString())
+                            initYear();
+                        } else if (oldValue == maxStep) {
+                            slider.setAttribute('class', "off");
+                            initYear();
+                        }
+                    };
+
+                    var timer;
+
+                    function sliderPlay() {
+                        yearMobile(2011);
+                        slider.setAttribute('value', "2011");
+                        slider.setAttribute('class', "on");
+                        initYear();
+
+                        function fantomClick() {
+                                timer = setTimeout( function(){
+                                sliderPlus();
+                                if (slider.getAttribute('class') == "on") {
+                                    timer = setTimeout(arguments.callee, 1000)
+                                }
+                            },1000);
+                        };
+
+                        fantomClick();
+                    };
+
+                    sliderPlay();
                     
                 });
             
