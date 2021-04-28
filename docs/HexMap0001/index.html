@@ -1,0 +1,93 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+</head>
+<body>
+    <!-- bgcolor="#212226" -->
+    <!-- style="overflow: hidden;" -->
+    <div id="headers">
+        <h1 class="header1">Депутатовка Luxury Village</h1>
+        <!-- <h2 id="header2"></h2> -->
+    </div>
+    <div id="source" class=textSmaller>
+        <span class=textWhite>Источник: <a id="chatdata">Госзакупки</a></span>
+    </div>
+    <img id="logo" src="https://raw.githubusercontent.com/NovayaData/pics/main/Logo.svg">
+    <div id="slidecontainer">
+        <input type="range" class="on" id="sliderYear" min="2011" max="2020" value=2011 step="1">
+        <div class="sliderticks" id="sliderticks">
+            <p id="p2011">2011</p>
+            <p id="p2012">2012</p>
+            <p id="p2013">2013</p>
+            <p id="p2014">2014</p>
+            <p id="p2015">2015</p>
+            <p id="p2016">2016</p>
+            <p id="p2017">2017</p>
+            <p id="p2018">2018</p>
+            <p id="p2019">2019</p>
+            <p id="p2020">2020</p>
+        </div>
+    </div>
+
+    <div id="hex">
+        <script>
+            // const DataPath = "../data/zakhvat-rynka-shkolnogo-pitaniya-v-moskve.csv";
+            // document.getElementById("chatdata").setAttribute("href", DataPath)
+
+            const slider = document.getElementById("sliderYear");
+
+            // const maxStep = 2012;
+
+            // var lastYear;
+            var year = "2011";
+
+            // const width = document.getElement('body').clientWidth;
+            const height = document.getElementsByTagName('body').clientHeight;
+            
+            d3.xml("./hexmap.svg")
+                .then(data => {
+
+                    const svgConst = d3.select("#hex")
+
+                    svgConst
+                        .style("height", height+"px")
+                        .style("width", height+"px");
+                    
+                    svgConst
+                        .node().append(data.documentElement);
+
+                    const svg = svgConst.select("#hexMap");
+
+                    // svg.style("color", "rgb(255,255,255)");
+                    // svg
+                        // .attr("viewBox", [0, 0, width, height])
+                        // .style("background-color", "rgba(255,255,255,0.5)");
+
+                    function initYear() {
+                        svg.selectAll(".stG").style("opacity", 0);
+                        svg.selectAll('.stG').each(function() { 
+                            y = this.id.slice(1)
+                            if (parseInt(y) <= parseInt(year)) {
+                                d3.select(this).style("opacity", 1); 
+                                // d3.select("#sh"+y).style("opacity", 1); 
+                            }
+                        });
+                    };
+
+                    slider.oninput = function() {
+                        year = this.value;
+                        initYear();
+                    };
+
+                    initYear();
+                    
+                });
+            
+        </script>
+    </div>
+</body>
