@@ -33,8 +33,8 @@
             <p id="p2020">2020</p>
         </div>
     </div>
-    <div id="bigNumberF" class="textWhite" style = "visibility: hidden;">
-        <span class="textSmall">Задекларировано:</span>
+    <div id="bigNumberF" class="textWhite">
+        <span class="textSmall">Задекларировано за год:</span>
         <br>
         <span id="bigNumber" class="header1"></span>
     </div>
@@ -125,15 +125,16 @@
               '2019': 170005.0,
               '2020': 127512.0},
               "2011":3477681.17,
-                "2012":5970152.81,
-                "2013":7259856.35,
-                "2014":673389.71,
-                "2015":655011.09,
-                "2016":770337.73,
-                "2017":826636.82,
-                "2018":934624.93,
-                "2019":799915.53,
-                "2020":6270365.61
+              "2011":127222005.84,
+                "2012":59247831.75,
+                "2013":107294550.99,
+                "2014":21298449.97,
+                "2015":15374910.99,
+                "2016":25538037.29,
+                "2017":16626437.51,
+                "2018":34465496.38,
+                "2019":30343199.91,
+                "2020":50072564.71
               };
 
             const slider = document.getElementById("sliderYear");
@@ -157,9 +158,11 @@
                 if (num < 1000000) {
                     return num.toLocaleString() + " м²"
                 } else {
-                    return (num/10000).toFixed(1).replace(".", ",").replace(",0", "").toLocaleString() + " га"
+                    return Math.round((num/10000)).toLocaleString() + " га"
                 };
             };
+
+            // .toFixed(1).replace(".", ",").replace(",0", "")
 
             function getNumberM(num) {
                 return Math.round(num).toLocaleString() + " м²"
