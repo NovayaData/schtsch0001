@@ -81,10 +81,11 @@
 
 #bigNumberF {
     position: absolute;
-    right: 3%;
+    left: 3%;
     bottom: 50px;
-    text-align: right;
+    text-align: left;
     vertical-align: bottom;
+    background: rgba(255,255,255,0.6);
 }
 
 #logo {

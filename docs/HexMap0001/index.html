@@ -33,26 +33,140 @@
             <p id="p2020">2020</p>
         </div>
     </div>
+    <div id="bigNumberF" class="textWhite">
+        <span class="textSmall">Задекларировано:</span>
+        <br>
+        <span id="bigNumber" class="header1"></span>
+    </div>
 
-    <div id="hex">
+    <div id="hex" style = "height: 100%;  width: 100%;">
         <script>
             // const DataPath = "../data/zakhvat-rynka-shkolnogo-pitaniya-v-moskve.csv";
             // document.getElementById("chatdata").setAttribute("href", DataPath)
 
+            const decldata = {'type1': {'2011': 119757504.0,
+              '2012': 49177361.0,
+              '2013': 96045164.0,
+              '2014': 16151898.0,
+              '2015': 10985516.0,
+              '2016': 17785586.0,
+              '2017': 8415735.0,
+              '2018': 26359418.0,
+              '2019': 25993200.0,
+              '2020': 44772791.0},
+             'type2': {'2011': 6842738.0,
+              '2012': 9352760.0,
+              '2013': 10499784.0,
+              '2014': 4242968.0,
+              '2015': 3605499.0,
+              '2016': 6482417.0,
+              '2017': 6867905.0,
+              '2018': 6879343.0,
+              '2019': 3302133.0,
+              '2020': 4353088.0},
+             'type3': {'2011': 59369.0,
+              '2012': 51234.0,
+              '2013': 53164.0,
+              '2014': 226252.0,
+              '2015': 131633.0,
+              '2016': 562568.0,
+              '2017': 257115.0,
+              '2018': 305119.0,
+              '2019': 241663.0,
+              '2020': 227313.0},
+             'type4': {'2011': 189319.0,
+              '2012': 197346.0,
+              '2013': 204371.0,
+              '2014': 221516.0,
+              '2015': 208144.0,
+              '2016': 232251.0,
+              '2017': 503221.0,
+              '2018': 248369.0,
+              '2019': 243324.0,
+              '2020': 247990.0},
+             'type5': {'2011': 181055.0,
+              '2012': 216678.0,
+              '2013': 211847.0,
+              '2014': 210925.0,
+              '2015': 208059.0,
+              '2016': 211782.0,
+              '2017': 226789.0,
+              '2018': 286004.0,
+              '2019': 239277.0,
+              '2020': 212461.0},
+             'type6': {'2011': 184480.0,
+              '2012': 243364.0,
+              '2013': 270619.0,
+              '2014': 184977.0,
+              '2015': 175907.0,
+              '2016': 193154.0,
+              '2017': 284529.0,
+              '2018': 226277.0,
+              '2019': 143930.0,
+              '2020': 121153.0},
+             'type7': {'2011': 7389.0,
+              '2012': 8776.0,
+              '2013': 9288.0,
+              '2014': 9229.0,
+              '2015': 9462.0,
+              '2016': 10023.0,
+              '2017': 10793.0,
+              '2018': 10983.0,
+              '2019': 9667.0,
+              '2020': 10257.0},
+             'type8': {'2011': 153,
+              '2012': 313,
+              '2013': 313,
+              '2014': 50686.0,
+              '2015': 50691.0,
+              '2016': 60257.0,
+              '2017': 60257.0,
+              '2018': 149982.0,
+              '2019': 170005.0,
+              '2020': 127512.0},
+              "2011":3477681.17,
+                "2012":5970152.81,
+                "2013":7259856.35,
+                "2014":673389.71,
+                "2015":655011.09,
+                "2016":770337.73,
+                "2017":826636.82,
+                "2018":934624.93,
+                "2019":799915.53,
+                "2020":6270365.61
+              };
+
             const slider = document.getElementById("sliderYear");
+            const bigNumber = document.getElementById("bigNumber");
+
+            const svgConst = d3.select("#hex")
 
             // const maxStep = 2012;
 
             // var lastYear;
             var year = "2011";
 
-            // const width = document.getElement('body').clientWidth;
-            const height = document.getElementsByTagName('body').clientHeight;
+            const width = document.getElementById("hex").clientWidth;
+            const height = document.getElementById("hex").clientHeight;
+            
+            if (height <= 400 || width <= 400 ) {
+                document.getElementById("sliderticks").setAttribute("style", "visibility: hidden;");
+            };
+
+            function getNumber(num) {
+                if (num < 1000000) {
+                    return num.toLocaleString() + " м²"
+                } else {
+                    return (num/10000).toFixed(1).replace(".", ",").replace(",0", "").toLocaleString() + " га"
+                };
+            };
+
+            function getNumberM(num) {
+                return Math.round(num).toLocaleString() + " м²"
+            };
             
             d3.xml("./hexmap.svg")
                 .then(data => {
-
-                    const svgConst = d3.select("#hex")
 
                     svgConst
                         .style("height", height+"px")
@@ -68,7 +182,24 @@
                         // .attr("viewBox", [0, 0, width, height])
                         // .style("background-color", "rgba(255,255,255,0.5)");
 
+                    const iconSelect = svg.selectAll(".typeIcon");
+
+                    iconSelect
+                        .on("mouseover", function(d) {
+                            var typeHoverId = this.id;
+                            // bigNumber.style("opacity", 1);
+                            // console.log(typeHoverId)
+                            num = decldata[typeHoverId][year.toString()]
+                            bigNumber.innerHTML = getNumber(num);
+                    });
+                    iconSelect
+                        .on("mouseleave", function(d) {
+                            // bigNumber.style("opacity", 0);
+                            bigNumber.innerHTML = (getNumberM(decldata[year]));
+                    });
+
                     function initYear() {
+                        bigNumber.innerHTML = (getNumberM(decldata[year]))
                         svg.selectAll(".stG").style("opacity", 0);
                         svg.selectAll('.stG').each(function() { 
                             y = this.id.slice(1)
@@ -79,11 +210,19 @@
                         });
                     };
 
+                    function yearMobile(newYear) {
+                        document.getElementById("p"+year.toString()).removeAttribute("style", "visibility: visible;")
+                        year = newYear;
+                        document.getElementById("p"+year.toString()).setAttribute("style", "visibility: visible;")
+                    };
+
                     slider.oninput = function() {
-                        year = this.value;
+                        // year = this.value;
+                        yearMobile(this.value)
                         initYear();
                     };
 
+                    yearMobile(2011);
                     initYear();
                     
                 });
