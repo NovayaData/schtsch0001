@@ -44,7 +44,7 @@
             // const DataPath = "../data/zakhvat-rynka-shkolnogo-pitaniya-v-moskve.csv";
             // document.getElementById("chatdata").setAttribute("href", DataPath)
 
-            const decldata = {'type1': {'2011': 119757504.0,
+            const decldata = {'cl1': {'2011': 119757504.0,
               '2012': 49177361.0,
               '2013': 96045164.0,
               '2014': 16151898.0,
@@ -54,7 +54,7 @@
               '2018': 26359418.0,
               '2019': 25993200.0,
               '2020': 44772791.0},
-             'type2': {'2011': 6842738.0,
+             'cl2': {'2011': 6842738.0,
               '2012': 9352760.0,
               '2013': 10499784.0,
               '2014': 4242968.0,
@@ -64,7 +64,7 @@
               '2018': 6879343.0,
               '2019': 3302133.0,
               '2020': 4353088.0},
-             'type3': {'2011': 59369.0,
+             'cl3': {'2011': 59369.0,
               '2012': 51234.0,
               '2013': 53164.0,
               '2014': 226252.0,
@@ -74,7 +74,7 @@
               '2018': 305119.0,
               '2019': 241663.0,
               '2020': 227313.0},
-             'type4': {'2011': 189319.0,
+             'cl4': {'2011': 189319.0,
               '2012': 197346.0,
               '2013': 204371.0,
               '2014': 221516.0,
@@ -84,7 +84,7 @@
               '2018': 248369.0,
               '2019': 243324.0,
               '2020': 247990.0},
-             'type5': {'2011': 181055.0,
+             'cl5': {'2011': 181055.0,
               '2012': 216678.0,
               '2013': 211847.0,
               '2014': 210925.0,
@@ -94,7 +94,7 @@
               '2018': 286004.0,
               '2019': 239277.0,
               '2020': 212461.0},
-             'type6': {'2011': 184480.0,
+             'cl6': {'2011': 184480.0,
               '2012': 243364.0,
               '2013': 270619.0,
               '2014': 184977.0,
@@ -104,7 +104,7 @@
               '2018': 226277.0,
               '2019': 143930.0,
               '2020': 121153.0},
-             'type7': {'2011': 7389.0,
+             'cl7': {'2011': 7389.0,
               '2012': 8776.0,
               '2013': 9288.0,
               '2014': 9229.0,
@@ -114,7 +114,7 @@
               '2018': 10983.0,
               '2019': 9667.0,
               '2020': 10257.0},
-             'type8': {'2011': 153,
+             'cl8': {'2011': 153,
               '2012': 313,
               '2013': 313,
               '2014': 50686.0,
@@ -180,6 +180,7 @@
                         .node().append(data.documentElement);
 
                     const svg = svgConst.select("#hexMap");
+                    svg.selectAll(".icosh").style("visibility", "hidden");
 
                     // svg.style("color", "rgb(255,255,255)");
                     // svg
@@ -188,28 +189,46 @@
 
                     const iconSelect = svg.selectAll(".typeIcon");
 
+                    var ico;
+                    var icosh;
+
                     iconSelect
                         .on("mouseover", function(d) {
-                            var typeHoverId = this.id;
+                            var typeHoverId = this.id.slice(0,3);
                             // bigNumber.style("opacity", 1);
                             // console.log(typeHoverId)
                             num = decldata[typeHoverId][year.toString()]
                             bigNumber.innerHTML = getNumber(num);
+                            ico =  svg.select("#"+typeHoverId)
+                            ico.attr("transform", "translate(0, -6)")
+                            icosh = svg.select("#ish"+typeHoverId.slice(2))
+                            icosh.style("opacity", 1);
                     });
                     iconSelect
                         .on("mouseleave", function(d) {
                             // bigNumber.style("opacity", 0);
                             bigNumber.innerHTML = (getNumberM(decldata[year]));
+                            ico.attr("transform", "translate(0, 0)")
+                            icosh.style("opacity", 0);
+
                     });
 
                     function initYear() {
                         bigNumber.innerHTML = (getNumberM(decldata[year]))
-                        svg.selectAll(".stG").style("opacity", 0);
+                        
+                        svg.selectAll(".stG").style("visibility", "hidden");
+                        svg.selectAll(".st65").style("visibility", "hidden");
+                        // .style("opacity", 0);
+                        // 65
+                        // 52
                         svg.selectAll('.stG').each(function() { 
                             y = this.id.slice(1)
                             if (parseInt(y) <= parseInt(year)) {
-                                d3.select(this).style("opacity", 1); 
-                                d3.select("#sh"+y).style("opacity", 1);
+                                d3.select(this).style("visibility", "visible");
+                                d3.select("#sh"+y).style("visibility", "visible");
+                                d3.select("#f"+y)
+                                    .style("visibility", "visible")
+                                    .style("opacity", 0.55);
                                 // d3.select("#clouds"+y).style("opacity", 1); 
                                 // d3.select("#shades"+y).style("opacity", 1); 
                             }
