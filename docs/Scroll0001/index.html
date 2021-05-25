@@ -217,8 +217,6 @@
                         .attr("width", bandWidth)
                         .attr("x", function(d) { 
 
-                            let i = data.indexOf( d );
-
                             if ( d.yearlabel!="0" ) {
                                 d3.select("#l"+d.yearlabel)
                                     .transition()
@@ -246,11 +244,20 @@
 
                 function cleaned() {
 
-                    var cleanDate = parseTime("2016-01-03");
+                    let bCalss = this.getAttribute('class');
+                    var cleanDate;
+
+                    if ( bCalss == "off" ) {
+                        cleanDate = parseTime("2016-01-03");
+                        this.setAttribute("class", "on");
+                    } else {
+                        cleanDate = xMin;
+                        this.setAttribute("class", "off");
+                    }
+
                     var s = Array(cleanDate, xMax);
 
                     bandWidth = width/data.filter(function(d) { return d.date > cleanDate;}).length;
-                    
                     x.domain(s);
 
                     focus.selectAll("rect").call(cleaner, 500);
