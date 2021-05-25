@@ -79,10 +79,6 @@
                     d.date = parseTime(d.date);
                 });
 
-                data.forEach(d => {
-                    console.log(d.date);
-                });
-
                 var xMin = d3.min(data, function(d) { return d.date; });
                 var xMax = d3.max(data, function(d) { return d.date; });
 
