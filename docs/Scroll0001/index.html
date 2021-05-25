@@ -136,6 +136,8 @@
                                 .text("| "+d.yearlabel)
                         };
 
+                        console.log(d.date);
+
                         return x(d.date); 
                         
                         })
@@ -238,8 +240,6 @@
                 function act() {
                     let bId = this.getAttribute('id');
                     let bCalss = this.getAttribute('class');
-
-                    console.log(bId);
 
                     if ( bCalss == "off" ) {
                         getReal(bId);
