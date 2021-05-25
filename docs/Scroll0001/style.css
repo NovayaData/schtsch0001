@@ -1,0 +1,68 @@
+#testControl {
+    position: absolute;
+    padding-top: 2.5%;
+    right: 3%;
+}
+
+.textSmall {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+.textSmaller {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+#headers {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    color: white;
+    padding-top: 2.5%;
+    width: 100%;
+    left: 3%;
+    margin: 0;
+}
+
+.header1 {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight:700;
+    margin: 0;
+    font-size: 10px;
+    color: white;
+}
+
+@media (min-width: 300px) {
+    .header1 {
+        font-size: 20px
+    }
+
+@media (min-width: 700px) {
+    .header1 {
+        font-size: 36px
+    }

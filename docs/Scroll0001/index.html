@@ -1,0 +1,202 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body bgcolor="#212226" style="overflow: hidden;">
+    <div id="headers">
+        <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
+    </div>
+
+    <div id="testControl">
+        <button id="b1" class="off">1</button>
+        <button id="b2" class="off">2</button>
+        <button id="b3" class="off">3</button>
+    </div>
+
+    <div id="chartArea" style = "height: 100%;  width: 100%;">
+        <script>
+            const margin = {top: 10, right: 30, bottom: 90, left: 40};
+            const width = document.getElementById('chartArea').clientWidth - margin.left - margin.right;
+            const height = document.getElementById('chartArea').clientHeight - margin.top - margin.bottom;
+
+            function getColor(v) {
+                if (804>v && v>=0){
+                    return "#ffed26"
+                } else if (2616>v && v>=804){
+                    return "#fbbf00"
+                } else if (4957>v && v>=2616){
+                    return "#ee9100"
+                } else if (7397>v && v>=4957){
+                    return "#da6513"
+                } else if (v>=7397){
+                    return "#bf381d"
+                }
+            }
+
+            var svg = d3.select("#chartArea").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                    .attr("transform", 
+                        "translate(" + margin.left + "," + margin.top + ")");
+
+            var x = d3.scaleBand()
+                .range([0, width]);
+
+            var y = d3.scaleLinear()
+                .range([height, 0]);
+            
+            d3.csv("viotest.csv").then( function(data) {
+
+                x.domain(data.map(function(d) { return data.indexOf( d ); }));
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .attr("opacity", 0)
+                    .call(d3.axisBottom(x));
+
+                y.domain([0, 40000]);
+                svg.append("g")
+                    .attr("opacity", 0)
+                    .call(d3.axisLeft(y));
+
+                const years = svg.append("g")
+                    .attr("id", "years");
+
+                const dates = svg.append("g")
+                    .attr("id", "dates");
+
+                svg.selectAll("bar")
+                .data(data)
+                .enter().append("rect")
+                    .attr("class", function(d) { return "b"+d.episode; })
+                    .attr("id", function(d) { return d.day; })
+                    .attr("x", function(d) { 
+
+                        if ( d.yearlabel!="0" ) {
+                            years
+                                .append("text")
+                                .attr("class", "textSmall")
+                                .attr('text-anchor', 'start')
+                                .attr("x", x(data.indexOf( d )))
+                                .attr("y", height+30)
+                                .attr("fill", "#ffffff")
+                                .text("| "+d.yearlabel)
+                        };
+
+                        return x(data.indexOf( d )); 
+                        
+                        })
+                    .attr("width", x.bandwidth())
+                    .attr("y", y(0))
+                    .attr("height", 0)
+                    .attr("opacity", 1)
+                    .attr("fill", function(d) {return getColor(d.weeksum); });
+                    
+                svg.selectAll("rect")
+                    .transition()
+                    .duration(500)
+                    .attr("y", height-30)
+                    .attr("height", 30);
+                    // .delay(function(d,i){ return(i*10)});
+
+                function getReal(epid) {
+
+                    d3.selectAll(".on")
+                        .attr("class", function(d) { getWurstFast(this.id); return "off"; })
+
+                    svg.selectAll("rect")
+                        .transition()
+                        .duration(500)
+                        .attr("opacity", 0.25);
+
+                    let episodeBars = d3.selectAll("."+epid);
+
+                    var r = episodeBars.nodes().length - 1;
+                    var leftDate = episodeBars.nodes()[0];
+                    var rightDate = episodeBars.nodes()[r];
+                        
+                    dates 
+                        .append("text")
+                        .attr("class", "textSmaller")
+                        .attr('text-anchor', 'end')
+                        .attr("x", leftDate.getAttribute("x"))
+                        .attr("y", height+14)
+                        .attr("fill", "#ffffff")
+                        .text(leftDate.getAttribute("id"));
+
+                    dates 
+                        .append("text")
+                        .attr("class", "textSmaller")
+                        .attr('text-anchor', 'start')
+                        .attr("x", parseFloat(rightDate.getAttribute("x"))+x.bandwidth())
+                        .attr("y", height+14)
+                        .attr("fill", "#ffffff")
+                        .text(rightDate.getAttribute("id"));
+
+                    episodeBars
+                        .transition()
+                        .duration(500)
+                        .attr("opacity", 1)
+                        .attr("fill", "#ffffff")
+                        .attr("height", function(d) { return d.weeksum/70; })
+                        .attr("y", function(d) { return height-d.weeksum/70; });
+
+                };
+
+                function getWurst(epid) {
+                    svg.selectAll("rect")
+                        .transition()
+                        .duration(500)
+                        .attr("opacity", 1);
+
+                    dates.selectAll(".textSmaller").remove()
+
+                    let episodeBars = d3.selectAll("."+epid);
+                    
+                    episodeBars
+                        .transition()
+                        .duration(500)
+                        .attr("fill", function(d) {return getColor(d.weeksum); })
+                        .attr("height", 30)
+                        .attr("y", height-30);
+                };
+
+                function getWurstFast(epid) {
+                    let episodeBars = d3.selectAll("."+epid);
+
+                    dates.selectAll(".textSmaller").remove()
+                    
+                    episodeBars
+                        .attr("fill", function(d) {return getColor(d.weeksum); })
+                        .attr("height", 30)
+                        .attr("y", height-30);
+                };
+                
+                function act() {
+                    let bId = this.getAttribute('id');
+                    let bCalss = this.getAttribute('class');
+                    if ( bCalss == "off" ) {
+                        getReal(bId);
+                        this.setAttribute("class", "on");
+                    } else {
+                        getWurst(bId);
+                        this.setAttribute("class", "off");
+                    };
+                };
+
+                d3.select("#b1")
+                    .on('click', act);
+                d3.select("#b2")
+                    .on('click', act);
+                d3.select("#b3")
+                    .on('click', act);
+            
+            });
+
+        </script>
+    </div>
+</body>
