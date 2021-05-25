@@ -75,14 +75,16 @@
             
             d3.csv("viotest.csv").then( function(data) {
 
-                data.forEach(function(d) {
+                data.forEach(d => {
                     d.date = parseTime(d.date);
                 });
+
+                data.forEach(d => {
+                    console.log(d.date);
+                });
+
                 var xMin = d3.min(data, function(d) { return d.date; });
                 var xMax = d3.max(data, function(d) { return d.date; });
-
-                console.log(xMin);
-                console.log(xMax);
 
                 x.domain([xMin, xMax]);
                 focus.append("g")
@@ -107,8 +109,6 @@
 
                 var bars = focus.append("g");
                 bandWidth = width/data.length;
-
-                console.log(data.length);
 
                 const years = bars.append("g")
                     .attr("id", "years");
@@ -135,8 +135,6 @@
                                 .attr("fill", "#ffffff")
                                 .text("| "+d.yearlabel)
                         };
-
-                        console.log(d.date);
 
                         return x(d.date); 
                         
