@@ -13,10 +13,11 @@
     </div>
 
     <div id="testControl">
-        <button id="b0" class="off">0</button>
         <button id="b1" class="off">1</button>
         <button id="b2" class="off">2</button>
-        <button id="b3" class="off">3</button>
+        <button id="b0" class="off">3</button>
+        <button id="b3" class="off">4</button>
+        <button id="b4" class="off">5</button>
     </div>
 
     <div id="chartArea" style = "height: 100%;  width: 100%;">
@@ -61,21 +62,42 @@
                         "translate(" + margin.left + "," + margin.top + ")");
                 
             
-            var x = d3.scaleBand()
+            var x = d3.scaleTime()
                 .range([0, width]);
 
             var y = d3.scaleLinear()
                 .range([height, 0]);
+
+            var parseTime = d3.timeParse("%Y-%m-%d");
+            var bandWidth;
+
+            var wurstH = 30;
             
             d3.csv("viotest.csv").then( function(data) {
 
-                x.domain(data.map(function(d) { return data.indexOf( d ); }));
+                data.forEach(function(d) {
+                    d.date = parseTime(d.date);
+                });
+                var xMin = d3.min(data, function(d) { return d.date; });
+                var xMax = d3.max(data, function(d) { return d.date; });
+
+                console.log(xMin);
+                console.log(xMax);
+
+                x.domain([xMin, xMax]);
                 focus.append("g")
                     .attr("id", "X")
+                    
                     .attr("transform", "translate(0," + height + ")")
                     .attr("opacity", 0)
+                    // .attr("class", "axis")
+                    // .attr("color", "#ffffff")
                     .call(d3.axisBottom(x).tickSize(0))
                     .selectAll("text").remove();
+                    //     .attr('text-anchor', 'start')
+                    //     .attr("transform", 
+                    //         "translate(1,0)");
+                    
 
                 y.domain([0, 40000]);
                 focus.append("g")
@@ -83,19 +105,23 @@
                     .call(d3.axisLeft(y))
                     .selectAll("text").remove();
 
-                const years = focus.append("g")
+                var bars = focus.append("g");
+                bandWidth = width/data.length;
+
+                console.log(data.length);
+
+                const years = bars.append("g")
                     .attr("id", "years");
 
                 const dates = focus.append("g")
                     .attr("id", "dates");
 
-                var bars = focus.append("g");
                 bars.attr("clip-path", "url(#clip)");
                 bars.selectAll("bar")
                 .data(data)
                 .enter().append("rect")
                     .attr("class", function(d) { return "b"+d.episode; })
-                    .attr("id", function(d) { return d.day; })
+                    // .attr("id", function(d) { return d.day; })
                     .attr("x", function(d) { 
 
                         if ( d.yearlabel!="0" ) {
@@ -104,20 +130,18 @@
                                 .attr("id", "l"+d.yearlabel)
                                 .attr("class", "textSmall")
                                 .attr('text-anchor', 'start')
-                                .attr("x", x(data.indexOf( d )))
+                                .attr("x", x(d.date))
                                 .attr("y", height+30)
                                 .attr("fill", "#ffffff")
                                 .text("| "+d.yearlabel)
                         };
 
-                        // console.log(x(data.indexOf( d )));
-
-                        return x(data.indexOf( d )); 
+                        return x(d.date); 
                         
                         })
-                    .attr("width", x.bandwidth())
+                    .attr("width", bandWidth)
                     .attr("y", y(0))
-                    .attr("height", 0)
+                    .attr("height", 10)
                     .attr("opacity", 1);
                     
                 bars.selectAll("rect")
@@ -136,9 +160,9 @@
                     var leftDate = episodeBars.nodes()[0];
                     var rightDate = episodeBars.nodes()[r];
                         
-                    dates
-                        .call(addDay, leftDate.getAttribute("id"), leftDate.getAttribute("x"), "end")
-                        .call(addDay, rightDate.getAttribute("id"), parseFloat(rightDate.getAttribute("x"))+x.bandwidth(), "start");
+                    // dates
+                    //     .call(addDay, leftDate.getAttribute("id"), leftDate.getAttribute("x"), "end")
+                    //     .call(addDay, rightDate.getAttribute("id"), parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
 
                     episodeBars
                         .call(pik, 500);
@@ -164,7 +188,6 @@
                 };
 
                 // Transitions
-
                 function wurstOpaciter(path, duration, v) {
                     path
                         .transition("pik")
@@ -187,14 +210,37 @@
                         .transition("pook")
                         .duration(duration)
                         .attr("fill", function(d) {return getColor(d.weeksum); })
-                        .attr("height", 40)
-                        .attr("y", height-40);
+                        .attr("height", wurstH)
+                        .attr("y", height-wurstH);
+                };
+
+                function cleaner(path, duration) {
+                    path
+                        .transition("cleaner")
+                        .duration(duration)
+                        .attr("width", bandWidth)
+                        .attr("x", function(d) { 
+
+                            let i = data.indexOf( d );
+
+                            if ( d.yearlabel!="0" ) {
+                                d3.select("#l"+d.yearlabel)
+                                    .transition()
+                                    .duration(500)
+                                    .attr("x", x(d.date))
+                            };
+
+                            return x(d.date);
+                        });
                 };
 
                 // Test buttons actions
                 function act() {
                     let bId = this.getAttribute('id');
                     let bCalss = this.getAttribute('class');
+
+                    console.log(bId);
+
                     if ( bCalss == "off" ) {
                         getReal(bId);
                         this.setAttribute("class", "on");
@@ -204,57 +250,30 @@
                     };
                 };
 
-                function brushed() {
+                function cleaned() {
+
+                    var cleanDate = parseTime("2016-01-03");
+                    var s = Array(cleanDate, xMax);
+
+                    bandWidth = width/data.filter(function(d) { return d.date > cleanDate;}).length;
                     
-                    // var s = [x(50), 50];
+                    x.domain(s);
 
-                    // console.log(x.domain())
-                    
-                    x.domain(x.domain().slice(50, x.domain().length));
-
-                    // svg.selectAll(".b666").attr("opacity", 0);
-
-                    focus.selectAll("rect")
-                            .transition()
-                            .duration(500)
-                            .attr("width", x.bandwidth())
-                            .attr("x", function(d) { 
-
-                                let i = data.indexOf( d );
-
-                                if ( d.yearlabel!="0" ) {
-                                    d3.select("#l"+d.yearlabel)
-                                        .transition()
-                                        .duration(500)
-                                        .attr("x", x(i))
-                                };
-
-                                // this.style("visibility", "visible")
-
-                                return x(i);
-                            });
-                            
-
-                            // .attr("cy", function(d) { return y(d.messages_sent_in_day); });
-
+                    focus.selectAll("rect").call(cleaner, 500);
                     focus.select("#X").call(d3.axisBottom(x).tickSize(0));
-
-                    // svg.call(zoom.transform, d3.zoomIdentity
-                    //     .scale(width / (s[1] - s[0]))
-                    //     .translate(-s[0], 0));
 
                 };
 
-                d3.select("#b0")
-                    .on('click', brushed);
                 d3.select("#b1")
                     .on('click', act);
                 d3.select("#b2")
                     .on('click', act);
+                d3.select("#b0")
+                    .on('click', cleaned);
                 d3.select("#b3")
                     .on('click', act);
-
-                
+                d3.select("#b4")
+                    .on('click', act);
             
             });
 
