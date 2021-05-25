@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
-<body bgcolor="#212226" style="overflow: hidden;">
+<body bgcolor="#212226">
+    <!-- style="overflow: hidden;" -->
     <div id="headers">
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
@@ -19,9 +20,13 @@
 
     <div id="chartArea" style = "height: 100%;  width: 100%;">
         <script>
-            const margin = {top: 10, right: 30, bottom: 90, left: 40};
-            const width = document.getElementById('chartArea').clientWidth - margin.left - margin.right;
-            const height = document.getElementById('chartArea').clientHeight - margin.top - margin.bottom;
+            const W = document.getElementById('chartArea').clientWidth;
+            const H = document.getElementById('chartArea').clientHeight;
+
+            const margin = {top: W*0.03, right: W*0.03, bottom: H*0.06, left: W*0.03};
+
+            const width = W - margin.left - margin.right;
+            const height = H - margin.top - margin.bottom;
 
             function getColor(v) {
                 if (804>v && v>=0){
@@ -38,8 +43,8 @@
             }
 
             var svg = d3.select("#chartArea").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
+                .attr("width", W)
+                .attr("height", H)
                 .append("g")
                     .attr("transform", 
                         "translate(" + margin.left + "," + margin.top + ")");
@@ -56,12 +61,14 @@
                 svg.append("g")
                     .attr("transform", "translate(0," + height + ")")
                     .attr("opacity", 0)
-                    .call(d3.axisBottom(x));
+                    .call(d3.axisBottom(x))
+                    .selectAll("text").remove();
 
                 y.domain([0, 40000]);
                 svg.append("g")
                     .attr("opacity", 0)
-                    .call(d3.axisLeft(y));
+                    .call(d3.axisLeft(y))
+                    .selectAll("text").remove();;
 
                 const years = svg.append("g")
                     .attr("id", "years");
@@ -93,25 +100,17 @@
                     .attr("width", x.bandwidth())
                     .attr("y", y(0))
                     .attr("height", 0)
-                    .attr("opacity", 1)
-                    .attr("fill", function(d) {return getColor(d.weeksum); });
+                    .attr("opacity", 1);
                     
                 svg.selectAll("rect")
-                    .transition()
-                    .duration(500)
-                    .attr("y", height-30)
-                    .attr("height", 30);
-                    // .delay(function(d,i){ return(i*10)});
+                    .call(pook, 500);
 
                 function getReal(epid) {
 
                     d3.selectAll(".on")
-                        .attr("class", function(d) { getWurstFast(this.id); return "off"; })
+                        .attr("class", function(d) { getWurst(this.id); return "off"; })
 
-                    svg.selectAll("rect")
-                        .transition()
-                        .duration(500)
-                        .attr("opacity", 0.25);
+                    svg.selectAll("rect").call(wurstOpaciter, 500, 0.25)
 
                     let episodeBars = d3.selectAll("."+epid);
 
@@ -119,63 +118,62 @@
                     var leftDate = episodeBars.nodes()[0];
                     var rightDate = episodeBars.nodes()[r];
                         
-                    dates 
-                        .append("text")
-                        .attr("class", "textSmaller")
-                        .attr('text-anchor', 'end')
-                        .attr("x", leftDate.getAttribute("x"))
-                        .attr("y", height+14)
-                        .attr("fill", "#ffffff")
-                        .text(leftDate.getAttribute("id"));
-
-                    dates 
-                        .append("text")
-                        .attr("class", "textSmaller")
-                        .attr('text-anchor', 'start')
-                        .attr("x", parseFloat(rightDate.getAttribute("x"))+x.bandwidth())
-                        .attr("y", height+14)
-                        .attr("fill", "#ffffff")
-                        .text(rightDate.getAttribute("id"));
+                    dates
+                        .call(addDay, leftDate.getAttribute("id"), leftDate.getAttribute("x"), "end")
+                        .call(addDay, rightDate.getAttribute("id"), parseFloat(rightDate.getAttribute("x"))+x.bandwidth(), "start");
 
                     episodeBars
-                        .transition()
-                        .duration(500)
+                        .call(pik, 500);
+                };
+
+                function addDay(path, dayText, xPos, al) {
+                    path 
+                        .append("text")
+                        .attr("class", "textSmaller")
+                        .attr('text-anchor', al)
+                        .attr("x", xPos)
+                        .attr("y", height+14)
+                        .attr("fill", "#ffffff")
+                        .text(dayText);
+                };
+
+                function getWurst(epid) {
+                    svg.selectAll("rect").call(wurstOpaciter, 500, 1)
+                    dates.selectAll(".textSmaller").remove()
+                    let episodeBars = d3.selectAll("."+epid);
+                    episodeBars
+                        .call(pook, 500);
+                };
+
+                // Transitions
+
+                function wurstOpaciter(path, duration, v) {
+                    path
+                        .transition("pik")
+                        .duration(duration)
+                        .attr("opacity", v);
+                }
+
+                function pik(path, duration) {
+                    path
+                        .transition("pik")
+                        .duration(duration)
                         .attr("opacity", 1)
                         .attr("fill", "#ffffff")
                         .attr("height", function(d) { return d.weeksum/70; })
                         .attr("y", function(d) { return height-d.weeksum/70; });
-
                 };
 
-                function getWurst(epid) {
-                    svg.selectAll("rect")
-                        .transition()
-                        .duration(500)
-                        .attr("opacity", 1);
-
-                    dates.selectAll(".textSmaller").remove()
-
-                    let episodeBars = d3.selectAll("."+epid);
-                    
-                    episodeBars
-                        .transition()
-                        .duration(500)
+                function pook(path, duration) {
+                    path
+                        .transition("pook")
+                        .duration(duration)
                         .attr("fill", function(d) {return getColor(d.weeksum); })
-                        .attr("height", 30)
-                        .attr("y", height-30);
+                        .attr("height", 50)
+                        .attr("y", height-50);
                 };
 
-                function getWurstFast(epid) {
-                    let episodeBars = d3.selectAll("."+epid);
-
-                    dates.selectAll(".textSmaller").remove()
-                    
-                    episodeBars
-                        .attr("fill", function(d) {return getColor(d.weeksum); })
-                        .attr("height", 30)
-                        .attr("y", height-30);
-                };
-                
+                // Test buttons actions
                 function act() {
                     let bId = this.getAttribute('id');
                     let bCalss = this.getAttribute('class');
@@ -194,6 +192,8 @@
                     .on('click', act);
                 d3.select("#b3")
                     .on('click', act);
+
+                
             
             });
 
