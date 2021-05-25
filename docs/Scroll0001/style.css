@@ -57,6 +57,13 @@
     color: white;
 }
 
+.axis {
+    /* stroke-width: 0.5px; */
+    /* stroke: #888; */
+    font: 10px;
+    color: white;
+  }
+
 @media (min-width: 300px) {
     .header1 {
         font-size: 20px
