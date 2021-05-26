@@ -1,7 +1,33 @@
 #testControl {
     position: absolute;
-    padding-top: 2.5%;
-    right: 3%;
+    /* padding-top: 2.5%; */
+    /* right: 3%; */
+}
+
+#sections {
+    position: absolute;
+    display: inline-block;
+    width: 250px;
+    top: 30%;
+    left: 3%;
+    color: whitesmoke;
+    z-index: 90;
+}
+
+.step {
+    margin-bottom: 1000px;
+}
+
+#chartArea {
+    /* display: inline; */
+    position: fixed;
+    /* margin-top: 0; */
+    z-index: 1;
+    margin-left: 0;
+    
+    height: 100%;
+    width: 100%;
+    /* transform: translate(-50%, 0%); */
 }
 
 .textSmall {

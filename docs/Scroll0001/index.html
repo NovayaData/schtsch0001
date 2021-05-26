@@ -12,272 +12,379 @@
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
 
-    <div id="testControl">
+    <!-- <div id="testControl">
         <button id="b1" class="off">1</button>
         <button id="b2" class="off">2</button>
         <button id="b0" class="off">3</button>
         <button id="b3" class="off">4</button>
         <button id="b4" class="off">5</button>
-    </div>
+    </div> -->
 
-    <div id="chartArea" style = "height: 100%;  width: 100%;">
-        <script>
-            const W = document.getElementById('chartArea').clientWidth,
-                H = document.getElementById('chartArea').clientHeight,
-                margin = {top: W*0.03, right: W*0.03, bottom: H*0.10, left: W*0.03},
-                width = W - margin.left - margin.right,
-                height = H - margin.top - margin.bottom;
+    <div id="graphic">
+        <div id="sections">
+            <section class="step">Че там у Дата-отдела?</section>
+            <section class="step">На первом, самом горячем этапе войны, данных не было и нет.</section>
+            <section class="step">_</section>
+            <section class="step">В какой-то момент ОБСЕ развернули мониторинговую систему, но собирали они плохо.</section>
+            <section class="step">_</section>
+            <section class="step">_</section>
+            <section class="step">Поэтому мы их не взяли...</section>
+            <section class="step">_</section>
+            <section class="step">_</section>
+            <section class="step">_</section>
+            <section class="step">_</section>
+            <section class="step">Ого пик!</section>
+            <section class="step">_</section>
+            <section class="step">И второй!</section>
+            <section class="step">Конец...?</section>
+        </div>
+        <div id="chartArea" >
+                <!-- style = "height: 100%;  width: 100%;" -->
+                <script>
 
-            function getColor(v) {
-                if (804>v && v>=0){
-                    return "#ffed26"
-                } else if (2616>v && v>=804){
-                    return "#fbbf00"
-                } else if (4957>v && v>=2616){
-                    return "#ee9100"
-                } else if (7397>v && v>=4957){
-                    return "#da6513"
-                } else if (v>=7397){
-                    return "#bf381d"
-                }
-            }
+                    const W = document.getElementById('chartArea').clientWidth,
+                        H = document.getElementById('chartArea').clientHeight,
+                        margin = {top: W*0.03, right: W*0.03, bottom: H*0.10, left: W*0.03, topStart: H*0.5},
+                        width = W - margin.left - margin.right,
+                        height = H - margin.top - margin.bottom;
 
-            var svg = d3.select("#chartArea").append("svg")
-                .attr("width", W)
-                .attr("height", H)
-                .append("g")
-                    
-
-            svg.append("defs").append("clipPath")
-                    .attr("id", "clip")
-                .append("rect")
-                    .attr("width", W)
-                    .attr("height", H);
-
-            var focus = svg.append("g")
-                .attr("class", "focus")
-                .attr("width", width)
-                .attr("height", height)
-                .attr("transform", 
-                        "translate(" + margin.left + "," + margin.top + ")");
-                
-            
-            var x = d3.scaleTime()
-                .range([0, width]);
-
-            var y = d3.scaleLinear()
-                .range([height, 0]);
-
-            var parseTime = d3.timeParse("%Y-%m-%d");
-            var bandWidth;
-
-            var wurstH = 30;
-            
-            d3.csv("viotest.csv").then( function(data) {
-
-                data.forEach(d => {
-                    d.date = parseTime(d.date);
-                });
-
-                var xMin = d3.min(data, function(d) { return d.date; });
-                var xMax = d3.max(data, function(d) { return d.date; });
-
-                x.domain([xMin, xMax]);
-                focus.append("g")
-                    .attr("id", "X")
-                    
-                    .attr("transform", "translate(0," + height + ")")
-                    .attr("opacity", 0)
-                    // .attr("class", "axis")
-                    // .attr("color", "#ffffff")
-                    .call(d3.axisBottom(x).tickSize(0))
-                    .selectAll("text").remove();
-                    //     .attr('text-anchor', 'start')
-                    //     .attr("transform", 
-                    //         "translate(1,0)");
-                    
-
-                y.domain([0, 40000]);
-                focus.append("g")
-                    .attr("opacity", 0)
-                    .call(d3.axisLeft(y))
-                    .selectAll("text").remove();
-
-                var bars = focus.append("g");
-                bandWidth = width/data.length;
-
-                const years = bars.append("g")
-                    .attr("id", "years");
-
-                const dates = focus.append("g")
-                    .attr("id", "dates");
-
-                bars.attr("clip-path", "url(#clip)");
-                bars.selectAll("bar")
-                .data(data)
-                .enter().append("rect")
-                    .attr("class", function(d) { return "b"+d.episode; })
-                    // .attr("id", function(d) { return d.day; })
-                    .attr("x", function(d) { 
-
-                        if ( d.yearlabel!="0" ) {
-                            years
-                                .append("text")
-                                .attr("id", "l"+d.yearlabel)
-                                .attr("class", "textSmall")
-                                .attr('text-anchor', 'start')
-                                .attr("x", x(d.date))
-                                .attr("y", height+30)
-                                .attr("fill", "#ffffff")
-                                .text("| "+d.yearlabel)
-                        };
-
-                        return x(d.date); 
-                        
-                        })
-                    .attr("width", bandWidth)
-                    .attr("y", y(0))
-                    .attr("height", 10)
-                    .attr("opacity", 1);
-                    
-                bars.selectAll("rect")
-                    .call(pook, 500);
-
-                function getReal(epid) {
-
-                    d3.selectAll(".on")
-                        .attr("class", function(d) { getWurst(this.id); return "off"; })
-
-                    bars.selectAll("rect").call(wurstOpaciter, 500, 0.25)
-
-                    let episodeBars = d3.selectAll("."+epid);
-
-                    var r = episodeBars.nodes().length - 1;
-                    var leftDate = episodeBars.nodes()[0];
-                    var rightDate = episodeBars.nodes()[r];
-                        
-                    // dates
-                    //     .call(addDay, leftDate.getAttribute("id"), leftDate.getAttribute("x"), "end")
-                    //     .call(addDay, rightDate.getAttribute("id"), parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
-
-                    episodeBars
-                        .call(pik, 500);
-                };
-
-                function addDay(path, dayText, xPos, al) {
-                    path 
-                        .append("text")
-                        .attr("class", "textSmaller")
-                        .attr('text-anchor', al)
-                        .attr("x", xPos)
-                        .attr("y", height+14)
-                        .attr("fill", "#ffffff")
-                        .text(dayText);
-                };
-
-                function getWurst(epid) {
-                    bars.selectAll("rect").call(wurstOpaciter, 500, 1)
-                    dates.selectAll(".textSmaller").remove()
-                    let episodeBars = d3.selectAll("."+epid);
-                    episodeBars
-                        .call(pook, 500);
-                };
-
-                // Transitions
-                function wurstOpaciter(path, duration, v) {
-                    path
-                        .transition("pik")
-                        .duration(duration)
-                        .attr("opacity", v);
-                }
-
-                function pik(path, duration) {
-                    path
-                        .transition("pik")
-                        .duration(duration)
-                        .attr("opacity", 1)
-                        .attr("fill", "#ffffff")
-                        .attr("height", function(d) { return d.weeksum/70; })
-                        .attr("y", function(d) { return height-d.weeksum/70; });
-                };
-
-                function pook(path, duration) {
-                    path
-                        .transition("pook")
-                        .duration(duration)
-                        .attr("fill", function(d) {return getColor(d.weeksum); })
-                        .attr("height", wurstH)
-                        .attr("y", height-wurstH);
-                };
-
-                function cleaner(path, duration) {
-                    path
-                        .transition("cleaner")
-                        .duration(duration)
-                        .attr("width", bandWidth)
-                        .attr("x", function(d) { 
-
-                            if ( d.yearlabel!="0" ) {
-                                d3.select("#l"+d.yearlabel)
-                                    .transition()
-                                    .duration(500)
-                                    .attr("x", x(d.date))
-                            };
-
-                            return x(d.date);
-                        });
-                };
-
-                // Test buttons actions
-                function act() {
-                    let bId = this.getAttribute('id');
-                    let bCalss = this.getAttribute('class');
-
-                    if ( bCalss == "off" ) {
-                        getReal(bId);
-                        this.setAttribute("class", "on");
-                    } else {
-                        getWurst(bId);
-                        this.setAttribute("class", "off");
-                    };
-                };
-
-                function cleaned() {
-
-                    let bCalss = this.getAttribute('class');
-                    var cleanDate;
-
-                    if ( bCalss == "off" ) {
-                        cleanDate = parseTime("2016-01-03");
-                        this.setAttribute("class", "on");
-                    } else {
-                        cleanDate = xMin;
-                        this.setAttribute("class", "off");
+                    function getColor(v) {
+                        if (804>v && v>=0){
+                            return "#ffed26"
+                        } else if (2616>v && v>=804){
+                            return "#fbbf00"
+                        } else if (4957>v && v>=2616){
+                            return "#ee9100"
+                        } else if (7397>v && v>=4957){
+                            return "#da6513"
+                        } else if (v>=7397){
+                            return "#bf381d"
+                        }
                     }
 
-                    var s = Array(cleanDate, xMax);
+                    var svg = d3.select("#chartArea").append("svg")
+                        .attr("width", W)
+                        .attr("height", H)
+                        .append("g")
+                            
 
-                    bandWidth = width/data.filter(function(d) { return d.date > cleanDate;}).length;
-                    x.domain(s);
+                    svg.append("defs").append("clipPath")
+                            .attr("id", "clip")
+                        .append("rect")
+                            .attr("width", W)
+                            .attr("height", H);
 
-                    focus.selectAll("rect").call(cleaner, 500);
-                    focus.select("#X").call(d3.axisBottom(x).tickSize(0));
+                    var focus = svg.append("g")
+                        .attr("class", "focus")
+                        .attr("width", width-margin.left-margin.right)
+                        .attr("height", H)
+                        .attr("transform", 
+                                "translate(" + margin.left + ",-" + H*0.25 + ")");
+                    
+                    var x = d3.scaleTime()
+                        .range([0, width]);
 
-                };
+                    var y = d3.scaleLinear()
+                        .range([height, 0]);
 
-                d3.select("#b1")
-                    .on('click', act);
-                d3.select("#b2")
-                    .on('click', act);
-                d3.select("#b0")
-                    .on('click', cleaned);
-                d3.select("#b3")
-                    .on('click', act);
-                d3.select("#b4")
-                    .on('click', act);
-            
-            });
+                    var parseTime = d3.timeParse("%Y-%m-%d");
+                    var bandWidth;
 
-        </script>
+                    var wurstH = 30;
+                    var NFS = 250;
+                    
+                    d3.csv("viotest.csv").then( function(data) {
+
+                        function focusMove(v) {
+                            focus.transition()
+                                .duration(NFS)
+                                .attr("transform", 
+                                        "translate(" + margin.left + ",-" + H*v + ")");
+                        };
+
+                        function scroller(){
+                            let container = d3.select('body')
+                            let dispatch = d3.dispatch('active', 'progress');
+                            let sections = d3.selectAll('.step')
+                            let sectionPositions
+                            let currentIndex = -1
+                            let containerStart = 0;
+
+                            function scroll(){
+                                d3.select(window)
+                                .on('scroll.scroller', position)
+                                .on('resize.scroller', resize)
+                                resize();
+                                let timer = d3.timer(function() {
+                                position();
+                                timer.stop();
+                                });
+                            }
+
+                            function resize(){
+                                sectionPositions = [];
+                                let startPos;
+                                sections.each(function(d, i) {
+                                let top = this.getBoundingClientRect().top;
+                                if (i === 0 ){
+                                    startPos = top;
+                                }
+                                sectionPositions.push(top - startPos)
+                                });
+                            }
+
+                            function position() {
+                                let pos = window.pageYOffset - 300 - containerStart;
+                                let sectionIndex = d3.bisect(sectionPositions, pos);
+                                sectionIndex = Math.min(sections.size()-1, sectionIndex);
+                                if (currentIndex !== sectionIndex){
+                                dispatch.call('active', this, sectionIndex);
+                                currentIndex = sectionIndex;
+                                }
+                                let prevIndex = Math.max(sectionIndex - 1, 0);
+                                let prevTop = sectionPositions[prevIndex]
+                                let progress = (pos - prevTop) / (sectionPositions[sectionIndex]   - prevTop);
+                                dispatch.call('progress', this, currentIndex, progress)
+                            }
+
+                            scroll.container = function(value) {
+                                if (arguments.legth === 0){
+                                return container
+                                }
+                                container = value
+                                return scroll
+                            }
+                            scroll.on = function(action, callback){
+                                dispatch.on(action, callback)
+                            };
+                            return scroll;
+                        };
+
+                        let scroll = scroller().container(d3.select('#graphic'));
+                        scroll();
+                        let lastIndex, activeIndex = 0;
+
+                        scroll.on('active', function(index){
+                            d3.selectAll('.step')
+                                .transition().duration(NFS)
+                                .style('opacity', function (d, i) {return i === index ? 1 : 0.1;});
+
+                            activeIndex = index
+                            let sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
+                            let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
+                            scrolledSections.forEach(i => {
+                                activationFunctions[i][0](activationFunctions[i][1]);
+                            })
+                            lastIndex = activeIndex;
+                        });
+
+                        data.forEach(d => {
+                            d.date = parseTime(d.date);
+                        });
+
+                        var xMin = d3.min(data, function(d) { return d.date; });
+                        var xMax = d3.max(data, function(d) { return d.date; });
+                        var cleanDate = parseTime("2016-01-03");
+
+                        x.domain([xMin, xMax]);
+                        focus.append("g")
+                            .attr("id", "X")
+                            // .attr("transform", "translate(0,"+H+")")
+                            .attr("opacity", 0)
+                            // .attr("class", "axis")
+                            // .attr("color", "#ffffff")
+                            .call(d3.axisBottom(x).tickSize(0))
+                            .selectAll("text").remove();
+                            //     .attr('text-anchor', 'start')
+                            //     .attr("transform", 
+                            //         "translate(1,0)");
+                            
+
+                        y.domain([0, 40000]);
+                        focus.append("g")
+                            .attr("opacity", 0)
+                            .call(d3.axisLeft(y))
+                            .selectAll("text").remove();
+
+                        var bars = focus.append("g");
+                        bandWidth = width/data.length;
+
+                        const years = bars.append("g")
+                            .attr("id", "years");
+
+                        const dates = focus.append("g")
+                            .attr("id", "dates");
+
+                        bars.attr("clip-path", "url(#clip)");
+                        bars.selectAll("bar")
+                        .data(data)
+                        .enter().append("rect")
+                            .attr("class", function(d) { return "b"+d.episode; })
+                            // .attr("id", function(d) { return d.day; })
+                            .attr("x", function(d) { 
+
+                                if ( d.yearlabel!="0" ) {
+                                    years
+                                        .append("text")
+                                        .attr("id", "l"+d.yearlabel)
+                                        .attr("class", "textSmall")
+                                        .attr('text-anchor', 'start')
+                                        .attr("x", x(d.date))
+                                        .attr("y", height+30)
+                                        .attr("fill", "#ffffff")
+                                        .text("| "+d.yearlabel)
+                                };
+
+                                return x(d.date); 
+                                
+                                })
+                            .attr("width", bandWidth)
+                            .attr("y", y(0))
+                            .attr("height", 10)
+                            .attr("opacity", 1);
+                        
+                        bars.selectAll("rect")
+                            .call(pook);
+
+                        function getReal(epid) {
+
+                            // d3.selectAll(".on")
+                            //     .attr("class", function(d) { getWurst(this.id); return "off"; })
+
+                            // bars.selectAll("rect").call(wurstOpaciter, 0.25)
+
+                            let episodeBars = d3.selectAll("."+epid);
+
+                            // var r = episodeBars.nodes().length - 1;
+                            // var leftDate = episodeBars.nodes()[0];
+                            // var rightDate = episodeBars.nodes()[r];  
+                            // dates
+                            //     .call(addDay, leftDate.getAttribute("id"), leftDate.getAttribute("x"), "end")
+                            //     .call(addDay, rightDate.getAttribute("id"), parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
+
+                            episodeBars
+                                .call(pik);
+                        };
+
+                        function addDay(path, dayText, xPos, al) {
+                            path 
+                                .append("text")
+                                .attr("class", "textSmaller")
+                                .attr('text-anchor', al)
+                                .attr("x", xPos)
+                                .attr("y", height+14)
+                                .attr("fill", "#ffffff")
+                                .text(dayText);
+                        };
+
+                        function getWurst(epid) {
+                            bars.selectAll("rect").call(wurstOpaciter, 1)
+                            dates.selectAll(".textSmaller").remove()
+                            let episodeBars = d3.selectAll("."+epid);
+                            episodeBars
+                                .call(pook);
+                        };
+
+                        function wurstStart(_) {
+                            bars.selectAll("rect")
+                                .call(wurstOpaciter, 1)
+                                .call(pook)
+                        };
+
+                        // Transitions
+                        function wurstOpaciter(path, v) {
+                            path
+                                .transition("wurstOpaciter")
+                                .duration(NFS)
+                                .attr("opacity", v);
+                        }
+
+                        function pik(path) {
+                            path
+                                .transition("pik")
+                                .duration(NFS)
+                                .attr("opacity", 1)
+                                .attr("fill", "#ffffff")
+                                .attr("height", function(d) { return d.weeksum/70; })
+                                .attr("y", function(d) { return height-d.weeksum/70; });
+                        };
+
+                        function pook(path) {
+                            path
+                                .transition("pook")
+                                .duration(NFS)
+                                .attr("fill", function(d) {return getColor(d.weeksum); })
+                                .attr("height", wurstH)
+                                .attr("y", height-wurstH);
+                        };
+
+                        function cleaner(path) {
+                            path
+                                .transition("cleaner")
+                                .duration(NFS)
+                                .attr("width", bandWidth)
+                                .attr("x", function(d) { 
+
+                                    if ( d.yearlabel!="0" ) {
+                                        d3.select("#l"+d.yearlabel)
+                                            .transition()
+                                            .duration(NFS)
+                                            .attr("x", x(d.date))
+                                    };
+
+                                    return x(d.date);
+                                });
+                        };
+
+                        // Test buttons actions
+
+                        function act(bId, bCalss) {
+                            // let bId = this.getAttribute('id');
+                            // let bCalss = this.getAttribute('class');
+
+                            if ( bCalss == "off" ) {
+                                getReal(bId);
+                                // this.setAttribute("class", "on");
+                            } else {
+                                getWurst(bId);
+                                // this.setAttribute("class", "off");
+                            };
+                        };
+
+                        function cleaned(leftDate) {
+                            var s = Array(leftDate, xMax);
+
+                            bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
+                            x.domain(s);
+
+                            focus.selectAll("rect").call(cleaner);
+                            focus.select("#X").call(d3.axisBottom(x).tickSize(0));
+
+                        };
+
+                        let activationFunctions = [
+                            [wurstStart, ""],
+                            [getReal, "b1"],
+                            [wurstStart, ""],
+                            [getReal, "b2"],
+                            [wurstStart, ""],
+                            [cleaned, xMin],
+                            [cleaned, cleanDate],
+                            [wurstStart, ""],
+                            [focusMove, 0.25],
+                            [focusMove, 0],
+                            [wurstStart, ""],
+                            [getReal, "b3"],
+                            [wurstStart, ""],
+                            [getReal, "b4"],
+                            [wurstStart, ""]
+
+                        ];
+                    
+                    });
+
+                </script>
+        </div>
+        
     </div>
 </body>
