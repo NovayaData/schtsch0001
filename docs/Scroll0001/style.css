@@ -10,7 +10,7 @@
     width: 250px;
     top: 30%;
     left: 3%;
-    color: whitesmoke;
+    color: black;
     z-index: 90;
 }
 
@@ -40,6 +40,7 @@
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
+    color: black;
 }
 
 .textSmaller {
@@ -62,7 +63,7 @@
     -ms-user-select: none;
     user-select: none;
     position: absolute;
-    color: white;
+    color: black;
     padding-top: 2.5%;
     width: 97%;
     left: 3%;
@@ -80,14 +81,14 @@
     font-weight:700;
     margin: 0;
     font-size: 10px;
-    color: white;
+    color: black;
 }
 
 .axis {
     /* stroke-width: 0.5px; */
     /* stroke: #888; */
     font: 10px;
-    color: white;
+    color: black;
   }
 
 @media (min-width: 300px) {

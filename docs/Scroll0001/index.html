@@ -6,19 +6,12 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
-<body bgcolor="#212226">
+<body>
+    <!-- bgcolor="#212226" -->
     <!-- style="overflow: hidden;" -->
     <div id="headers">
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
-
-    <!-- <div id="testControl">
-        <button id="b1" class="off">1</button>
-        <button id="b2" class="off">2</button>
-        <button id="b0" class="off">3</button>
-        <button id="b3" class="off">4</button>
-        <button id="b4" class="off">5</button>
-    </div> -->
 
     <div id="graphic">
         <div id="sections">
@@ -43,7 +36,7 @@
 
                     const W = document.getElementById('chartArea').clientWidth,
                         H = document.getElementById('chartArea').clientHeight,
-                        margin = {top: W*0.03, right: W*0.03, bottom: H*0.10, left: W*0.03, topStart: H*0.5},
+                        margin = {top: W*0.03, right: W*0.03, bottom: H*0.10, left: W*0.03},
                         width = W - margin.left - margin.right,
                         height = H - margin.top - margin.bottom;
 
@@ -188,15 +181,15 @@
                         x.domain([xMin, xMax]);
                         focus.append("g")
                             .attr("id", "X")
-                            // .attr("transform", "translate(0,"+H+")")
+                            // .attr("transform", "translate(0,"+height+")")
                             .attr("opacity", 0)
-                            // .attr("class", "axis")
-                            // .attr("color", "#ffffff")
+                            // .attr("color", "#fff000")
                             .call(d3.axisBottom(x).tickSize(0))
                             .selectAll("text").remove();
-                            //     .attr('text-anchor', 'start')
-                            //     .attr("transform", 
-                            //         "translate(1,0)");
+                                // .attr("class", "axis")
+                                // .attr('text-anchor', 'start');
+                                // .attr("transform", 
+                                //     "translate(1,0)");
                             
 
                         y.domain([0, 40000]);
@@ -219,6 +212,7 @@
                         .data(data)
                         .enter().append("rect")
                             .attr("class", function(d) { return "b"+d.episode; })
+                            .attr("fill", function(d) {return getColor(d.weeksum); })
                             // .attr("id", function(d) { return d.day; })
                             .attr("x", function(d) { 
 
@@ -230,7 +224,7 @@
                                         .attr('text-anchor', 'start')
                                         .attr("x", x(d.date))
                                         .attr("y", height+30)
-                                        .attr("fill", "#ffffff")
+                                        // .attr("fill", "#000000")
                                         .text("| "+d.yearlabel)
                                 };
 
@@ -250,7 +244,7 @@
                             // d3.selectAll(".on")
                             //     .attr("class", function(d) { getWurst(this.id); return "off"; })
 
-                            // bars.selectAll("rect").call(wurstOpaciter, 0.25)
+                            bars.selectAll("rect").call(wurstOpaciter, 0.25)
 
                             let episodeBars = d3.selectAll("."+epid);
 
@@ -262,6 +256,7 @@
                             //     .call(addDay, rightDate.getAttribute("id"), parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
 
                             episodeBars
+                                .call(wurstOpaciter, 1)
                                 .call(pik);
                         };
 
@@ -276,13 +271,13 @@
                                 .text(dayText);
                         };
 
-                        function getWurst(epid) {
-                            bars.selectAll("rect").call(wurstOpaciter, 1)
-                            dates.selectAll(".textSmaller").remove()
-                            let episodeBars = d3.selectAll("."+epid);
-                            episodeBars
-                                .call(pook);
-                        };
+                        // function getWurst(epid) {
+                        //     bars.selectAll("rect").call(wurstOpaciter, 1)
+                        //     dates.selectAll(".textSmaller").remove()
+                        //     let episodeBars = d3.selectAll("."+epid);
+                        //     episodeBars
+                        //         .call(pook);
+                        // };
 
                         function wurstStart(_) {
                             bars.selectAll("rect")
@@ -302,8 +297,8 @@
                             path
                                 .transition("pik")
                                 .duration(NFS)
-                                .attr("opacity", 1)
-                                .attr("fill", "#ffffff")
+                                // .attr("opacity", 1)
+                                // .attr("fill", "#979899")
                                 .attr("height", function(d) { return d.weeksum/70; })
                                 .attr("y", function(d) { return height-d.weeksum/70; });
                         };
@@ -312,7 +307,7 @@
                             path
                                 .transition("pook")
                                 .duration(NFS)
-                                .attr("fill", function(d) {return getColor(d.weeksum); })
+                                // .attr("fill", function(d) {return getColor(d.weeksum); })
                                 .attr("height", wurstH)
                                 .attr("y", height-wurstH);
                         };
@@ -335,20 +330,7 @@
                                 });
                         };
 
-                        // Test buttons actions
-
-                        function act(bId, bCalss) {
-                            // let bId = this.getAttribute('id');
-                            // let bCalss = this.getAttribute('class');
-
-                            if ( bCalss == "off" ) {
-                                getReal(bId);
-                                // this.setAttribute("class", "on");
-                            } else {
-                                getWurst(bId);
-                                // this.setAttribute("class", "off");
-                            };
-                        };
+                        // Scroll actions
 
                         function cleaned(leftDate) {
                             var s = Array(leftDate, xMax);
@@ -357,7 +339,7 @@
                             x.domain(s);
 
                             focus.selectAll("rect").call(cleaner);
-                            focus.select("#X").call(d3.axisBottom(x).tickSize(0));
+                            focus.select("#X").transition().duration(NFS).call(d3.axisBottom(x).tickSize(0));
 
                         };
 
