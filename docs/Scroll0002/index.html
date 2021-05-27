@@ -7,7 +7,6 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
-    <!-- bgcolor="#212226" -->
     <!-- style="overflow: hidden;" -->
     <!-- <div id="headers">
         <h1 class="header1">Украина и республики</h1>
@@ -19,39 +18,6 @@
     <div id="graphic">
         <div id="chartArea" >
             <script>
-                function getColor(v, c) {
-                    if (4>v && v>=0){
-                        if (c=="ukr") {
-                            return "#ffed26";
-                        } else {
-                            return "#8cffff";
-                        }
-                    } else if (8>v && v>=4){
-                        if (c=="ukr") {
-                            return "#fbbf00";
-                        } else {
-                            return "#5ed9ea";
-                        }
-                    } else if (13>v && v>=8){
-                        if (c=="ukr") {
-                            return "#ee9100";
-                        } else {
-                            return "#35b2d4";
-                        }
-                    } else if (22>v && v>=13){
-                        if (c=="ukr") {
-                            return "#da6513";
-                        } else {
-                            return "#108dba";
-                        }
-                    } else if (v>=22){
-                        if (c=="ukr") {
-                            return "#bf381d";
-                        } else {
-                            return "#00689c";
-                        }
-                    }
-                };
 
                 var bandWidth;
                 var wurstH = 30;
@@ -106,6 +72,21 @@
                     var xMin = d3.min(data, function(d) { return d.date; });
                     var xMax = d3.max(data, function(d) { return d.date; });
 
+                    const episodes = {
+                        "1" : [
+                            xMin,
+                            parseTime("2018-05-20")
+                        ],
+                        "2" : [
+                            parseTime("2018-05-20"),
+                            parseTime("2018-10-07")
+                        ],
+                        "3" : [
+                            parseTime("2018-10-07"),
+                            xMax
+                        ]
+                    };
+
                     x.domain([xMin, xMax]);
                     y.domain([0, 400]);
 
@@ -118,56 +99,68 @@
                     focus.append("g")
                         .attr("opacity", 0)
                         .call(yAxis);
+
+                    Object.keys(episodes).forEach( function(episode) {
+
+                        ["ukr", "resp"].forEach(function(cCode) {
+                            addLine(cCode, episode);
+                        });
+
+                    });
                     
-                    line1 = d3.line()
-                        .curve(d3.curveStep)
-                        .x(d => x(d.date))
-                        .y(d => y(d["ukr"]));
+                    function addLine(cCode, episode) {
 
-                    focus.append("path")
-                        .datum(data)
-                        .attr("clip-path", "url(#clip)")
-                        .attr("id", "l1")
-                        .attr("fill", "none")
-                        .attr("stroke", "#fbbf00")
-                        .attr("stroke-width", 1.2)
-                        .attr("stroke-linejoin", "round")
-                        .attr("stroke-linecap", "round")
-                        .attr("d", line1);
+                        episodeData = data.filter(
+                            function(d) { 
+                                return d.date >= episodes[episode][0] && d.date <= episodes[episode][1];
+                                }
+                        );
 
-                    line2 = d3.line()
-                        .curve(d3.curveStep)
-                        .x(d => x(d.date))
-                        .y(d => y(d["resp"]));
+                        console.log(episodeData);
 
-                    focus.append("path")
-                        .datum(data)
-                        .attr("clip-path", "url(#clip)")
-                        .attr("id", "l2")
-                        .attr("fill", "none")
-                        .attr("stroke", "#00ace5")
-                        .attr("stroke-width", 1.2)
-                        .attr("stroke-linejoin", "round")
-                        .attr("stroke-linecap", "round")
-                        .attr("d", line2);
+                        focus.append("path")
+                            .datum(episodeData)
+                            .attr("clip-path", "url(#clip)")
+                            .attr("class", episode+" "+cCode)
+                            .attr("fill", "none")
+                            .attr("stroke-width", 1.2)
+                            .attr("stroke-linejoin", "round")
+                            .attr("stroke-linecap", "round")
+                            .attr(
+                                "d", 
+                                d3.line()
+                                .curve(d3.curveStep)
+                                .x(d => x(d.date))
+                                .y(d => y(d[cCode]))
+                            );
+                    };
+
+                    function cleaned(a, b) {
+                        var s = Array(a, b);
+                        x.domain(s);
+                        focus.selectAll(".ukr").call(cleaner, "ukr");
+                        focus.selectAll(".resp").call(cleaner, "resp");
+                        focus.select("#X").call(resizeAx, x);
+                    };
+
+                    // Transitions
+
+                    function resizeAx(path, a) {
+                        path
+                            .transition("resizeAx")
+                            .duration(400)
+                            .call(d3.axisBottom(a).tickSize(0));
+                    }
 
                     function cleaner(path, c) {
                         path
-                        .transition()
+                        .transition("cleaner")
                         .duration(400)
                         .attr("d", d3.line()
                             .curve(d3.curveStep)
                             .x(function(d) { return x(d.date) })
                             .y(function(d) { return y(d[c]) })
                     )};
-
-                    function cleaned(a, b) {
-                        var s = Array(a, b);
-                        x.domain(s);
-                        focus.select("#l1").call(cleaner, "ukr");
-                        focus.select("#l2").call(cleaner, "resp");
-                        focus.select("#X").transition().duration(400).call(d3.axisBottom(x).tickSize(0));
-                    };
 
                     var B1 = d3.select("#go");
                     B1.on('click', function() { cleaned(parseTime("2018-05-16"), parseTime("2018-10-01")); });

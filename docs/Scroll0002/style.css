@@ -91,6 +91,14 @@
     color: black;
   }
 
+.ukr {
+    stroke: #fbbf00
+}
+
+.resp {
+    stroke: #00abe5
+}
+
 @media (min-width: 300px) {
     .header1 {
         font-size: 20px

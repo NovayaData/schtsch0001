@@ -1,3 +1,23 @@
+/* ::-webkit-scrollbar {
+    display: none;
+} */
+
+@-moz-document url-prefix() {
+html{
+    scrollbar-width: none;
+}
+}
+body {
+    margin: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: scroll;
+}
+body::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
 #testControl {
     position: absolute;
     /* padding-top: 2.5%; */

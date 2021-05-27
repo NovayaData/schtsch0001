@@ -23,8 +23,6 @@
             <section class="step">_</section>
             <section class="step">Поэтому мы их не взяли...</section>
             <section class="step">_</section>
-            <section class="step">_</section>
-            <section class="step">_</section>
             <section class="step">Ого пик!</section>
             <section class="step">_</section>
             <section class="step">И второй!</section>
@@ -86,13 +84,6 @@
                     var NFS = 250;
                     
                     d3.csv("viotest.csv").then( function(data) {
-
-                        function focusMove(v) {
-                            focus.transition()
-                                .duration(NFS)
-                                .attr("transform", 
-                                        "translate(" + margin.left + ",-" + H*v + ")");
-                        };
 
                         function scroller(){
                             let container = d3.select('body')
@@ -285,7 +276,38 @@
                                 .call(pook)
                         };
 
+                        function cleaned(leftDate) {
+                            var s = Array(leftDate, xMax);
+
+                            bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
+                            x.domain(s);
+
+                            focus.selectAll("rect").call(cleaner);
+                            focus.select("#X").call(resizeAx, x);
+
+                        };
+
+                        function focusMove(v) {
+                            focus.transition()
+                                .duration(NFS)
+                                .attr("transform", 
+                                        "translate(" + margin.left + ",-" + H*v + ")");
+                        };
+
+                        function jump([leftDate, v]) {
+                            cleaned(leftDate);
+                            focusMove(v);
+                        }
+
                         // Transitions
+
+                        function resizeAx(path, a) {
+                            path
+                                .transition("resizeAx")
+                                .duration(NFS)
+                                .call(d3.axisBottom(a).tickSize(0));
+                        }
+
                         function wurstOpaciter(path, v) {
                             path
                                 .transition("wurstOpaciter")
@@ -332,27 +354,14 @@
 
                         // Scroll actions
 
-                        function cleaned(leftDate) {
-                            var s = Array(leftDate, xMax);
-
-                            bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
-                            x.domain(s);
-
-                            focus.selectAll("rect").call(cleaner);
-                            focus.select("#X").transition().duration(NFS).call(d3.axisBottom(x).tickSize(0));
-
-                        };
-
                         let activationFunctions = [
                             [wurstStart, ""],
                             [getReal, "b1"],
                             [wurstStart, ""],
                             [getReal, "b2"],
                             [wurstStart, ""],
-                            [cleaned, xMin],
-                            [cleaned, cleanDate],
-                            [focusMove, 0.25],
-                            [focusMove, 0],
+                            [jump, [xMin, 0.25]],
+                            [jump, [cleanDate, 0]],
                             [wurstStart, ""],
                             [getReal, "b3"],
                             [wurstStart, ""],
