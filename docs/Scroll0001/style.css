@@ -1,7 +1,3 @@
-/* ::-webkit-scrollbar {
-    display: none;
-} */
-
 @-moz-document url-prefix() {
 html{
     scrollbar-width: none;
