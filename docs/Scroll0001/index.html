@@ -79,12 +79,6 @@
                         .attr("height", H)
                         .attr("transform", 
                                 "translate(" + margin.left + ",-" + H*0.25 + ")");
-                    
-                    var x = d3.scaleTime()
-                        .range([0, width]);
-
-                    var y = d3.scaleLinear()
-                        .range([height, 0]);
 
                     var parseTime = d3.timeParse("%Y-%m-%d");
                     var bandWidth;
@@ -209,6 +203,12 @@
 
                         var cleanDate = parseTime("2016-01-03");
 
+                        var x = d3.scaleTime()
+                            .range([0, width]);
+
+                        var y = d3.scaleLinear()
+                            .range([height, height-40000*yScaler]);
+
                         x.domain([xMin, xMax]);
                         focus.append("g")
                             .attr("id", "X")
@@ -218,9 +218,11 @@
 
                         y.domain([0, 40000]);
                         focus.append("g")
+                            .attr("id", "Y")
                             .attr("opacity", 0)
-                            .call(d3.axisLeft(y))
-                            .selectAll("text").remove();
+                            .call(d3.axisLeft(y)
+                                .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ));
+                            // .selectAll("text");
 
                         var bars = focus.append("g");
                         bandWidth = width/data.length;
@@ -259,6 +261,8 @@
                         bars.selectAll("rect")
                             .call(pook);
 
+                        var showY = 0;
+
                         function getFormatedDate(date) {
                             date = parseTime(date);
                             let mo = new Intl.DateTimeFormat('ru', { month: 'short' }).format(date);
@@ -276,6 +280,10 @@
                             episodeBars
                                 .call(pik);
 
+                            if (showY==1) {
+                                focus.select("#Y").attr("opacity", 1);
+                            };
+                            
                             var r = episodeBars.nodes().length - 1;
                             var leftDate = episodeBars.nodes()[0];
                             var rightDate = episodeBars.nodes()[r];
@@ -305,6 +313,7 @@
                         };
 
                         function wurstStart(_) {
+                            focus.select("#Y").attr("opacity", 0);
                             dates.selectAll("text").remove();
                             bars.selectAll("rect")
                                 .call(wurstOpaciter, 1)
@@ -319,6 +328,11 @@
                         };
 
                         function jump([leftDate, v]) {
+                            if (v==0) {
+                                showY = 1;
+                            } else {
+                                showY = 0;
+                            };
                             cleaned(leftDate);
                             focusMove(v);
                         }
