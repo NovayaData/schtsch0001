@@ -61,6 +61,20 @@
                         }
                     }
 
+                    function getColorG(v) {
+                        if (279.4>v && v>=0){
+                            return "#e3e4e5"
+                        } else if (2695.8>v && v>=279.4){
+                            return "#adafb0"
+                        } else if (5163>v && v>=2695.8){
+                            return "#7a7c7f"
+                        } else if (7207.2>v && v>=5163){
+                            return "#4b4d50"
+                        } else if (v>=7207.2){
+                            return "#212226"
+                        }
+                    }
+
                     var svg = d3.select("#chartArea").append("svg")
                         .attr("width", W)
                         .attr("height", H)
@@ -221,6 +235,7 @@
                             .attr("id", "Y")
                             .attr("opacity", 0)
                             .call(d3.axisLeft(y)
+                                .tickSize(0)
                                 .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ));
                             // .selectAll("text");
 
@@ -238,7 +253,12 @@
                         .data(data)
                         .enter().append("rect")
                             .attr("class", function(d) { return d.episode; })
-                            .attr("fill", function(d) {return getColor(d.weeksum); })
+                            .attr("fill", function(d) {
+                                if (d.date < cleanDate) {
+                                    return getColorG(d.weeksum);
+                                } else {
+                                    return getColor(d.weeksum);
+                                }})
                             .attr("id", function(d) { return d.dateStr; })
                             .attr("x", function(d) { 
                                 if ( d.yearlabel!="0" ) {
