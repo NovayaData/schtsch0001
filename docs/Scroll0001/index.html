@@ -89,7 +89,7 @@
                     var parseTime = d3.timeParse("%Y-%m-%d");
                     var bandWidth;
 
-                    var wurstH = 30;
+                    var wurstH = H*0.035;
                     var NFS = 250;
                     
                     d3.csv("viotest.csv").then( function(data) {
@@ -170,6 +170,8 @@
                             lastIndex = activeIndex;
                         });
 
+                        // Transform date
+
                         data.forEach(d => {
                             d.dateStr = d.date;
                             d.date = parseTime(d.date);
@@ -199,6 +201,12 @@
 
                         var xMin = d3.min(data, function(d) { return d.date; });
                         var xMax = d3.max(data, function(d) { return d.date; });
+
+                        weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
+                        yScaler = (H*0.7)/weeksumMax;
+
+                        // console.log(yScaler);
+
                         var cleanDate = parseTime("2016-01-03");
 
                         x.domain([xMin, xMax]);
@@ -368,8 +376,8 @@
                             path
                                 .transition("pik")
                                 .duration(NFS)
-                                .attr("height", function(d) { return d.weeksum/70; })
-                                .attr("y", function(d) { return height-d.weeksum/70; });
+                                .attr("height", function(d) { return d.weeksum*yScaler; })
+                                .attr("y", function(d) { return height-d.weeksum*yScaler; });
                         };
 
                         function pook(path) {
