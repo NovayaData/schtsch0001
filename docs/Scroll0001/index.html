@@ -99,6 +99,8 @@
 
                     var wurstH = H*0.035;
                     var NFS = 250;
+
+                    var showY = 0;
                     
                     d3.csv("viotest.csv").then( function(data) {
 
@@ -178,7 +180,7 @@
                             lastIndex = activeIndex;
                         });
 
-                        // Transform date
+                        // Transform data
 
                         data.forEach(d => {
                             d.dateStr = d.date;
@@ -196,26 +198,13 @@
                             })
                         });
 
-                        var curYear = "0"
-                        data.forEach(d => {
-                            let dYear = d.date.getFullYear().toString();
-                            if (dYear != curYear) {
-                                d.yearlabel = dYear;
-                                curYear = dYear;
-                            } else {
-                                d.yearlabel = "0";
-                            };
-                        });
-
                         var xMin = d3.min(data, function(d) { return d.date; });
                         var xMax = d3.max(data, function(d) { return d.date; });
 
                         weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
                         yScaler = (H*0.7)/weeksumMax;
 
-                        // console.log(yScaler);
-
-                        var cleanDate = parseTime("2016-01-03");
+                        var cleanDate = parseTime("2016-01-01");
 
                         var x = d3.scaleTime()
                             .range([0, width]);
@@ -224,11 +213,31 @@
                             .range([height, height-40000*yScaler]);
 
                         x.domain([xMin, xMax]);
-                        focus.append("g")
-                            .attr("id", "X")
-                            .attr("opacity", 0)
-                            .call(d3.axisBottom(x).tickSize(0))
-                            .selectAll("text").remove();
+
+                        function addXAx(i, o, h, t, f) {
+                            focus.append("g")
+                                .attr("id", i)
+                                .attr("opacity", o)
+                                .attr("transform", "translate(0," + h + ")")
+                                .call(
+                                    d3.axisBottom(x)
+                                        .tickSize(0)
+                                        .ticks(t)
+                                        .tickFormat(f)
+                                    )
+                                .selectAll("text")
+                                    .attr('text-anchor', 'start');
+                        };
+                        
+                        addXAx("Xmonths", 0, height+5, d3.timeMonth, d3.timeFormat("%-m"));
+                        addXAx("X", 1, height+20, d3.timeYear, d3.timeFormat("| %Y"));
+
+                        function dropDomains() {
+                            focus.selectAll(".domain")
+                                .remove()
+                        };
+
+                        dropDomains();
 
                         y.domain([0, 40000]);
                         focus.append("g")
@@ -239,14 +248,64 @@
                                 .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ));
                             // .selectAll("text");
 
+                        // const years = focus.append("g")
+                        //     .attr("id", "years");
+
+                        // const months = focus.append("g")
+                        //     .attr("id", "months")
+                        //     .attr("opacity", 1);
+
+                        
+                        // var curMonth = "0";
+                        // var formatTime = d3.timeFormat("%Y-%m-%d");
+
+                        // x.domain().ticks(d3.timeDays, 1).forEach(d => {
+                        //     let dMonth = d.getMonth().toString();
+
+                        //     if (dMonth != curMonth) {
+                                
+                        //         months
+                        //             .append("text")
+                        //             .attr("id", "m"+formatTime(d))
+                        //             .attr("class", "textSmaller move")
+                        //             .attr('text-anchor', 'start')
+                        //             .attr("x", x(d))
+                        //             .attr("y", height+10)
+                        //             .text(dMonth)
+
+                        //         curMonth = dMonth;
+                        //     }
+
+                        // });
+
+                        // var curYear = "0";
+
+                        // data.forEach(d => {
+                        //     let dYear = d.date.getFullYear().toString();
+
+                        //     if (dYear != curYear) {
+                        //         d.yearlabel = dYear;
+                        //         curYear = dYear;
+                        //     } else {
+                        //         d.yearlabel = "0";
+                        //     };
+
+                        //     // let dMonth = d.date.getMonth().toString();
+
+                        //     // if (dMonth != curMonth) {
+                        //     //     d.monthlabel = dMonth;
+                        //     //     curMonth = dMonth;
+                        //     // } else {
+                        //     //     d.monthlabel = "0";
+                        //     // };
+
+                        // });
+
                         var bars = focus.append("g");
                         bandWidth = width/data.length;
 
-                        const years = bars.append("g")
-                            .attr("id", "years");
-
-                        const dates = focus.append("g")
-                            .attr("id", "dates");
+                        // const dates = focus.append("g")
+                        //     .attr("id", "dates");
 
                         bars.attr("clip-path", "url(#clip)");
                         bars.selectAll("bar")
@@ -261,16 +320,21 @@
                                 }})
                             .attr("id", function(d) { return d.dateStr; })
                             .attr("x", function(d) { 
-                                if ( d.yearlabel!="0" ) {
-                                    years
-                                        .append("text")
-                                        .attr("id", "y"+d.dateStr)
-                                        .attr("class", "textSmall move")
-                                        .attr('text-anchor', 'start')
-                                        .attr("x", x(d.date))
-                                        .attr("y", height+30)
-                                        .text("| "+d.yearlabel)
-                                };
+                                // if ( d.yearlabel!="0" ) {
+                                //     years
+                                //         .append("text")
+                                //         .attr("id", "y"+d.dateStr)
+                                //         .attr("class", "textSmall move")
+                                //         .attr('text-anchor', 'start')
+                                //         .attr("x", x(d.date))
+                                //         .attr("y", height+30)
+                                //         .text("| "+d.yearlabel)
+                                // };
+
+                                // if ( d.monthlabel!="0" ) {
+                                //     
+                                // };
+
                                 return x(d.date); 
                             })
                             .attr("width", bandWidth)
@@ -280,8 +344,6 @@
                         
                         bars.selectAll("rect")
                             .call(pook);
-
-                        var showY = 0;
 
                         function getFormatedDate(date) {
                             date = parseTime(date);
@@ -300,41 +362,47 @@
                             episodeBars
                                 .call(pik);
 
+                            focus.select("#Xmonths").attr("opacity", 1);
+
                             if (showY==1) {
                                 focus.select("#Y").attr("opacity", 1);
                             };
+
+                            // focus.select("#months").attr("opacity", 1);
                             
-                            var r = episodeBars.nodes().length - 1;
-                            var leftDate = episodeBars.nodes()[0];
-                            var rightDate = episodeBars.nodes()[r];
+                            // var r = episodeBars.nodes().length - 1;
+                            // var leftDate = episodeBars.nodes()[0];
+                            // var rightDate = episodeBars.nodes()[r];
 
-                            lDate = leftDate.getAttribute("id")
-                            rDate = rightDate.getAttribute("id")
+                            // lDate = leftDate.getAttribute("id")
+                            // rDate = rightDate.getAttribute("id")
 
-                            lText = getFormatedDate(lDate);
-                            rText = getFormatedDate(rDate);
+                            // lText = getFormatedDate(lDate);
+                            // rText = getFormatedDate(rDate);
 
-                            dates
-                                .call(addDay, "d"+lDate, lText, leftDate.getAttribute("x"), "end")
-                                .call(addDay, "d"+rDate, rText, parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
+                            // dates
+                            //     .call(addDay, "d"+lDate, lText, leftDate.getAttribute("x"), "end")
+                            //     .call(addDay, "d"+rDate, rText, parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
 
                         };
 
-                        function addDay(path, i, dayText, xPos, al) {
-                            path 
-                                .append("text")
-                                .attr("id", i)
-                                .attr("class", "textSmaller move")
-                                .attr('text-anchor', al)
-                                .attr("x", xPos)
-                                .attr("y", height+14)
-                                .attr("fill", "#000000")
-                                .text(dayText);
-                        };
+                        // function addDay(path, i, dayText, xPos, al) {
+                        //     path 
+                        //         .append("text")
+                        //         .attr("id", i)
+                        //         .attr("class", "textSmaller move")
+                        //         .attr('text-anchor', al)
+                        //         .attr("x", xPos)
+                        //         .attr("y", height+14)
+                        //         .attr("fill", "#000000")
+                        //         .text(dayText);
+                        // };
 
                         function wurstStart(_) {
                             focus.select("#Y").attr("opacity", 0);
-                            dates.selectAll("text").remove();
+                            focus.select("#Xmonths").attr("opacity", 0);
+                            // focus.select("#months").attr("opacity", 0);
+                            // dates.selectAll("text").remove();
                             bars.selectAll("rect")
                                 .call(wurstOpaciter, 1)
                                 .call(pook)
@@ -364,8 +432,10 @@
                             x.domain(s);
 
                             focus.selectAll("rect").call(cleaner);
-                            focus.select("#X").call(resizeAx, x);
-                            focus.selectAll(".move").call(mover);
+                            focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
+                            focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
+                            dropDomains();
+                            // focus.selectAll(".move").call(mover);
 
                         };
 
@@ -392,11 +462,17 @@
                                 .attr("x", function(d) { return x(d.date); });
                         };
 
-                        function resizeAx(path, a) {
+                        function resizeAx(path, a, t, f) {
                             path
                                 .transition("resizeAx")
                                 .duration(NFS)
-                                .call(d3.axisBottom(a).tickSize(0));
+                                .call(d3.axisBottom(a)
+                                    .tickSize(0)
+                                    .ticks(t)
+                                    .tickFormat(d3.timeFormat(f))
+                                )
+                            .selectAll("text")
+                                .attr('text-anchor', 'start');
                         }
 
                         function wurstOpaciter(path, v) {
