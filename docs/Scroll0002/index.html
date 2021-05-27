@@ -73,15 +73,15 @@
                     var xMax = d3.max(data, function(d) { return d.date; });
 
                     const episodes = {
-                        "1" : [
+                        "e1" : [
                             xMin,
                             parseTime("2018-05-20")
                         ],
-                        "2" : [
+                        "e2" : [
                             parseTime("2018-05-20"),
                             parseTime("2018-10-07")
                         ],
-                        "3" : [
+                        "e3" : [
                             parseTime("2018-10-07"),
                             xMax
                         ]
@@ -123,6 +123,7 @@
                             .attr("clip-path", "url(#clip)")
                             .attr("class", episode+" "+cCode)
                             .attr("fill", "none")
+                            .attr("opacity", 1)
                             .attr("stroke-width", 1.2)
                             .attr("stroke-linejoin", "round")
                             .attr("stroke-linecap", "round")
@@ -135,26 +136,47 @@
                             );
                     };
 
-                    function cleaned(a, b) {
-                        var s = Array(a, b);
+                    function cleaned(s, dl) {
+                        // var s = Array(a, b);
                         x.domain(s);
-                        focus.selectAll(".ukr").call(cleaner, "ukr");
-                        focus.selectAll(".resp").call(cleaner, "resp");
-                        focus.select("#X").call(resizeAx, x);
+                        focus.selectAll(".ukr").call(cleaner, "ukr", dl);
+                        focus.selectAll(".resp").call(cleaner, "resp", dl);
+                        focus.select("#X").call(resizeAx, x, dl);
+                    };
+
+                    function act(e) {
+                        focus.selectAll("path").filter(function() {
+                            return !this.classList.contains(e)
+                        }).call(hideShow, 0.25);
+                        cleaned(episodes[e], 800);
+                    };
+
+                    function react() {
+                        focus.selectAll("path").call(hideShow, 1);
+                        cleaned([xMin, xMax], 0);
                     };
 
                     // Transitions
 
-                    function resizeAx(path, a) {
+                    function hideShow(path, o) {
+                        path
+                            .transition("hideShow")
+                            .duration(400)
+                            .attr("opacity", o)
+                    };
+
+                    function resizeAx(path, a, dl) {
                         path
                             .transition("resizeAx")
+                            .delay(dl)
                             .duration(400)
                             .call(d3.axisBottom(a).tickSize(0));
-                    }
+                    };
 
-                    function cleaner(path, c) {
+                    function cleaner(path, c, dl) {
                         path
                         .transition("cleaner")
+                        .delay(dl)
                         .duration(400)
                         .attr("d", d3.line()
                             .curve(d3.curveStep)
@@ -162,11 +184,13 @@
                             .y(function(d) { return y(d[c]) })
                     )};
 
+                    // Controls
+
                     var B1 = d3.select("#go");
-                    B1.on('click', function() { cleaned(parseTime("2018-05-16"), parseTime("2018-10-01")); });
+                    B1.on('click', function() { act("e2"); });
 
                     var B2 = d3.select("#back");
-                    B2.on('click', function() { cleaned(xMin, xMax); });
+                    B2.on('click', function() { react(); });
 
                 });
 

@@ -32,6 +32,15 @@
                 <!-- style = "height: 100%;  width: 100%;" -->
                 <script>
 
+                    const articleScript = {
+                        "episodes" : {
+                            "e1" : ["2014-04-06", "2015-04-12"],
+                            "e2" : ["2015-04-19", "2015-12-27"],
+                            "e3" : ["2016-12-18", "2017-05-28"],
+                            "e4" : ["2018-09-30", "2019-01-06"]
+                        }
+                    };
+
                     const W = document.getElementById('chartArea').clientWidth,
                         H = document.getElementById('chartArea').clientHeight,
                         margin = {top: W*0.03, right: W*0.03, bottom: H*0.10, left: W*0.03},
@@ -162,7 +171,30 @@
                         });
 
                         data.forEach(d => {
+                            d.dateStr = d.date;
                             d.date = parseTime(d.date);
+                        });
+
+                        Object.keys(articleScript.episodes).forEach( function(e) {
+                            let minDate = parseTime(articleScript["episodes"][e][0]),
+                                maxDate = parseTime(articleScript["episodes"][e][1]);
+                            
+                            data.forEach(d => {
+                                if (d.date >= minDate && d.date <= maxDate) {
+                                    d.episode = e;
+                                }
+                            })
+                        });
+
+                        var curYear = "0"
+                        data.forEach(d => {
+                            let dYear = d.date.getFullYear().toString();
+                            if (dYear != curYear) {
+                                d.yearlabel = dYear;
+                                curYear = dYear;
+                            } else {
+                                d.yearlabel = "0";
+                            };
                         });
 
                         var xMin = d3.min(data, function(d) { return d.date; });
@@ -172,16 +204,9 @@
                         x.domain([xMin, xMax]);
                         focus.append("g")
                             .attr("id", "X")
-                            // .attr("transform", "translate(0,"+height+")")
                             .attr("opacity", 0)
-                            // .attr("color", "#fff000")
                             .call(d3.axisBottom(x).tickSize(0))
                             .selectAll("text").remove();
-                                // .attr("class", "axis")
-                                // .attr('text-anchor', 'start');
-                                // .attr("transform", 
-                                //     "translate(1,0)");
-                            
 
                         y.domain([0, 40000]);
                         focus.append("g")
@@ -202,26 +227,22 @@
                         bars.selectAll("bar")
                         .data(data)
                         .enter().append("rect")
-                            .attr("class", function(d) { return "b"+d.episode; })
+                            .attr("class", function(d) { return d.episode; })
                             .attr("fill", function(d) {return getColor(d.weeksum); })
-                            // .attr("id", function(d) { return d.day; })
+                            .attr("id", function(d) { return d.dateStr; })
                             .attr("x", function(d) { 
-
                                 if ( d.yearlabel!="0" ) {
                                     years
                                         .append("text")
-                                        .attr("id", "l"+d.yearlabel)
-                                        .attr("class", "textSmall")
+                                        .attr("id", "y"+d.dateStr)
+                                        .attr("class", "textSmall move")
                                         .attr('text-anchor', 'start')
                                         .attr("x", x(d.date))
                                         .attr("y", height+30)
-                                        // .attr("fill", "#000000")
                                         .text("| "+d.yearlabel)
                                 };
-
                                 return x(d.date); 
-                                
-                                })
+                            })
                             .attr("width", bandWidth)
                             .attr("y", y(0))
                             .attr("height", 10)
@@ -230,61 +251,56 @@
                         bars.selectAll("rect")
                             .call(pook);
 
-                        function getReal(epid) {
-
-                            // d3.selectAll(".on")
-                            //     .attr("class", function(d) { getWurst(this.id); return "off"; })
-
-                            bars.selectAll("rect").call(wurstOpaciter, 0.25)
-
-                            let episodeBars = d3.selectAll("."+epid);
-
-                            // var r = episodeBars.nodes().length - 1;
-                            // var leftDate = episodeBars.nodes()[0];
-                            // var rightDate = episodeBars.nodes()[r];  
-                            // dates
-                            //     .call(addDay, leftDate.getAttribute("id"), leftDate.getAttribute("x"), "end")
-                            //     .call(addDay, rightDate.getAttribute("id"), parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
-
-                            episodeBars
-                                .call(wurstOpaciter, 1)
-                                .call(pik);
+                        function getFormatedDate(date) {
+                            date = parseTime(date);
+                            let mo = new Intl.DateTimeFormat('ru', { month: 'short' }).format(date);
+                            let da = new Intl.DateTimeFormat('ru', { day: 'numeric' }).format(date);
+                            return `${da} ${mo}`;
                         };
 
-                        function addDay(path, dayText, xPos, al) {
+                        function getReal(epid) {
+
+                            bars.selectAll("rect").filter(function() {
+                                return !this.classList.contains(epid)
+                            }).call(wurstOpaciter, 0.25)
+
+                            let episodeBars = d3.selectAll("."+epid);
+                            episodeBars
+                                .call(pik);
+
+                            var r = episodeBars.nodes().length - 1;
+                            var leftDate = episodeBars.nodes()[0];
+                            var rightDate = episodeBars.nodes()[r];
+
+                            lDate = leftDate.getAttribute("id")
+                            rDate = rightDate.getAttribute("id")
+
+                            lText = getFormatedDate(lDate);
+                            rText = getFormatedDate(rDate);
+
+                            dates
+                                .call(addDay, "d"+lDate, lText, leftDate.getAttribute("x"), "end")
+                                .call(addDay, "d"+rDate, rText, parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
+
+                        };
+
+                        function addDay(path, i, dayText, xPos, al) {
                             path 
                                 .append("text")
-                                .attr("class", "textSmaller")
+                                .attr("id", i)
+                                .attr("class", "textSmaller move")
                                 .attr('text-anchor', al)
                                 .attr("x", xPos)
                                 .attr("y", height+14)
-                                .attr("fill", "#ffffff")
+                                .attr("fill", "#000000")
                                 .text(dayText);
                         };
 
-                        // function getWurst(epid) {
-                        //     bars.selectAll("rect").call(wurstOpaciter, 1)
-                        //     dates.selectAll(".textSmaller").remove()
-                        //     let episodeBars = d3.selectAll("."+epid);
-                        //     episodeBars
-                        //         .call(pook);
-                        // };
-
                         function wurstStart(_) {
+                            dates.selectAll("text").remove();
                             bars.selectAll("rect")
                                 .call(wurstOpaciter, 1)
                                 .call(pook)
-                        };
-
-                        function cleaned(leftDate) {
-                            var s = Array(leftDate, xMax);
-
-                            bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
-                            x.domain(s);
-
-                            focus.selectAll("rect").call(cleaner);
-                            focus.select("#X").call(resizeAx, x);
-
                         };
 
                         function focusMove(v) {
@@ -299,7 +315,40 @@
                             focusMove(v);
                         }
 
+                        function cleaned(leftDate) {
+                            var s = Array(leftDate, xMax);
+
+                            bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
+                            x.domain(s);
+
+                            focus.selectAll("rect").call(cleaner);
+                            focus.select("#X").call(resizeAx, x);
+                            focus.selectAll(".move").call(mover);
+
+                        };
+
+                        function getDateStrFromId(i) {
+                            return i.slice(1, i.length);
+                        };
+
                         // Transitions
+
+                        function mover(path) {
+                            path
+                                .transition("mover")
+                                .duration(NFS)
+                                .attr("x", function() { 
+                                    return x(parseTime(getDateStrFromId(this.id)));
+                                });
+                        };
+
+                        function cleaner(path) {
+                            path
+                                .transition("cleaner")
+                                .duration(NFS)
+                                .attr("width", bandWidth)
+                                .attr("x", function(d) { return x(d.date); });
+                        };
 
                         function resizeAx(path, a) {
                             path
@@ -319,8 +368,6 @@
                             path
                                 .transition("pik")
                                 .duration(NFS)
-                                // .attr("opacity", 1)
-                                // .attr("fill", "#979899")
                                 .attr("height", function(d) { return d.weeksum/70; })
                                 .attr("y", function(d) { return height-d.weeksum/70; });
                         };
@@ -329,43 +376,24 @@
                             path
                                 .transition("pook")
                                 .duration(NFS)
-                                // .attr("fill", function(d) {return getColor(d.weeksum); })
                                 .attr("height", wurstH)
                                 .attr("y", height-wurstH);
-                        };
-
-                        function cleaner(path) {
-                            path
-                                .transition("cleaner")
-                                .duration(NFS)
-                                .attr("width", bandWidth)
-                                .attr("x", function(d) { 
-
-                                    if ( d.yearlabel!="0" ) {
-                                        d3.select("#l"+d.yearlabel)
-                                            .transition()
-                                            .duration(NFS)
-                                            .attr("x", x(d.date))
-                                    };
-
-                                    return x(d.date);
-                                });
                         };
 
                         // Scroll actions
 
                         let activationFunctions = [
                             [wurstStart, ""],
-                            [getReal, "b1"],
+                            [getReal, "e1"],
                             [wurstStart, ""],
-                            [getReal, "b2"],
+                            [getReal, "e2"],
                             [wurstStart, ""],
                             [jump, [xMin, 0.25]],
                             [jump, [cleanDate, 0]],
                             [wurstStart, ""],
-                            [getReal, "b3"],
+                            [getReal, "e3"],
                             [wurstStart, ""],
-                            [getReal, "b4"],
+                            [getReal, "e4"],
                             [wurstStart, ""]
 
                         ];
