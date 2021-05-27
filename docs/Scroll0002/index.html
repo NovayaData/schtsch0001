@@ -139,8 +139,8 @@
                     function cleaned(s, dl) {
                         // var s = Array(a, b);
                         x.domain(s);
-                        focus.selectAll(".ukr").call(cleaner, "ukr", dl);
-                        focus.selectAll(".resp").call(cleaner, "resp", dl);
+                        focus.selectAll(".ukr").call(resizer, "ukr", dl);
+                        focus.selectAll(".resp").call(resizer, "resp", dl);
                         focus.select("#X").call(resizeAx, x, dl);
                     };
 
@@ -169,15 +169,15 @@
                         path
                             .transition("resizeAx")
                             .delay(dl)
-                            .duration(400)
+                            .duration(800)
                             .call(d3.axisBottom(a).tickSize(0));
                     };
 
-                    function cleaner(path, c, dl) {
+                    function resizer(path, c, dl) {
                         path
-                        .transition("cleaner")
+                        .transition("resizer")
                         .delay(dl)
-                        .duration(400)
+                        .duration(800)
                         .attr("d", d3.line()
                             .curve(d3.curveStep)
                             .x(function(d) { return x(d.date) })
