@@ -16,7 +16,7 @@ body::-webkit-scrollbar {
 
 #paragraph {
     position: fixed;
-    margin-top: 9%;
+    margin-top: 12%;
     margin-left: 25%;
     height: 40%;
     width: 50%;
@@ -89,7 +89,7 @@ body::-webkit-scrollbar {
     -ms-user-select: none;
     user-select: none;
     position: absolute;
-    padding-top: 0;
+    padding-top: 3%;
     width: 97%;
     left: 6%;
     margin: 0;
