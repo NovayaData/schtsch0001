@@ -13,6 +13,68 @@ body::-webkit-scrollbar {
     width: 0px;
     background: transparent;
 }
+/* 
+#paragraphs {
+    position: fixed;
+    padding-top: 3%;
+    padding-left: 6%;
+    width: 88%;
+    height: 94%;
+} */
+
+.paragraph {
+    background-color: grey;
+    height: 36%;
+    width: 39%;
+    opacity: 0.25;
+}
+
+.paragraphs {
+    background-color: red;
+    height: 77%;
+    width: 39%;
+    opacity: 0.25;
+}
+
+.paragraphText {
+    opacity: 1;
+}
+
+#p1 {
+    position: fixed;
+    margin-top: 3%;
+    margin-left: 9%;
+}
+
+#p2 {
+    position: fixed;
+    margin-top: 3%;
+    margin-left: 51%;
+}
+
+#p3 {
+    position: fixed;
+    margin-top: 24%;
+    margin-left: 51%;
+}
+
+#p4 {
+    position: fixed;
+    margin-top: 24%;
+    margin-left: 9%;
+}
+
+#p14 {
+    position: fixed;
+    margin-top: 3%;
+    margin-left: 9%;
+}
+
+#p23 {
+    position: fixed;
+    margin-top: 3%;
+    margin-left: 51%;
+}
 
 #testControl {
     position: absolute;
@@ -26,7 +88,7 @@ body::-webkit-scrollbar {
     width: 250px;
     top: 30%;
     left: 3%;
-    color: black;
+    opacity: 0;
     z-index: 90;
 }
 
@@ -82,7 +144,7 @@ body::-webkit-scrollbar {
     color: black;
     padding-top: 2.5%;
     width: 97%;
-    left: 3%;
+    left: 6%;
     margin: 0;
 }
 
