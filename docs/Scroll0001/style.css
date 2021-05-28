@@ -89,7 +89,7 @@ body::-webkit-scrollbar {
     -ms-user-select: none;
     user-select: none;
     position: absolute;
-    padding-top: 3%;
+    padding-top: 0;
     width: 97%;
     left: 6%;
     margin: 0;
