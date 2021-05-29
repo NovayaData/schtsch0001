@@ -10,497 +10,567 @@
 <body>
     <!-- bgcolor="#f7f7f7" -->
     <!-- style="overflow: hidden;" -->
-    <div id="paragraph">
-        <span class="paragraphText">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            <p></p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </span>
-    </div>
     <div id="headers">
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
-        <div id="graphic">
-            <div id="sections">
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-                <section class="step">_</section>
-            </div>
-            <div id="chartArea" >
-                    <script>
 
-                        const W = document.getElementById('chartArea').clientWidth,
-                            H = document.getElementById('chartArea').clientHeight,
-                            margin = {top: W*0.12, right: W*0.06, bottom: H*0.06, left: W*0.06},
-                            width = W - margin.left - margin.right,
-                            height = H - margin.top - margin.bottom;
+    <div id="paragraphs">
+    </div>
 
-                        function getColor(v) {
-                            if (279.4>v && v>=0){
-                                return "#ffed26"
-                            } else if (2695.8>v && v>=279.4){
-                                return "#fbbf00"
-                            } else if (5163>v && v>=2695.8){
-                                return "#ee9100"
-                            } else if (7207.2>v && v>=5163){
-                                return "#da6513"
-                            } else if (v>=7207.2){
-                                return "#bf381d"
-                            }
+    <div id="graphic">
+
+        <div id="sections">
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">●</section>
+        </div>
+        
+        <div id="chartArea" >
+            <script>
+
+                function scroller(){
+                    let container = d3.select('body')
+                    let dispatch = d3.dispatch('active', 'progress');
+                    let sections = d3.selectAll('.step')
+                    let sectionPositions
+                    let currentIndex = -1
+                    let containerStart = 0;
+
+                    function scroll(){
+                        d3.select(window)
+                        .on('scroll.scroller', position)
+                        .on('resize.scroller', resize)
+                        resize();
+                        let timer = d3.timer(function() {
+                        position();
+                        timer.stop();
+                        });
+                    }
+
+                    function resize(){
+                        sectionPositions = [];
+                        let startPos;
+                        sections.each(function(d, i) {
+                        let top = this.getBoundingClientRect().top;
+                        if (i === 0 ){
+                            startPos = top;
                         }
+                        sectionPositions.push(top - startPos)
+                        });
+                    }
 
-                        function getColorG(v) {
-                            if (279.4>v && v>=0){
-                                return "#ececec"
-                            } else if (2695.8>v && v>=279.4){
-                                return "#cfcfcf"
-                            } else if (5163>v && v>=2695.8){
-                                return "#b0b0b0"
-                            } else if (7207.2>v && v>=5163){
-                                return "#949494"
-                            } else if (v>=7207.2){
-                                return "#787878"
-                            }
+                    function position() {
+                        let pos = window.pageYOffset - 300 - containerStart;
+                        let sectionIndex = d3.bisect(sectionPositions, pos);
+                        sectionIndex = Math.min(sections.size()-1, sectionIndex);
+                        if (currentIndex !== sectionIndex){
+                        dispatch.call('active', this, sectionIndex);
+                        currentIndex = sectionIndex;
                         }
-
-                        var svg = d3.select("#chartArea").append("svg")
-                            .attr("width", W)
-                            .attr("height", H)
-                            .append("g")
-                                
-
-                        svg.append("defs").append("clipPath")
-                                .attr("id", "clip")
-                            .append("rect")
-                                .attr("width", width)
-                                .attr("height", H);
-
-                        var focus = svg.append("g")
-                            .attr("class", "focus")
-                            .attr("width", width)
-                            .attr("height", height)
-                            .attr("transform", 
-                                    "translate(" + margin.left + "," + margin.top + ")");
-
-                        var parseTime = d3.timeParse("%Y-%m-%d");
-                        var bandWidth;
-
-                        var wurstH = H*0.035;
-                        var NFS = 250;
-
-                        var showY = 1;
-
-                        function scroller(){
-                            let container = d3.select('body')
-                            let dispatch = d3.dispatch('active', 'progress');
-                            let sections = d3.selectAll('.step')
-                            let sectionPositions
-                            let currentIndex = -1
-                            let containerStart = 0;
-
-                            function scroll(){
-                                d3.select(window)
-                                .on('scroll.scroller', position)
-                                .on('resize.scroller', resize)
-                                resize();
-                                let timer = d3.timer(function() {
-                                position();
-                                timer.stop();
-                                });
-                            }
-
-                            function resize(){
-                                sectionPositions = [];
-                                let startPos;
-                                sections.each(function(d, i) {
-                                let top = this.getBoundingClientRect().top;
-                                if (i === 0 ){
-                                    startPos = top;
-                                }
-                                sectionPositions.push(top - startPos)
-                                });
-                            }
-
-                            function position() {
-                                let pos = window.pageYOffset - 300 - containerStart;
-                                let sectionIndex = d3.bisect(sectionPositions, pos);
-                                sectionIndex = Math.min(sections.size()-1, sectionIndex);
-                                if (currentIndex !== sectionIndex){
-                                dispatch.call('active', this, sectionIndex);
-                                currentIndex = sectionIndex;
-                                }
-                                let prevIndex = Math.max(sectionIndex - 1, 0);
-                                let prevTop = sectionPositions[prevIndex]
-                                let progress = (pos - prevTop) / (sectionPositions[sectionIndex]   - prevTop);
-                                dispatch.call('progress', this, currentIndex, progress)
-                            }
-
-                            scroll.container = function(value) {
-                                if (arguments.legth === 0){
-                                return container
-                                }
-                                container = value
-                                return scroll
-                            }
-                            scroll.on = function(action, callback){
-                                dispatch.on(action, callback)
-                            };
-                            return scroll;
-                        };
-
-                        let scroll = scroller().container(d3.select('#graphic'));
-                            scroll();
-                        let lastIndex, activeIndex = 0;
-
-                        Promise.all([
-                            d3.csv("viotest.csv"),
-                            d3.json('articleScript.json')
-                        ]).then(([data, articleScript]) => {
-
-                            scroll.on('active', function(index){
-                                // d3.selectAll('.step')
-                                //     .transition().duration(NFS)
-                                //     .style('opacity', function (d, i) {return i === index ? 1 : 0.1;});
-
-                                activeIndex = index
-                                let sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
-                                let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
-                                scrolledSections.forEach(i => {
-                                    activationFunctions[i][0](activationFunctions[i][1]);
-                                })
-                                lastIndex = activeIndex;
-                            });
-
-                            // Transform data
-
-                            data.forEach(d => {
-                                d.date = parseTime(d.date);
-                                d.episode = "";
-
-                                Object.keys(articleScript.episodes).forEach( function(eKey) {
-
-                                    let eList = articleScript.episodes[eKey];
-                                    eList.forEach(function(e) {
-
-                                        let minDate = parseTime(e[0]),
-                                            maxDate = parseTime(e[1]);
-
-                                        if (d.date >= minDate && d.date <= maxDate) {
-                                            d.episode += eKey+" ";
-                                        }
-                                    })
-                                });
-
-                            });
-
-                            var xMin = d3.min(data, function(d) { return d.date; });
-                            var xMax = d3.max(data, function(d) { return d.date; });
-
-                            weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
-                            yScaler = (H*0.65)/weeksumMax;
-
-                            Math.round(weeksumMax/10000)*10000
-
-                            var cleanDate = parseTime("2016-01-01");
-
-                            var x = d3.scaleTime()
-                                .range([0, width]);
-
-                            var y = d3.scaleLinear()
-                                .range([height, height-Math.round(weeksumMax/10000)*10000*yScaler]);
-
-                            x.domain([xMin, xMax]);
-
-                            function addXAx(i, o, h, t, f) {
-                                focus.append("g")
-                                    .attr("clip-path", "url(#clip)")
-                                    .attr("id", i)
-                                    .attr("opacity", o)
-                                    .attr("transform", "translate(0," + h + ")")
-                                    .call(
-                                        d3.axisBottom(x)
-                                            .tickSize(0)
-                                            .ticks(t)
-                                            .tickFormat(f)
-                                        )
-                                    .selectAll("text")
-                                        .attr('text-anchor', 'start')
-                                        .attr("class", "textSmaller");
-                            };
-                            
-                            addXAx("Xmonths", 0, height+5, d3.timeMonth, d3.timeFormat("%-m"));
-                            addXAx("X", 1, height+20, d3.timeYear, d3.timeFormat("| %Y"));
-
-                            y.domain([0, 40000]);
-                            focus.append("g")
-                                .attr("id", "Y")
-                                .attr("opacity", 0)
-                                .call(d3.axisLeft(y)
-                                    .tickSize(0)
-                                    .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ))
-                                .selectAll("text")
-                                    .attr('text-anchor', 'end')
-                                    .attr("class", "textSmaller");
-
-                            function dropDomains() {
-                                focus.selectAll(".domain")
-                                    .remove()
-                            };
-
-                            dropDomains();
-
-                            // const months = focus.append("g")
-                            //     .attr("id", "months")
-                            //     .attr("opacity", 1);
-
-                            
-                            // var curMonth = "0";
-                            // var formatTime = d3.timeFormat("%Y-%m-%d");
-
-                            // x.domain().ticks(d3.timeDays, 1).forEach(d => {
-                            //     let dMonth = d.getMonth().toString();
-
-                            //     if (dMonth != curMonth) {
-                                    
-                            //         months
-                            //             .append("text")
-                            //             .attr("id", "m"+formatTime(d))
-                            //             .attr("class", "textSmaller move")
-                            //             .attr('text-anchor', 'start')
-                            //             .attr("x", x(d))
-                            //             .attr("y", height+10)
-                            //             .text(dMonth)
-
-                            //         curMonth = dMonth;
-                            //     }
-
-                            // });
-
-                            //     // let dMonth = d.date.getMonth().toString();
-
-                            //     // if (dMonth != curMonth) {
-                            //     //     d.monthlabel = dMonth;
-                            //     //     curMonth = dMonth;
-                            //     // } else {
-                            //     //     d.monthlabel = "0";
-                            //     // };
-
-                            // });
-
-                            var bars = focus.append("g");
-                            bandWidth = width/data.length;
-
-                            // const dates = focus.append("g")
-                            //     .attr("id", "dates");
-
-                            bars.attr("clip-path", "url(#clip)");
-                            bars.selectAll("bar")
-                            .data(data)
-                            .enter().append("rect")
-                                .attr("class", function(d) { return d.episode; })
-                                .attr("fill", function(d) {
-                                    if (d.date < cleanDate) {
-                                        return getColorG(d.weeksum);
-                                    } else {
-                                        return getColor(d.weeksum);
-                                    }})
-                                // .attr("id", function(d) { return d.dateStr; })
-                                .attr("x", function(d) { return x(d.date); })
-                                .attr("width", bandWidth)
-                                .attr("y", y(0))
-                                .attr("height", 0)
-                                .attr("opacity", 1);
-                            
-                            bars.selectAll("rect")
-                                .call(pook);
-
-                            function getFormatedDate(date) {
-                                date = parseTime(date);
-                                let mo = new Intl.DateTimeFormat('ru', { month: 'short' }).format(date);
-                                let da = new Intl.DateTimeFormat('ru', { day: 'numeric' }).format(date);
-                                return `${da} ${mo}`;
-                            };
-
-                            function getReal(epid) {
-
-                                bars.selectAll("rect").filter(function() {
-                                    return !this.classList.contains(epid)
-                                }).call(wurstOpaciter, 0.25)
-
-                                let episodeBars = d3.selectAll("."+epid);
-                                episodeBars
-                                    .call(pik);
-
-                                focus.select("#Xmonths").attr("opacity", 1);
-
-                                if (showY==1) {
-                                    focus.select("#Y").attr("opacity", 1);
-                                };
-
-                                // focus.select("#months").attr("opacity", 1);
-                                
-                                // var r = episodeBars.nodes().length - 1;
-                                // var leftDate = episodeBars.nodes()[0];
-                                // var rightDate = episodeBars.nodes()[r];
-
-                                // lDate = leftDate.getAttribute("id")
-                                // rDate = rightDate.getAttribute("id")
-
-                                // lText = getFormatedDate(lDate);
-                                // rText = getFormatedDate(rDate);
-
-                                // dates
-                                //     .call(addDay, "d"+lDate, lText, leftDate.getAttribute("x"), "end")
-                                //     .call(addDay, "d"+rDate, rText, parseFloat(rightDate.getAttribute("x"))+bandWidth, "start");
-
-                            };
-
-                            // function addDay(path, i, dayText, xPos, al) {
-                            //     path 
-                            //         .append("text")
-                            //         .attr("id", i)
-                            //         .attr("class", "textSmaller move")
-                            //         .attr('text-anchor', al)
-                            //         .attr("x", xPos)
-                            //         .attr("y", height+14)
-                            //         .attr("fill", "#000000")
-                            //         .text(dayText);
-                            // };
-
-                            function wurstStart(_) {
-                                focus.select("#Y").attr("opacity", 0);
-                                focus.select("#Xmonths").attr("opacity", 0);
-                                // focus.select("#months").attr("opacity", 0);
-                                // dates.selectAll("text").remove();
-                                bars.selectAll("rect")
-                                    .call(wurstOpaciter, 1)
-                                    .call(pook)
-                            };
-
-                            function focusMove(v) {
-                                focus.transition()
-                                    .duration(NFS)
-                                    .attr("transform", 
-                                            "translate(" + margin.left + ",-" + H*v + ")");
-                            };
-
-                            function jump([leftDate, v]) {
-                                if (v==0) {
-                                    showY = 1;
-                                } else {
-                                    showY = 0;
-                                };
-                                cleaned(leftDate);
-                                focusMove(v);
-                            }
-
-                            function cleaned(leftDate) {
-                                var s = Array(leftDate, xMax);
-
-                                bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
-                                x.domain(s);
-
-                                focus.selectAll("rect").call(cleaner);
-                                focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
-                                focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
-                                dropDomains();
-                                // focus.selectAll(".move").call(mover);
-
-                            };
-
-                            function getDateStrFromId(i) {
-                                return i.slice(1, i.length);
-                            };
-
-                            // Transitions
-
-                            function mover(path) {
-                                path
-                                    .transition("mover")
-                                    .duration(NFS)
-                                    .attr("x", function() { 
-                                        return x(parseTime(getDateStrFromId(this.id)));
-                                    });
-                            };
-
-                            function cleaner(path) {
-                                path
-                                    .transition("cleaner")
-                                    .duration(NFS)
-                                    .attr("width", bandWidth)
-                                    .attr("x", function(d) { return x(d.date); });
-                            };
-
-                            function resizeAx(path, a, t, f) {
-                                path
-                                    .transition("resizeAx")
-                                    .duration(NFS)
-                                    .call(d3.axisBottom(a)
-                                        .tickSize(0)
-                                        .ticks(t)
-                                        .tickFormat(d3.timeFormat(f))
-                                    )
-                                .selectAll("text")
-                                    .attr('text-anchor', 'start')
-                                    .attr("class", "textSmaller");
-                            }
-
-                            function wurstOpaciter(path, v) {
-                                path
-                                    .transition("wurstOpaciter")
-                                    .duration(NFS)
-                                    .attr("opacity", v);
-                            }
-
-                            function pik(path) {
-                                path
-                                    .transition("pik")
-                                    .duration(NFS)
-                                    .attr("height", function(d) { return d.weeksum*yScaler; })
-                                    .attr("y", function(d) { return height-d.weeksum*yScaler; });
-                            };
-
-                            function pook(path) {
-                                path
-                                    .transition("pook")
-                                    .duration(NFS)
-                                    .attr("height", wurstH)
-                                    .attr("y", height-wurstH);
-                            };
-
-                            // Scroll actions
-
-                            let activationFunctions = [
-                                [wurstStart, ""],
-                                [getReal, "e1"],
-                                [wurstStart, ""],
-                                [getReal, "e2"],
-                                [wurstStart, ""],
-                                // [jump, [xMin, 0.25]],
-                                // [jump, [cleanDate, 0]],
-                                [cleaned, xMin],
-                                [cleaned, cleanDate],
-                                [wurstStart, ""],
-                                [getReal, "e3"],
-                                [wurstStart, ""],
-                                [getReal, "e4"],
-                                [wurstStart, ""]
-
-                            ];
+                        let prevIndex = Math.max(sectionIndex - 1, 0);
+                        let prevTop = sectionPositions[prevIndex]
+                        let progress = (pos - prevTop) / (sectionPositions[sectionIndex]   - prevTop);
+                        dispatch.call('progress', this, currentIndex, progress)
+                    }
+
+                    scroll.container = function(value) {
+                        if (arguments.legth === 0){
+                        return container
+                        }
+                        container = value
+                        return scroll
+                    }
+                    scroll.on = function(action, callback){
+                        dispatch.on(action, callback)
+                    };
+                    return scroll;
+                };
+
+                function getColor(v) {
+                    if (279.4>v && v>=0){
+                        return "#ffed26"
+                    } else if (2695.8>v && v>=279.4){
+                        return "#fbbf00"
+                    } else if (5163>v && v>=2695.8){
+                        return "#ee9100"
+                    } else if (7207.2>v && v>=5163){
+                        return "#da6513"
+                    } else if (v>=7207.2){
+                        return "#bf381d"
+                    }
+                }
+
+                function getColorG(v) {
+                    if (279.4>v && v>=0){
+                        return "#ececec"
+                    } else if (2695.8>v && v>=279.4){
+                        return "#cfcfcf"
+                    } else if (5163>v && v>=2695.8){
+                        return "#b0b0b0"
+                    } else if (7207.2>v && v>=5163){
+                        return "#949494"
+                    } else if (v>=7207.2){
+                        return "#787878"
+                    }
+                }
+
+                const W = document.getElementById('chartArea').clientWidth,
+                    H = document.getElementById('chartArea').clientHeight,
+                    margin = {top: H*0.06, right: W*0.06, bottom: H*0.06, left: W*0.06},
+                    width = W - margin.left - margin.right,
+                    height = H - margin.top - margin.bottom;
+
+                var svg = d3.select("#chartArea").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g")
                         
+
+                svg.append("defs").append("clipPath")
+                        .attr("id", "clip")
+                    .append("rect")
+                        .attr("width", width)
+                        .attr("height", H);
+
+                var focusCenter = -height/6;
+                var curFocusPosition = 0;
+
+                var focus = svg.append("g")
+                    .attr("class", "focus")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("transform", 
+                            "translate(" + margin.left + "," + margin.top + ")");
+
+                var parseTime = d3.timeParse("%Y-%m-%d");
+                var bandWidth;
+
+                var wurstH = H*0.035;
+                var NFS = 250;
+
+                // var sizeCondition = 0;
+                var cleanDate = parseTime("2016-01-01");
+
+                Promise.all([
+                    d3.csv("viotest.csv"),
+                    d3.json('articleScript.json')
+                ]).then(([data, articleScript]) => {
+
+                    let activationFunctions = [
+                        [dropAll, ["pStart", "↑"]],
+                        // [focusMove, "", "pStart"],
+                        [getAction, ["e1", "p1"]],
+                        [getAction, ["e2", "p2"]],
+                        [getAction, ["e5", "p2"]],
+                        [getSize, ["clean", "p2", 0]],
+                        [getSize, ["clean", "p2", 1]],
+                        [getAction, ["e3", "p3"]],
+                        [getAction, ["e4", "p4"]],
+                        [dropAll, ["pEnd", "↓"]]
+                        
+                        // [getJump, "clean", "pEnd"]
+                    ];
+
+                    // Finish page
+
+                    const paragraphs = d3.select("#paragraphs");
+                    const sections = d3.select("#sections");
+
+                    Object.keys(articleScript.paragraphs).forEach(
+                        function(p) {
+                            paragraphs
+                                .append("span")
+                                .attr("id", p)
+                                .style("opacity", 0)
+                                .attr("class", "paragraphText")
+                                .html(articleScript.paragraphs[p])
+                        }
+                    );
+
+                    var curParagraph = "pStart";
+                    getText("pStart");
+
+                    var navigatorX = activationFunctions.map(
+                        d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
+                    );
+
+                    var circle = svg.append("g")
+                        .append("circle")
+                        .attr("r", "6px")
+                        .attr("fill", "#ececec")
+                        .attr("transform", 
+                            "translate(" + margin.left/3 + "," + navigatorX[0] + ")");
+
+                    // var steps = d3.selectAll(".step").nodes();
+                    
+                    d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
+
+                    // activationFunctions.forEach(
+                    //     function() {
+                    //         sections
+                    //             .append("section")
+                    //             .attr("class", "step")
+                    //             .html("_")
+                    //     }
+                    // );
+
+                    // Transform data
+
+                    data.forEach(d => {
+                        d.date = parseTime(d.date);
+                        d.episode = "";
+
+                        Object.keys(articleScript.episodes).forEach( function(eKey) {
+
+                            let eList = articleScript.episodes[eKey];
+                            eList.forEach(function(e) {
+
+                                let minDate = parseTime(e[0]),
+                                    maxDate = parseTime(e[1]);
+
+                                if (d.date >= minDate && d.date <= maxDate) {
+                                    d.episode += eKey+" ";
+                                }
+                            })
                         });
 
-                    </script>
-            </div>
+                    });
+
+                    // Draw
+
+                    var xMin = d3.min(data, function(d) { return d.date; });
+                    var xMax = d3.max(data, function(d) { return d.date; });
+
+                    weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
+                    yScaler = (H*0.65)/weeksumMax;
+
+                    Math.round(weeksumMax/10000)*10000
+
+                    var x = d3.scaleTime()
+                        .range([0, width]);
+
+                    var y = d3.scaleLinear()
+                        .range([height, height-Math.round(weeksumMax/10000)*10000*yScaler]);
+
+                    x.domain([xMin, xMax]);
+
+                    function addXAx(i, o, h, t, f) {
+                        focus.append("g")
+                            .attr("clip-path", "url(#clip)")
+                            .attr("id", i)
+                            .attr("opacity", o)
+                            .attr("transform", "translate(0," + h + ")")
+                            .call(
+                                d3.axisBottom(x)
+                                    .tickSize(0)
+                                    .ticks(t)
+                                    .tickFormat(f)
+                                )
+                            .selectAll("text")
+                                .attr('text-anchor', 'start')
+                                .attr("class", "textSmaller");
+                    };
+                    
+                    addXAx("Xmonths", 0, height+5, d3.timeMonth, d3.timeFormat("%-m"));
+                    addXAx("X", 1, height+20, d3.timeYear, d3.timeFormat("| %Y"));
+
+                    y.domain([0, 40000]);
+                    focus.append("g")
+                        .attr("id", "Y")
+                        .attr("opacity", 0)
+                        .call(d3.axisLeft(y)
+                            .tickSize(0)
+                            .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ))
+                        .selectAll("text")
+                            .attr('text-anchor', 'end')
+                            .attr("class", "textSmaller");
+
+                    function dropDomains() {
+                        focus.selectAll(".domain")
+                            .remove()
+                    };
+
+                    dropDomains();
+
+                    var bars = focus.append("g");
+                    bandWidth = width/data.length;
+
+                    bars.attr("clip-path", "url(#clip)");
+                    bars.selectAll("bar")
+                    .data(data)
+                    .enter().append("rect")
+                        .attr("class", function(d) { return d.episode; })
+                        .attr("fill", function(d) {
+                            if (d.date < cleanDate) {
+                                return getColorG(d.weeksum);
+                            } else {
+                                return getColor(d.weeksum);
+                            }})
+                        // .attr("id", function(d) { return d.dateStr; })
+                        .attr("x", function(d) { return x(d.date); })
+                        .attr("width", bandWidth)
+                        .attr("y", y(0))
+                        .attr("height", 0)
+                        .attr("opacity", 1);
+                    
+                    bars.selectAll("rect")
+                        .call(pook);
+
+                    function getFormatedDate(date) {
+                        date = parseTime(date);
+                        let mo = new Intl.DateTimeFormat('ru', { month: 'short' }).format(date);
+                        let da = new Intl.DateTimeFormat('ru', { day: 'numeric' }).format(date);
+                        return `${da} ${mo}`;
+                    };
+
+                    // Actions
+
+                    function getAction(args) {
+
+                        let eid = args[0],
+                            pid = args[1];
+
+                        if (eid && eid!="clean") {
+                            getReal(eid)
+                        } else if (eid=="clean") {
+                            getWurst();
+                        };
+
+                        if (pid && pid!="clean") {
+                            getText(pid)
+                        } else if (pid=="clean") {
+                            getBlanc();
+                        };
+
+                        // var r = episodeBars.nodes().length - 1;
+                        // var leftDate = episodeBars.nodes()[0];
+                        // var rightDate = episodeBars.nodes()[r];
+
+                        // lDate = leftDate.getAttribute("id")
+                        // rDate = rightDate.getAttribute("id")
+
+                    };
+
+                    function getReal(eid) {
+                        bars.selectAll("rect").filter(function() {
+                                return !this.classList.contains(eid)
+                            }).call(wurstOpaciter, 0.25).call(pook)
+
+                            focus.selectAll("."+eid).call(wurstOpaciter, 1).call(pik);
+                            focus.select("#Xmonths").attr("opacity", 1);
+
+                            focus.select("#Y").attr("opacity", 1);
+
+                            // if (showY==1) {
+                            //     focus.select("#Y").attr("opacity", 1);
+                            // };
+                    };
+
+                    function getText(pid) {
+                        // d3.selectAll(".paragraphText").filter(function() {
+                        //     return this.id != pid
+                        // }).call(textOpaciter, 0);
+                        // d3.select("#"+pid).call(textOpaciter, 1);
+                        if (curParagraph!=pid) {
+                            d3.select("#"+curParagraph).call(textOpaciter, 0);
+                            d3.select("#"+pid).call(textOpaciter, 1);
+                            curParagraph=pid;
+                        } else {
+                            d3.select("#"+pid).call(textOpaciter, 1);
+                        }
+                    };
+
+                    function textMover(path) {
+                        path
+                            .transition("textMover")
+                            .duration(NFS*2)
+                            .style("margin-top", 
+                                 "9%");
+                    };
+
+                    function textOpaciter(path, o) {
+                        path
+                            .transition("textOpaciter")
+                            .duration(NFS)
+                            .style("opacity", o);
+                    }
+
+                    function getWurst() {
+                        focus.select("#Y").attr("opacity", 0);
+                        focus.select("#Xmonths").attr("opacity", 0);
+
+                        bars.selectAll("rect")
+                            .call(wurstOpaciter, 1)
+                            .call(pook)
+                    };
+
+                    function getBlanc() {
+                        d3.selectAll(".paragraphText").call(textOpaciter, 0);
+                    };
+
+                    function dropAll(args) {
+                        let pid = args[0],
+                            direction = args[1];
+
+                        // d3.selectAll(".step").html(direction);
+
+                        getWurst();
+                        getText(pid);
+                    };
+
+                    function focusMove(_, pid) {
+
+                        getWurst();
+                        getText(pid);
+
+                        if (curFocusPosition==0) {
+                            focus.call(moveChartV, margin.top);
+                            curFocusPosition = 1;
+                        } else {
+                            focus.call(moveChartV, focusCenter);
+                            curFocusPosition = 0;
+                        }
+                    };
+
+                    function moveChartV(path, v) {
+                        path.transition("moveChartV")
+                            .duration(NFS)
+                            .attr("transform", 
+                                 "translate(" + margin.left + "," + v + ")");
+                    };
+
+                    // function getJump(eid, pid) {
+                        
+                    //     focusMove("", pid)
+                    //     getSize(eid, "")
+
+                    // }
+
+                    function getSize(args) {
+
+                        let eid = args[0],
+                            pid = args[1],
+                            sizeCondition = args[2]
+
+
+                        if (eid=="clean") {
+                            getWurst()
+                        };
+
+                        if (sizeCondition==1) {
+                            resizer(cleanDate);
+                            // sizeCondition=1;
+                        } else {
+                            resizer(xMin);
+                            // sizeCondition=0;
+                        };
+
+                        getText(pid);
+                    };
+
+                    function resizer(leftDate) {
+
+                        var s = Array(leftDate, xMax);
+
+                        bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
+                        x.domain(s);
+
+                        focus.selectAll("rect").call(resizeBars);
+                        focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
+                        focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
+                        dropDomains();
+
+                    };
+
+                    // Transitions
+
+                    function resizeBars(path) {
+                        path
+                            .transition("resizeBars")
+                            .duration(NFS)
+                            .attr("width", bandWidth)
+                            .attr("x", function(d) { return x(d.date); });
+                    };
+
+                    function resizeAx(path, a, t, f) {
+                        path
+                            .transition("resizeAx")
+                            .duration(NFS)
+                            .call(d3.axisBottom(a)
+                                .tickSize(0)
+                                .ticks(t)
+                                .tickFormat(d3.timeFormat(f))
+                            )
+                        .selectAll("text")
+                            .attr('text-anchor', 'start')
+                            .attr("class", "textSmaller");
+                    }
+
+                    function wurstOpaciter(path, v) {
+                        path
+                            .transition("wurstOpaciter")
+                            .duration(NFS)
+                            .attr("opacity", v);
+                    }
+
+                    function pik(path) {
+                        path
+                            .transition("pik")
+                            .duration(NFS)
+                            .attr("height", function(d) { return d.weeksum*yScaler; })
+                            .attr("y", function(d) { return height-d.weeksum*yScaler; });
+                    };
+
+                    function pook(path) {
+                        path
+                            .transition("pook")
+                            .duration(NFS)
+                            .attr("height", wurstH)
+                            .attr("y", height-wurstH);
+                    };
+
+                    function navigate(path, i) {
+                        path
+                            .transition("navigate")
+                            .duration(NFS)
+                            .attr("transform", 
+                                "translate(" + margin.left/3 + "," + navigatorX[i] + ")")
+                    };
+
+                    // Scroll
+
+                    let scroll = scroller().container(d3.select('#graphic'));
+                        scroll();
+                    let lastIndex, activeIndex = 0;
+
+                    scroll.on('active', function(index){
+                        // d3.selectAll('.step')
+                        //     .transition().duration(0)
+                        //     .style('opacity', function (d, i) {return i === index ? 1 : 0;});
+
+                        activeIndex = index
+                        let sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
+                        let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
+
+                        scrolledSections.forEach(i => {
+                            activationFunctions[i][0](
+                                activationFunctions[i][1]
+                                // activationFunctions[i][2]
+                            );
+                            circle.call(navigate, i);
+                        })
+                        lastIndex = activeIndex;
+                    });
+                });
+
+            </script>
+        </div>
     </div>
     
 </body>
