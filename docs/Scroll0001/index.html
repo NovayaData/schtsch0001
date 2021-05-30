@@ -19,18 +19,6 @@
 
     <div id="graphic">
 
-        <!-- <div id="sections">
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">●</section>
-        </div> -->
-
         <div id="sections">
             <section class="step">●</section>
             <section class="step">●</section>
@@ -176,7 +164,6 @@
 
                     let activationFunctions = [
                         [dropAll, ["pStart", "↑"]],
-                        // [focusMove, "", "pStart"],
                         [getAction, ["e1", "p1"]],
                         [getAction, ["e2", "p2"]],
                         [getAction, ["e5", "p2"]],
@@ -212,14 +199,30 @@
                         d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
                     );
 
-                    var circle = svg.append("g")
-                        .append("circle")
-                        .attr("r", "6px")
-                        .attr("fill", "#ececec")
-                        .attr("transform", 
-                            "translate(" + margin.left/3 + "," + navigatorX[0] + ")");
+                    var circlesContainer = svg.append("g");
+                    var hTr = W-margin.right/2;
 
-                    // var steps = d3.selectAll(".step").nodes();
+                    function addCircle(i, hPos, color) {
+                        
+
+                        circlesContainer
+                            .append("circle")
+                            .attr("id", "c"+i)
+                            .attr("r", "4px")
+                            .attr("fill", color)
+                            .attr("transform", 
+                                "translate(" + hTr + "," + hPos + ")");
+                    };
+
+                    navigatorX.forEach(
+                        function(d, i) {
+                            addCircle(i, d, "#ececec")
+                        }
+                    );
+
+                    addCircle("theCircle", navigatorX[0], "#cfcfcf");
+                    const theCircle = circlesContainer.select("#ctheCircle");
+
                     
                     d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
 
@@ -342,6 +345,10 @@
                     };
 
                     // Actions
+
+                    function paintCircle(i) {
+                        circlesContainer.select("circle").filter()
+                    };
 
                     function getAction(args) {
 
@@ -552,7 +559,7 @@
                             .transition("navigate")
                             .duration(NFS)
                             .attr("transform", 
-                                "translate(" + margin.left/3 + "," + navigatorX[i] + ")")
+                                "translate(" + hTr + "," + navigatorX[i] + ")")
                     };
 
                     // Scroll
@@ -575,7 +582,7 @@
                                 activationFunctions[i][1]
                                 // activationFunctions[i][2]
                             );
-                            circle.call(navigate, i);
+                            theCircle.call(navigate, i);
                         })
                         lastIndex = activeIndex;
                     });
