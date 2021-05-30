@@ -63,7 +63,7 @@
                 
                 var parseTime = d3.timeParse("%Y-%m-%d");
                 
-                d3.csv("vio_ukr_resp.csv").then( function(data) {
+                d3.csv("../data/Scroll0002/violations_Ukraine_Republics.csv").then( function(data) {
 
                     data.forEach(function(d) {
                         d.date = parseTime(d.date);

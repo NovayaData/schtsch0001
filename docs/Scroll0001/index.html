@@ -19,15 +19,27 @@
 
     <div id="graphic">
 
+        <!-- <div id="sections">
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">↑</section>
+            <section class="step">●</section>
+        </div> -->
+
         <div id="sections">
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
+            <section class="step">●</section>
+            <section class="step">●</section>
+            <section class="step">●</section>
+            <section class="step">●</section>
+            <section class="step">●</section>
+            <section class="step">●</section>
+            <section class="step">●</section>
+            <section class="step">●</section>
             <section class="step">●</section>
         </div>
         
@@ -158,8 +170,8 @@
                 var cleanDate = parseTime("2016-01-01");
 
                 Promise.all([
-                    d3.csv("viotest.csv"),
-                    d3.json('articleScript.json')
+                    d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
+                    d3.json('../data/Scroll0001/article_script.json')
                 ]).then(([data, articleScript]) => {
 
                     let activationFunctions = [
