@@ -59,7 +59,7 @@
 
     <div id="bub" style = "height: 100%;  width: 100%;">
         <script>
-            const DataPath = "../data/zakhvat-rynka-shkolnogo-pitaniya-v-moskve.csv";
+            const DataPath = "../data/YeastDiagram0001/zakhvat-rynka-shkolnogo-pitaniya-v-moskve.csv";
             document.getElementById("chatdata").setAttribute("href", DataPath)
 
             var slider = document.getElementById("sliderYear");
@@ -96,7 +96,7 @@
 
             var minR = 1.5;
             var sizer;
-            var center = [width / 2, height / 2];;
+            var center = [width / 2, height / 2];
 
             if (height <= 400 || width <= 400 ) {
                 minR = 1;
@@ -225,15 +225,15 @@
 
                 simulation.restart();
                 simulation
-                    .alpha(0.2)
-                    .alphaTarget(0.2)
+                    .alpha(0.4)
+                    .alphaTarget(0.4)
                     .restart();
                 simulation.force("x").initialize(data);
                 simulation.force("collide").initialize(data);
 
                 simulationTimer = setTimeout( function(){
                     simulation.stop();
-                } ,20000);
+                } ,200000);
 
             };
 
