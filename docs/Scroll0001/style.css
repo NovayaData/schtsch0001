@@ -14,18 +14,26 @@ body::-webkit-scrollbar {
     background: transparent;
 }
 
+.video {
+    position: fixed;
+    height: 25%;
+    width: 25%;
+}
+
+
 #paragraphs {
     position: fixed;
+    z-index: 10;
     height: 40%;
     width: 50%;
-    /* transform: translateX(8000); */
 }
 
 .paragraphText {
     position: fixed;
+    z-index: 4;
     margin-top: 12%;
     margin-left: 25%;
-    height: 40%;
+    max-height: 40%;
     width: 50%;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -42,6 +50,29 @@ body::-webkit-scrollbar {
     
 }
 
+.paragraphFalseText {
+    position: fixed;
+    z-index: 3;
+    margin-top: 12%;
+    margin-left: 25%;
+    max-height: 40%;
+    width: 50%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: 'Lora', serif;
+    font-weight:400;
+    background-color: ffffff;
+    color: #ffffff;;
+    font-size: 18px;
+    letter-spacing: .015em;
+    line-height: 25px;
+    
+}
+
 #testControl {
     position: absolute;
 }
@@ -52,6 +83,7 @@ body::-webkit-scrollbar {
     margin-top: 50vh;
     left: 1%;
     z-index: 90;
+    width: 50%;
     opacity: 0;
 }
 
@@ -67,7 +99,7 @@ body::-webkit-scrollbar {
     margin-bottom: 100vh;
     font-size: 3vh;
     color: #cfcfcf;
-    /* background-color: burlywood; */
+    background-color: burlywood;
 }
 
 

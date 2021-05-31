@@ -10,28 +10,42 @@
 <body>
     <!-- bgcolor="#f7f7f7" -->
     <!-- style="overflow: hidden;" -->
+
     <div id="headers">
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
 
-    <div id="paragraphs">
-    </div>
+    <!-- <div id="paragraphs">
+    </div> -->
+
+    <!-- <iframe 
+        width='560' 
+        height='315' 
+        src='https://www.youtube.com/embed/0ZZTP_hoMPw?controls=0' 
+        title='YouTube video player' 
+        frameborder='0' 
+        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' 
+        allowfullscreen>
+    </iframe> -->
 
     <div id="graphic">
 
         <div id="sections">
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
+            <section class="step">1</section>
+            <section class="step">2</section>
+            <section class="step">3</section>
+            <section class="step">4</section>
+            <section class="step">5</section>
+            <section class="step">6</section>
+            <section class="step">7</section>
+            <section class="step">8</section>
+            <section class="step">9</section>
+            <section class="step">10</section>
+            <section class="step">11</section>
         </div>
+
         
+
         <div id="chartArea" >
             <script>
 
@@ -58,11 +72,13 @@
                         sectionPositions = [];
                         let startPos;
                         sections.each(function(d, i) {
-                        let top = this.getBoundingClientRect().top;
-                        if (i === 0 ){
-                            startPos = top;
-                        }
-                        sectionPositions.push(top - startPos)
+                            let top = this.getBoundingClientRect().top;
+
+                            if (i === 0 ){
+                                startPos = top;
+                            }
+
+                            sectionPositions.push(top - startPos);
                         });
                     }
 
@@ -164,37 +180,42 @@
                 ]).then(([data, articleScript]) => {
 
                     let activationFunctions = [
-                        [dropAll, ["pZero", "real"]],
-                        [dropAll, ["pStart", "wurst"]],
-                        [getAction, ["e1", "p1"]],
-                        [getAction, ["e2", "p2"]],
-                        [getAction, ["e5", "p2"]],
-                        [getSize, ["clean", "p2", 0]],
-                        [getSize, ["clean", "p2", 1]],
-                        [getAction, ["e3", "p3"]],
-                        [getAction, ["e4", "p4"]],
-                        [dropAll, ["pEnd", "wurst"]]
-                        
-                        // [getJump, "clean", "pEnd"]
+                        [dropAll, ["p1", "real", "black"]],
+                        [dropAll, ["p2", "real", "colored"]],
+                        [dropAll, ["p3", "wurst", ""]],
+                        [getAction, ["e1", "p4", [], ["m2"]]],
+                        [getAction, ["e2", "p5", ["m2"], []]],
+                        [getAction, ["e5", "p5", [], []]],
+                        [getSize, ["clean", "p6", 0, []]],
+                        [getSize, ["clean", "p6", 1, ["m1"]]],
+                        [getAction, ["e3", "p7", ["m1"], []]],
+                        [getAction, ["e4", "p7", [], []]],
+                        [dropAll, ["pEnd", "wurst", ""]]
                     ];
 
                     // Finish page
 
                     const paragraphs = d3.select("#paragraphs");
-                    const sections = d3.select("#sections");
+                    // const sections = d3.select("#sections");
 
                     Object.keys(articleScript.paragraphs).forEach(
                         function(p) {
                             paragraphs
                                 .append("span")
+                                .attr("id", "f"+p)
+                                .style("opacity", 0)
+                                .attr("class", "paragraphFalseText")
+                                .html(articleScript.paragraphs[p]);
+                            paragraphs
+                                .append("span")
                                 .attr("id", p)
                                 .style("opacity", 0)
                                 .attr("class", "paragraphText")
-                                .html(articleScript.paragraphs[p])
+                                .html(articleScript.paragraphs[p]);
                         }
                     );
 
-                    var curParagraph = "pZero";
+                    var curParagraph = "p1";
                     getText(curParagraph);
 
                     var navigatorX = activationFunctions.map(
@@ -222,7 +243,7 @@
                         }
                     );
 
-                    addCircle("theCircle", navigatorX[0], "#cfcfcf");
+                    addCircle("theCircle", navigatorX[0], "#b0b0b0");
                     const theCircle = circlesContainer.select("#ctheCircle");
 
                     
@@ -239,9 +260,14 @@
 
                     // Transform data
 
+                    var marksData = {};
+
                     data.forEach(d => {
+                        d.dateStr = d.date;
                         d.date = parseTime(d.date);
                         d.episode = "episode ";
+
+                        marksData[d.dateStr] = [d.weeksum, d.date];
 
                         Object.keys(articleScript.episodes).forEach( function(eKey) {
 
@@ -316,7 +342,7 @@
                     dropDomains();
 
                     var bars = focus.append("g");
-                    bandWidth = width/data.length+0.5;
+                    bandWidth = width/data.length+0.4;
 
                     bars.attr("clip-path", "url(#clip)");
                     bars.selectAll("bar")
@@ -324,8 +350,7 @@
                     .enter().append("rect")
                         .attr("class", function(d) { return d.episode; })
                         .attr("fill", "#494a4d")
-                        // .attr("stroke", "#494a4d")
-                        // .attr("stroke-width", 0.5)
+                        .attr("id", function(d) { return "b"+d.dateStr; })
                         // .attr("fill", function(d) {
                         //     if (d.date < cleanDate) {
                         //         return getColorG(d.weeksum);
@@ -335,27 +360,40 @@
                         // .attr("id", function(d) { return d.dateStr; })
                         .attr("x", function(d) { return x(d.date); })
                         .attr("width", bandWidth)
-                        .attr("height", function(d) { return d.weeksum*yScaler; })
-                        .attr("y", function(d) { return height-d.weeksum*yScaler; })
-                        // .attr("y", y(0))
-                        // .attr("height", 0)
-                        .attr("opacity", 1)
-                        .attr("text", function(d) { return colorise(d.date, d.weeksum)
-                            
-                        });
+                        .attr("height", function(d) { return d.weeksum*yScaler})
+                        .attr("y", function(d) { return y(d.weeksum); })
+                        .attr("opacity", 1);
 
                     function colorise(date, value) {
                         if (date < cleanDate) {
-                            console.log(getColorG(value));
                             return getColorG(value);
                         } else {
-                            console.log(getColorG(value));
                             return getColor(value);
                         }
                     };
-                    
-                    // bars.selectAll("rect")
-                    //     .call(pook);
+
+                    const marks = focus.append("g");
+                    marks.attr("clip-path", "url(#clip)");
+
+                    Object.keys(articleScript.marks).forEach(
+                        function(m) {
+                            let mList =  articleScript.marks[m];
+                            mList.forEach(
+                                function(mark) {
+                                    let markWidth = x(marksData[mark[0]][1])+bandWidth/2;
+                                    marks.append("circle")
+                                        .attr("id", "m"+mark[0])
+                                        .attr("class", "mark "+m)
+                                        .attr("r", bandWidth*2)
+                                        .attr("fill", "#00ace5")
+                                        .attr("opacity", 0)
+                                        // .attr("text", markHeight)
+                                        .attr("cx", markWidth)
+                                        .attr("cy", y(marksData[mark[0]][0])-10);
+                                }
+                            )
+                        }
+                    );
 
                     function getFormatedDate(date) {
                         date = parseTime(date);
@@ -370,13 +408,30 @@
                         circlesContainer.select("circle").filter()
                     };
 
+                    function marker(mids, o) {
+                        if (mids) {
+                            mids.forEach(
+                                function(mid) {
+                                    marks.select("."+mid).call(markOpaciter, o);
+                                }
+                            ) 
+                        }
+                    };
+
                     function getAction(args) {
 
                         let eid = args[0],
-                            pid = args[1];
+                            pid = args[1],
+                            mids = args[2],
+                            midsDel = args[3];
+
+                        // let curMarkOpacity = curMark.node().getAttribute("opacity");
+
+                        marker(mids, 1);
+                        marker(midsDel, 0);
 
                         if (eid && eid!="clean") {
-                            getReal(eid)
+                            getReal(eid, "colored")
                         } else if (eid=="clean") {
                             getWurst();
                         };
@@ -387,42 +442,42 @@
                             getBlanc();
                         };
 
-                        // var r = episodeBars.nodes().length - 1;
-                        // var leftDate = episodeBars.nodes()[0];
-                        // var rightDate = episodeBars.nodes()[r];
-
-                        // lDate = leftDate.getAttribute("id")
-                        // rDate = rightDate.getAttribute("id")
-
                     };
 
-                    function getReal(eid) {
+                    function markOpaciter(path, o) {
+                        path
+                            .transition("markOpaciter")
+                            .duration(NFS)
+                            .attr("opacity", o);
+                    }
+
+                    function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
-                            }).call(wurstOpaciter, 0.10).call(pook)
+                            }).call(wurstOpaciter, 0.5).call(pookColor).call(pook)
 
-                            focus.selectAll("."+eid).call(wurstOpaciter, 1).call(pik);
+                            focus.selectAll("."+eid).call(wurstOpaciter, 1).call(pik).call(pikColor, colorMode);
                             focus.select("#Xmonths").attr("opacity", 1);
-
-                            focus.select("#Y").attr("opacity", 1)
-
-                            // if (showY==1) {
-                            //     focus.select("#Y").attr("opacity", 1);
-                            // };
+                            focus.select("#Y").attr("opacity", 1);
                     };
 
                     function getText(pid) {
-                        // d3.selectAll(".paragraphText").filter(function() {
-                        //     return this.id != pid
-                        // }).call(textOpaciter, 0);
-                        // d3.select("#"+pid).call(textOpaciter, 1);
-                        if (curParagraph!=pid) {
-                            d3.select("#"+curParagraph).call(textOpaciter, 0);
-                            d3.select("#"+pid).call(textOpaciter, 1);
-                            curParagraph=pid;
-                        } else {
-                            d3.select("#"+pid).call(textOpaciter, 1);
-                        }
+                        d3.selectAll(".paragraphFalseText").filter(function() {
+                            return this.id != "f"+pid
+                        }).call(textOpaciter, 0);
+                        d3.select("#f"+pid).call(textOpaciter, 0.8);
+
+                        d3.selectAll(".paragraphText").filter(function() {
+                            return this.id != pid
+                        }).call(textOpaciter, 0);
+                        d3.select("#"+pid).call(textOpaciter, 1);
+                        // if (curParagraph!=pid) {
+                        //     d3.select("#"+curParagraph).call(textOpaciter, 0);
+                        //     d3.select("#"+pid).call(textOpaciter, 0.5);
+                        //     curParagraph=pid;
+                        // } else {
+                        //     d3.select("#"+pid).call(textOpaciter, 0.5);
+                        // }
                     };
 
                     function textMover(path) {
@@ -446,7 +501,10 @@
 
                         bars.selectAll("rect")
                             .call(wurstOpaciter, 1)
+                            .call(pookColor)
                             .call(pook)
+
+                        marks.selectAll("circle").call(pookMark);
                     };
 
                     function getBlanc() {
@@ -455,29 +513,16 @@
 
                     function dropAll(args) {
                         let pid = args[0],
-                            barType = args[1];
+                            barType = args[1],
+                            colorMode = args[2];
 
                         if (barType=="wurst") {
                             getWurst();
                         } else if (barType=="real") {
-                            getReal("episode");
+                            getReal("episode", colorMode);
                         };
                         
                         getText(pid);
-                    };
-
-                    function focusMove(_, pid) {
-
-                        getWurst();
-                        getText(pid);
-
-                        if (curFocusPosition==0) {
-                            focus.call(moveChartV, margin.top);
-                            curFocusPosition = 1;
-                        } else {
-                            focus.call(moveChartV, focusCenter);
-                            curFocusPosition = 0;
-                        }
                     };
 
                     function moveChartV(path, v) {
@@ -487,19 +532,14 @@
                                  "translate(" + margin.left + "," + v + ")");
                     };
 
-                    // function getJump(eid, pid) {
-                        
-                    //     focusMove("", pid)
-                    //     getSize(eid, "")
-
-                    // }
-
                     function getSize(args) {
 
                         let eid = args[0],
                             pid = args[1],
-                            sizeCondition = args[2]
+                            sizeCondition = args[2],
+                            midsDel = args[3];
 
+                        marker(midsDel, 0)
 
                         if (eid=="clean") {
                             getWurst()
@@ -507,10 +547,8 @@
 
                         if (sizeCondition==1) {
                             resizer(cleanDate);
-                            // sizeCondition=1;
                         } else {
                             resizer(xMin);
-                            // sizeCondition=0;
                         };
 
                         getText(pid);
@@ -520,17 +558,28 @@
 
                         var s = Array(leftDate, xMax);
 
-                        bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length+0.5;
+                        bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length+0.4;
                         x.domain(s);
 
                         focus.selectAll("rect").call(resizeBars);
                         focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
                         focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
+                        focus.selectAll(".mark").call(resizeMarks);
                         dropDomains();
 
                     };
 
                     // Transitions
+                    
+                    function resizeMarks(path) {
+                        path
+                            .transition("resizeBars")
+                            .duration(NFS)
+                            .attr("cx", 
+                                function() {
+                                    return x(marksData[this.id.replace("m", "")][1])+bandWidth/2
+                                });
+                    }
 
                     function resizeBars(path) {
                         path
@@ -562,23 +611,72 @@
                     }
 
                     function pik(path) {
+                        // let pookThisMarks = []
                         path
                             .transition("pik")
                             .duration(NFS)
-                            .attr("height", function(d) {return d.weeksum*yScaler; })
-                            .attr("y", function(d) { return height-d.weeksum*yScaler; })
-                            .attr("fill", "#494a4d");
+                            .attr("height", function(d) { 
+                                let m = marks.select("#"+this.id.replace("b", "m"));
+                                if (m) {
+                                    m.call(pikMark);
+                                };
+                                return d.weeksum*yScaler;
+                            })
+                            .attr("y", function(d) { return y(d.weeksum); });
+                    };
+
+                    function pikMark(path) {
+                        path
+                            .transition("pikMark")
+                            .duration(NFS)
+                            .attr("cy", 
+                                function() {
+                                    return y(marksData[this.id.replace("m", "")][0])-10
+                                });
+                        };
+
+                    function pikColor(path, colorMode) {
+                        path
+                            .transition("pikColor")
+                            .duration(NFS)
+                            .attr("fill", function(d) {
+
+                                if (colorMode == "black") {
+                                    return "#494a4d"
+                                } else if (colorMode == "colored") {
+                                    return colorise(d.date, d.weeksum)
+                                }
+
+                            });
                     };
 
                     function pook(path) {
                         path
                             .transition("pook")
                             .duration(NFS)
-                            .attr("height", wurstH)
-                            .attr("y", height-wurstH)
-                            // .attr("fill", "#ffed26");
-                            .attr("fill", function(d) { return colorise(d.date, d.weeksum)});
+                            .attr("height", function() { 
+                                let m = marks.select("#"+this.id.replace("b", "m"));
+                                if (m) {
+                                    m.call(pookMark);
+                                };
+                                return wurstH;
+                            })
+                            .attr("y", height-wurstH);
                     };
+
+                    function pookColor(path) {
+                        path
+                            .transition("pookColor")
+                            .duration(NFS)
+                            .attr("fill", function(d) { return colorise(d.date, d.weeksum) });
+                    };
+
+                    function pookMark(path) {
+                        path
+                            .transition("pookColor")
+                            .duration(NFS)
+                            .attr("cy", height-wurstH-10);
+                    }
 
                     function navigate(path, i) {
                         path
@@ -616,6 +714,9 @@
 
             </script>
         </div>
+    </div>
+
+    <div id="paragraphs">
     </div>
     
 </body>
