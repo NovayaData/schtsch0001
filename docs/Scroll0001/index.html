@@ -8,6 +8,8 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
+
+    <!-- <img class="picture" alt="test2" src="https://s0.rbk.ru/v6_top_pics/media/img/1/90/756184010255901.jpg"> -->
     <!-- bgcolor="#f7f7f7" -->
     <!-- style="overflow: hidden;" -->
 
@@ -20,14 +22,21 @@
         <div id="paragraphs">
         </div>
 
+        
+
         <div id="sections">
-            <section class="step">1</section>
+            <section class="step"
+                style="background-image: url('https://news.usni.org/wp-content/uploads/2014/07/12013-2.jpg'); background-size: 100%; background-position:center;">
+                1</section>
             <section class="step">2</section>
             <section class="step">3</section>
             <section class="step">4</section>
             <section class="step">5</section>
             <section class="step">6</section>
-            <section class="step">7</section>
+            <section class="step" 
+                style="background-image: url('https://foreignpolicy.com/wp-content/uploads/2019/12/GettyImages-Russia_ukraine-tanks-464495524.jpg?w=1500'); background-size: 100%; background-position:center;">
+                7
+            </section>
             <section class="step">8</section>
             <section class="step">9</section>
             <section class="step">10</section>
@@ -175,7 +184,7 @@
                         [getAction, ["e2", "p5", ["m2"], []]],
                         [getAction, ["e5", "p5", [], []]],
                         [getSize, ["clean", "p6", 0, []]],
-                        [getSize, ["clean", "p6", 1, ["m1"]]],
+                        [getSize, ["clean", "p7", 1, ["m1"]]],
                         [getAction, ["e3", "p7", ["m1"], []]],
                         [getAction, ["e4", "p7", [], []]],
                         [dropAll, ["pEnd", "wurst", ""]]
@@ -328,7 +337,8 @@
                     .data(data)
                     .enter().append("rect")
                         .attr("class", function(d) { return d.episode; })
-                        .attr("fill", "#494a4d")
+                        // .attr("fill", "#494a4d")
+                        .attr("fill", "#F0F1F2")
                         .attr("id", function(d) { return "b"+d.dateStr; })
                         .attr("x", function(d) { return x(d.date); })
                         .attr("width", bandWidth)
@@ -637,7 +647,8 @@
                             .attr("fill", function(d) {
 
                                 if (colorMode == "black") {
-                                    return "#494a4d"
+                                    // return "#494a4d"
+                                    return "#F0F1F2"
                                 } else if (colorMode == "colored") {
                                     return colorise(d.date, d.weeksum)
                                 }
@@ -684,7 +695,7 @@
 
                     scroll.on('active', function(index){
                         // d3.selectAll('.step')
-                        //     .transition().duration(0)
+                        //     .transition().duration(NFS)
                         //     .style('opacity', function (d, i) {return i === index ? 1 : 0;});
 
                         activeIndex = index
