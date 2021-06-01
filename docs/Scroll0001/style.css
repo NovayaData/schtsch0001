@@ -14,13 +14,6 @@ body::-webkit-scrollbar {
     background: transparent;
 }
 
-.video {
-    position: fixed;
-    height: 25%;
-    width: 25%;
-}
-
-
 #paragraphs {
     position: fixed;
     z-index: 10;
@@ -80,10 +73,11 @@ body::-webkit-scrollbar {
 #sections {
     position: absolute;
     display: inline-block;
+    /* height: 100%; */
+    width: 50%;
     margin-top: 50vh;
     left: 1%;
     z-index: 90;
-    width: 50%;
     opacity: 0;
 }
 
@@ -102,17 +96,19 @@ body::-webkit-scrollbar {
     background-color: burlywood;
 }
 
+.picture {
+    position: fixed;
+    /* height: 100%;
+    width: 100%; */
+}
 
 #chartArea {
-    /* display: inline; */
     position: fixed;
-    /* margin-top: 0; */
     z-index: 1;
     margin-left: 0;
     
     height: 100%;
     width: 100%;
-    /* transform: translate(-50%, 0%); */
 }
 
 .textSmaller {
@@ -137,7 +133,7 @@ body::-webkit-scrollbar {
     user-select: none;
     position: absolute;
     padding-top: 3%;
-    width: 97%;
+    width: 94%;
     left: 6%;
     margin: 0;
 }
@@ -168,8 +164,10 @@ body::-webkit-scrollbar {
     .header1 {
         font-size: 20px
     }
+}
 
 @media (min-width: 700px) {
     .header1 {
         font-size: 36px
     }
+}

@@ -15,20 +15,10 @@
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
 
-    <!-- <div id="paragraphs">
-    </div> -->
-
-    <!-- <iframe 
-        width='560' 
-        height='315' 
-        src='https://www.youtube.com/embed/0ZZTP_hoMPw?controls=0' 
-        title='YouTube video player' 
-        frameborder='0' 
-        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' 
-        allowfullscreen>
-    </iframe> -->
-
     <div id="graphic">
+
+        <div id="paragraphs">
+        </div>
 
         <div id="sections">
             <section class="step">1</section>
@@ -43,8 +33,6 @@
             <section class="step">10</section>
             <section class="step">11</section>
         </div>
-
-        
 
         <div id="chartArea" >
             <script>
@@ -249,15 +237,6 @@
                     
                     d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
 
-                    // activationFunctions.forEach(
-                    //     function() {
-                    //         sections
-                    //             .append("section")
-                    //             .attr("class", "step")
-                    //             .html("_")
-                    //     }
-                    // );
-
                     // Transform data
 
                     var marksData = {};
@@ -351,13 +330,6 @@
                         .attr("class", function(d) { return d.episode; })
                         .attr("fill", "#494a4d")
                         .attr("id", function(d) { return "b"+d.dateStr; })
-                        // .attr("fill", function(d) {
-                        //     if (d.date < cleanDate) {
-                        //         return getColorG(d.weeksum);
-                        //     } else {
-                        //         return getColor(d.weeksum);
-                        //     }})
-                        // .attr("id", function(d) { return d.dateStr; })
                         .attr("x", function(d) { return x(d.date); })
                         .attr("width", bandWidth)
                         .attr("height", function(d) { return d.weeksum*yScaler})
@@ -387,9 +359,10 @@
                                         .attr("r", bandWidth*2)
                                         .attr("fill", "#00ace5")
                                         .attr("opacity", 0)
-                                        // .attr("text", markHeight)
+                                        .attr("text", mark[1])
                                         .attr("cx", markWidth)
-                                        .attr("cy", y(marksData[mark[0]][0])-10);
+                                        .attr("cy", height-wurstH-10);
+                                        // .attr("cy", y(marksData[mark[0]][0])-10);
                                 }
                             )
                         }
@@ -408,15 +381,49 @@
                         circlesContainer.select("circle").filter()
                     };
 
-                    function marker(mids, o) {
+                    function marker(mids, mode) {
                         if (mids) {
                             mids.forEach(
                                 function(mid) {
-                                    marks.select("."+mid).call(markOpaciter, o);
+                                    let curMarks = marks.select("."+mid)
+                                    curMarks.call(markOn, mode);
+                                    // if (mode=="on") {
+                                    //     curMarks.call(wurstOpaciter, 1);;
+                                    // } else if (mode=="off") {
+                                    //     curMarks.call(wurstOpaciter, 0)
+                                    // };
                                 }
                             ) 
                         }
                     };
+
+                    function markOn(path, mode) {
+                        path
+                            .attr("opacity", function(d) {
+                                if (mode=="on") {
+                                    return 1;
+                                } else if (mode=="off") {
+                                    return 0;
+                                } else {
+                                    alert("what??" + " " + curClass + " " + mode)
+                                }
+                            })
+                            .attr("class", function() {
+
+                                let curClass = this.getAttribute("class");
+
+                                if (!curClass.includes("on") && mode=="on") {
+                                    return curClass.replace("mark", "mark on");
+                                } else if (curClass.includes("on") && mode=="on") {
+                                    return curClass;
+                                } else if (mode=="off") {
+                                    return curClass.replace("mark on", "mark");
+                                } else {
+                                    alert("what?" + " " + curClass + " " + mode)
+                                }
+                            });
+                            
+                    }
 
                     function getAction(args) {
 
@@ -425,10 +432,8 @@
                             mids = args[2],
                             midsDel = args[3];
 
-                        // let curMarkOpacity = curMark.node().getAttribute("opacity");
-
-                        marker(mids, 1);
-                        marker(midsDel, 0);
+                        marker(mids, "on");
+                        marker(midsDel, "off");
 
                         if (eid && eid!="clean") {
                             getReal(eid, "colored")
@@ -444,19 +449,25 @@
 
                     };
 
-                    function markOpaciter(path, o) {
-                        path
-                            .transition("markOpaciter")
-                            .duration(NFS)
-                            .attr("opacity", o);
-                    }
-
                     function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
                             }).call(wurstOpaciter, 0.5).call(pookColor).call(pook)
 
-                            focus.selectAll("."+eid).call(wurstOpaciter, 1).call(pik).call(pikColor, colorMode);
+                            let curReal = focus.selectAll("."+eid)
+
+                            curReal.call(wurstOpaciter, 1).call(pik).call(pikColor, colorMode);
+
+                            let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
+                            if (curMarksIds) {
+                                marks.selectAll(".on").filter( function() { return curMarksIds.includes(this.id) } )
+                                    .call(pikMark);
+                                marks.selectAll(".on").filter( function() { return !curMarksIds.includes(this.id) } )
+                                    .call(pookMark, 0.5);
+                                marks.selectAll("circle:not(.on)").filter( function() { return !curMarksIds.includes(this.id) } )
+                                    .call(pookMark, 0);
+                            };
+
                             focus.select("#Xmonths").attr("opacity", 1);
                             focus.select("#Y").attr("opacity", 1);
                     };
@@ -471,13 +482,6 @@
                             return this.id != pid
                         }).call(textOpaciter, 0);
                         d3.select("#"+pid).call(textOpaciter, 1);
-                        // if (curParagraph!=pid) {
-                        //     d3.select("#"+curParagraph).call(textOpaciter, 0);
-                        //     d3.select("#"+pid).call(textOpaciter, 0.5);
-                        //     curParagraph=pid;
-                        // } else {
-                        //     d3.select("#"+pid).call(textOpaciter, 0.5);
-                        // }
                     };
 
                     function textMover(path) {
@@ -504,7 +508,7 @@
                             .call(pookColor)
                             .call(pook)
 
-                        marks.selectAll("circle").call(pookMark);
+                        marks.selectAll(".on").call(pookMark, 1);
                     };
 
                     function getBlanc() {
@@ -525,13 +529,6 @@
                         getText(pid);
                     };
 
-                    function moveChartV(path, v) {
-                        path.transition("moveChartV")
-                            .duration(NFS)
-                            .attr("transform", 
-                                 "translate(" + margin.left + "," + v + ")");
-                    };
-
                     function getSize(args) {
 
                         let eid = args[0],
@@ -539,7 +536,7 @@
                             sizeCondition = args[2],
                             midsDel = args[3];
 
-                        marker(midsDel, 0)
+                        marker(midsDel, "off");
 
                         if (eid=="clean") {
                             getWurst()
@@ -608,31 +605,29 @@
                             .transition("wurstOpaciter")
                             .duration(NFS)
                             .attr("opacity", v);
-                    }
+                    };
 
                     function pik(path) {
-                        // let pookThisMarks = []
                         path
                             .transition("pik")
                             .duration(NFS)
                             .attr("height", function(d) { 
-                                let m = marks.select("#"+this.id.replace("b", "m"));
-                                if (m) {
-                                    m.call(pikMark);
-                                };
                                 return d.weeksum*yScaler;
                             })
                             .attr("y", function(d) { return y(d.weeksum); });
                     };
 
                     function pikMark(path) {
+                        
                         path
                             .transition("pikMark")
                             .duration(NFS)
                             .attr("cy", 
                                 function() {
                                     return y(marksData[this.id.replace("m", "")][0])-10
-                                });
+                                }
+                            )
+                            .attr("opacity", 1);
                         };
 
                     function pikColor(path, colorMode) {
@@ -654,13 +649,7 @@
                         path
                             .transition("pook")
                             .duration(NFS)
-                            .attr("height", function() { 
-                                let m = marks.select("#"+this.id.replace("b", "m"));
-                                if (m) {
-                                    m.call(pookMark);
-                                };
-                                return wurstH;
-                            })
+                            .attr("height", wurstH)
                             .attr("y", height-wurstH);
                     };
 
@@ -671,11 +660,12 @@
                             .attr("fill", function(d) { return colorise(d.date, d.weeksum) });
                     };
 
-                    function pookMark(path) {
+                    function pookMark(path, o) {
                         path
                             .transition("pookColor")
                             .duration(NFS)
-                            .attr("cy", height-wurstH-10);
+                            .attr("cy", height-wurstH-10)
+                            .attr("opacity", o);
                     }
 
                     function navigate(path, i) {
@@ -715,8 +705,4 @@
             </script>
         </div>
     </div>
-
-    <div id="paragraphs">
-    </div>
-    
 </body>
