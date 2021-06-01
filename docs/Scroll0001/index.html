@@ -464,12 +464,34 @@
                                     .call(pikMark);
                                 marks.selectAll(".on").filter( function() { return !curMarksIds.includes(this.id) } )
                                     .call(pookMark, 0.5);
-                                marks.selectAll("circle:not(.on)").filter( function() { return !curMarksIds.includes(this.id) } )
-                                    .call(pookMark, 0);
                             };
+
+                            marks.selectAll("circle:not(.on)").call(pookMark, 0);
 
                             focus.select("#Xmonths").attr("opacity", 1);
                             focus.select("#Y").attr("opacity", 1);
+                    };
+
+                    function getSize(args) {
+                        let eid = args[0],
+                            pid = args[1],
+                            sizeCondition = args[2],
+                            midsDel = args[3];
+
+                        marker(midsDel, "off");
+                        marks.selectAll("circle:not(.on)").call(pookMark, 0);
+
+                        if (eid=="clean") {
+                            getWurst()
+                        };
+
+                        if (sizeCondition==1) {
+                            resizer(cleanDate);
+                        } else {
+                            resizer(xMin);
+                        };
+
+                        getText(pid);
                     };
 
                     function getText(pid) {
@@ -526,28 +548,6 @@
                             getReal("episode", colorMode);
                         };
                         
-                        getText(pid);
-                    };
-
-                    function getSize(args) {
-
-                        let eid = args[0],
-                            pid = args[1],
-                            sizeCondition = args[2],
-                            midsDel = args[3];
-
-                        marker(midsDel, "off");
-
-                        if (eid=="clean") {
-                            getWurst()
-                        };
-
-                        if (sizeCondition==1) {
-                            resizer(cleanDate);
-                        } else {
-                            resizer(xMin);
-                        };
-
                         getText(pid);
                     };
 
