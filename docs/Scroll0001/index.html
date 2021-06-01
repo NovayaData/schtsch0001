@@ -8,41 +8,42 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
+
+    <!-- <img class="picture" alt="test2" src="https://s0.rbk.ru/v6_top_pics/media/img/1/90/756184010255901.jpg"> -->
     <!-- bgcolor="#f7f7f7" -->
     <!-- style="overflow: hidden;" -->
+
     <div id="headers">
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
 
-    <div id="paragraphs">
-    </div>
-
     <div id="graphic">
 
-        <!-- <div id="sections">
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">↑</section>
-            <section class="step">●</section>
-        </div> -->
+        <div id="paragraphs">
+        </div>
+
+        
 
         <div id="sections">
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
-            <section class="step">●</section>
+            <!-- <section class="step"
+                style="background-image: url('https://news.usni.org/wp-content/uploads/2014/07/12013-2.jpg'); background-size: 100%; background-position:center;">
+                1</section> -->
+            <section class="step">1</section>
+            <section class="step">2</section>
+            <section class="step">3</section>
+            <section class="step">4</section>
+            <section class="step">5</section>
+            <section class="step">6</section>
+            <section class="step" 
+                style="background-image: url('https://foreignpolicy.com/wp-content/uploads/2019/12/GettyImages-Russia_ukraine-tanks-464495524.jpg?w=1500'); background-size: 100%; background-position:center;">
+                7
+            </section>
+            <section class="step">8</section>
+            <section class="step">9</section>
+            <section class="step">10</section>
+            <section class="step">11</section>
         </div>
-        
+
         <div id="chartArea" >
             <script>
 
@@ -69,11 +70,13 @@
                         sectionPositions = [];
                         let startPos;
                         sections.each(function(d, i) {
-                        let top = this.getBoundingClientRect().top;
-                        if (i === 0 ){
-                            startPos = top;
-                        }
-                        sectionPositions.push(top - startPos)
+                            let top = this.getBoundingClientRect().top;
+
+                            if (i === 0 ){
+                                startPos = top;
+                            }
+
+                            sectionPositions.push(top - startPos);
                         });
                     }
 
@@ -171,72 +174,90 @@
 
                 Promise.all([
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
-                    d3.json('../data/Scroll0001/article_script.json')
-                ]).then(([data, articleScript]) => {
+                    d3.json('../data/Scroll0001/article_script.json'),
+                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv")
+                ]).then(([data, articleScript, googleData]) => {
 
                     let activationFunctions = [
-                        [dropAll, ["pStart", "↑"]],
-                        // [focusMove, "", "pStart"],
-                        [getAction, ["e1", "p1"]],
-                        [getAction, ["e2", "p2"]],
-                        [getAction, ["e5", "p2"]],
-                        [getSize, ["clean", "p2", 0]],
-                        [getSize, ["clean", "p2", 1]],
-                        [getAction, ["e3", "p3"]],
-                        [getAction, ["e4", "p4"]],
-                        [dropAll, ["pEnd", "↓"]]
-                        
-                        // [getJump, "clean", "pEnd"]
+                        [dropAll, ["p1", "real", "black"]],
+                        [dropAll, ["p2", "real", "colored"]],
+                        [dropAll, ["p3", "wurst", ""]],
+                        [getAction, ["e1", "p4", [], ["m2"]]],
+                        [getAction, ["e2", "p5", ["m2"], []]],
+                        [getAction, ["e5", "p5", [], []]],
+                        [getSize, ["clean", "p6", 0, []]],
+                        [getSize, ["clean", "p7", 1, ["m1"]]],
+                        [getAction, ["e3", "p7", ["m1"], []]],
+                        [getAction, ["e4", "p7", [], []]],
+                        [dropAll, ["pEnd", "wurst", ""]]
                     ];
 
                     // Finish page
 
                     const paragraphs = d3.select("#paragraphs");
-                    const sections = d3.select("#sections");
+                    // const sections = d3.select("#sections");
 
                     Object.keys(articleScript.paragraphs).forEach(
                         function(p) {
                             paragraphs
                                 .append("span")
+                                .attr("id", "f"+p)
+                                .style("opacity", 0)
+                                .attr("class", "paragraphFalseText")
+                                .html(articleScript.paragraphs[p]);
+                            paragraphs
+                                .append("span")
                                 .attr("id", p)
                                 .style("opacity", 0)
                                 .attr("class", "paragraphText")
-                                .html(articleScript.paragraphs[p])
+                                .html(articleScript.paragraphs[p]);
                         }
                     );
 
-                    var curParagraph = "pStart";
-                    getText("pStart");
+                    var curParagraph = "p1";
+                    getText(curParagraph);
 
                     var navigatorX = activationFunctions.map(
                         d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
                     );
 
-                    var circle = svg.append("g")
-                        .append("circle")
-                        .attr("r", "6px")
-                        .attr("fill", "#ececec")
-                        .attr("transform", 
-                            "translate(" + margin.left/3 + "," + navigatorX[0] + ")");
+                    var circlesContainer = svg.append("g");
+                    var hTr = W-margin.right/2;
 
-                    // var steps = d3.selectAll(".step").nodes();
+                    function addCircle(i, hPos, color) {
+                        
+
+                        circlesContainer
+                            .append("circle")
+                            .attr("id", "c"+i)
+                            .attr("r", "4px")
+                            .attr("fill", color)
+                            .attr("transform", 
+                                "translate(" + hTr + "," + hPos + ")");
+                    };
+
+                    navigatorX.forEach(
+                        function(d, i) {
+                            addCircle(i, d, "#ececec")
+                        }
+                    );
+
+                    addCircle("theCircle", navigatorX[0], "#b0b0b0");
+                    const theCircle = circlesContainer.select("#ctheCircle");
+
                     
                     d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
 
-                    // activationFunctions.forEach(
-                    //     function() {
-                    //         sections
-                    //             .append("section")
-                    //             .attr("class", "step")
-                    //             .html("_")
-                    //     }
-                    // );
-
                     // Transform data
 
+                    var marksData = {};
+
                     data.forEach(d => {
+                        d.dateStr = d.date;
                         d.date = parseTime(d.date);
-                        d.episode = "";
+                        d.episode = "episode ";
+
+                        marksData[d.dateStr] = [d.weeksum, d.date];
 
                         Object.keys(articleScript.episodes).forEach( function(eKey) {
 
@@ -254,13 +275,18 @@
 
                     });
 
+                    googleData.forEach(d => {
+                        d.date = parseTime(d.date),
+                        d.search_index = parseFloat(d.search_index)
+                    });
+
                     // Draw
 
                     var xMin = d3.min(data, function(d) { return d.date; });
                     var xMax = d3.max(data, function(d) { return d.date; });
 
                     weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
-                    yScaler = (H*0.65)/weeksumMax;
+                    yScaler = (H*0.7)/weeksumMax;
 
                     Math.round(weeksumMax/10000)*10000
 
@@ -295,7 +321,7 @@
                     y.domain([0, 40000]);
                     focus.append("g")
                         .attr("id", "Y")
-                        .attr("opacity", 0)
+                        .attr("opacity", 1)
                         .call(d3.axisLeft(y)
                             .tickSize(0)
                             .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ))
@@ -311,28 +337,91 @@
                     dropDomains();
 
                     var bars = focus.append("g");
-                    bandWidth = width/data.length;
+                    bandWidth = width/data.length+0.4;
 
                     bars.attr("clip-path", "url(#clip)");
                     bars.selectAll("bar")
                     .data(data)
                     .enter().append("rect")
                         .attr("class", function(d) { return d.episode; })
-                        .attr("fill", function(d) {
-                            if (d.date < cleanDate) {
-                                return getColorG(d.weeksum);
-                            } else {
-                                return getColor(d.weeksum);
-                            }})
-                        // .attr("id", function(d) { return d.dateStr; })
+                        .attr("fill", "#494a4d")
+                        // .attr("fill", "#F0F1F2")
+                        .attr("id", function(d) { return "b"+d.dateStr; })
                         .attr("x", function(d) { return x(d.date); })
                         .attr("width", bandWidth)
-                        .attr("y", y(0))
-                        .attr("height", 0)
+                        .attr("height", function(d) { return d.weeksum*yScaler})
+                        .attr("y", function(d) { return y(d.weeksum); })
                         .attr("opacity", 1);
-                    
-                    bars.selectAll("rect")
-                        .call(pook);
+
+                    function colorise(date, value) {
+                        if (date < cleanDate) {
+                            return getColorG(value);
+                        } else {
+                            return getColor(value);
+                        }
+                    };
+
+                    focus.append("g").attr("clip-path", "url(#clip)")
+                        .append("path")
+                        .datum(googleData)
+                        // .attr("id", "googleData")
+                        .attr("fill", "none")
+                        .attr("opacity", 1)
+                        .attr("stroke-width", 8)
+                        .attr("stroke", "#ffffff")
+                        .attr("stroke-linejoin", "round")
+                        .attr("stroke-linecap", "round")
+                        .attr(
+                            "d", 
+                            d3.line()
+                            // .curve(d3.curveCatmullRom)
+                            .curve(d3.curveCatmullRom)
+                            .x(d => x(d.date))
+                            .y(d => y(d.search_index*40000))
+                        );
+
+                    focus.append("g").attr("clip-path", "url(#clip)")
+                        .append("path")
+                        .datum(googleData)
+                        // .attr("id", "googleData")
+                        .attr("fill", "none")
+                        .attr("opacity", 1)
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "#00abe5")
+                        .attr("stroke-linejoin", "round")
+                        .attr("stroke-linecap", "round")
+                        .attr(
+                            "d", 
+                            d3.line()
+                            // .curve(d3.curveCatmullRom)
+                            .curve(d3.curveCatmullRom)
+                            .x(d => x(d.date))
+                            .y(d => y(d.search_index*40000))
+                        );
+
+                    const marks = focus.append("g");
+                    marks.attr("clip-path", "url(#clip)");
+
+                    Object.keys(articleScript.marks).forEach(
+                        function(m) {
+                            let mList =  articleScript.marks[m];
+                            mList.forEach(
+                                function(mark) {
+                                    let markWidth = x(marksData[mark[0]][1])+bandWidth/2;
+                                    marks.append("circle")
+                                        .attr("id", "m"+mark[0])
+                                        .attr("class", "mark "+m)
+                                        .attr("r", bandWidth*2)
+                                        .attr("fill", "#00ace5")
+                                        .attr("opacity", 0)
+                                        .attr("text", mark[1])
+                                        .attr("cx", markWidth)
+                                        .attr("cy", height-wurstH-10);
+                                        // .attr("cy", y(marksData[mark[0]][0])-10);
+                                }
+                            )
+                        }
+                    );
 
                     function getFormatedDate(date) {
                         date = parseTime(date);
@@ -343,13 +432,66 @@
 
                     // Actions
 
+                    function paintCircle(i) {
+                        circlesContainer.select("circle").filter()
+                    };
+
+                    function marker(mids, mode) {
+                        if (mids) {
+                            mids.forEach(
+                                function(mid) {
+                                    let curMarks = marks.select("."+mid)
+                                    curMarks.call(markOn, mode);
+                                    // if (mode=="on") {
+                                    //     curMarks.call(wurstOpaciter, 1);;
+                                    // } else if (mode=="off") {
+                                    //     curMarks.call(wurstOpaciter, 0)
+                                    // };
+                                }
+                            ) 
+                        }
+                    };
+
+                    function markOn(path, mode) {
+                        path
+                            .attr("opacity", function(d) {
+                                if (mode=="on") {
+                                    return 1;
+                                } else if (mode=="off") {
+                                    return 0;
+                                } else {
+                                    alert("what??" + " " + curClass + " " + mode)
+                                }
+                            })
+                            .attr("class", function() {
+
+                                let curClass = this.getAttribute("class");
+
+                                if (!curClass.includes("on") && mode=="on") {
+                                    return curClass.replace("mark", "mark on");
+                                } else if (curClass.includes("on") && mode=="on") {
+                                    return curClass;
+                                } else if (mode=="off") {
+                                    return curClass.replace("mark on", "mark");
+                                } else {
+                                    alert("what?" + " " + curClass + " " + mode)
+                                }
+                            });
+                            
+                    }
+
                     function getAction(args) {
 
                         let eid = args[0],
-                            pid = args[1];
+                            pid = args[1],
+                            mids = args[2],
+                            midsDel = args[3];
+
+                        marker(mids, "on");
+                        marker(midsDel, "off");
 
                         if (eid && eid!="clean") {
-                            getReal(eid)
+                            getReal(eid, "colored")
                         } else if (eid=="clean") {
                             getWurst();
                         };
@@ -360,42 +502,63 @@
                             getBlanc();
                         };
 
-                        // var r = episodeBars.nodes().length - 1;
-                        // var leftDate = episodeBars.nodes()[0];
-                        // var rightDate = episodeBars.nodes()[r];
-
-                        // lDate = leftDate.getAttribute("id")
-                        // rDate = rightDate.getAttribute("id")
-
                     };
 
-                    function getReal(eid) {
+                    function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
-                            }).call(wurstOpaciter, 0.25).call(pook)
+                            }).call(wurstOpaciter, 0.5).call(pookColor).call(pook)
 
-                            focus.selectAll("."+eid).call(wurstOpaciter, 1).call(pik);
+                            let curReal = focus.selectAll("."+eid)
+
+                            curReal.call(wurstOpaciter, 1).call(pik).call(pikColor, colorMode);
+
+                            let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
+                            if (curMarksIds) {
+                                marks.selectAll(".on").filter( function() { return curMarksIds.includes(this.id) } )
+                                    .call(pikMark);
+                                marks.selectAll(".on").filter( function() { return !curMarksIds.includes(this.id) } )
+                                    .call(pookMark, 0.5);
+                            };
+
+                            marks.selectAll("circle:not(.on)").call(pookMark, 0);
+
                             focus.select("#Xmonths").attr("opacity", 1);
-
                             focus.select("#Y").attr("opacity", 1);
+                    };
 
-                            // if (showY==1) {
-                            //     focus.select("#Y").attr("opacity", 1);
-                            // };
+                    function getSize(args) {
+                        let eid = args[0],
+                            pid = args[1],
+                            sizeCondition = args[2],
+                            midsDel = args[3];
+
+                        marker(midsDel, "off");
+                        marks.selectAll("circle:not(.on)").call(pookMark, 0);
+
+                        if (eid=="clean") {
+                            getWurst()
+                        };
+
+                        if (sizeCondition==1) {
+                            resizer(cleanDate);
+                        } else {
+                            resizer(xMin);
+                        };
+
+                        getText(pid);
                     };
 
                     function getText(pid) {
-                        // d3.selectAll(".paragraphText").filter(function() {
-                        //     return this.id != pid
-                        // }).call(textOpaciter, 0);
-                        // d3.select("#"+pid).call(textOpaciter, 1);
-                        if (curParagraph!=pid) {
-                            d3.select("#"+curParagraph).call(textOpaciter, 0);
-                            d3.select("#"+pid).call(textOpaciter, 1);
-                            curParagraph=pid;
-                        } else {
-                            d3.select("#"+pid).call(textOpaciter, 1);
-                        }
+                        d3.selectAll(".paragraphFalseText").filter(function() {
+                            return this.id != "f"+pid
+                        }).call(textOpaciter, 0);
+                        d3.select("#f"+pid).call(textOpaciter, 0.8);
+
+                        d3.selectAll(".paragraphText").filter(function() {
+                            return this.id != pid
+                        }).call(textOpaciter, 0);
+                        d3.select("#"+pid).call(textOpaciter, 1);
                     };
 
                     function textMover(path) {
@@ -419,7 +582,10 @@
 
                         bars.selectAll("rect")
                             .call(wurstOpaciter, 1)
+                            .call(pookColor)
                             .call(pook)
+
+                        marks.selectAll(".on").call(pookMark, 1);
                     };
 
                     function getBlanc() {
@@ -428,61 +594,15 @@
 
                     function dropAll(args) {
                         let pid = args[0],
-                            direction = args[1];
+                            barType = args[1],
+                            colorMode = args[2];
 
-                        // d3.selectAll(".step").html(direction);
-
-                        getWurst();
-                        getText(pid);
-                    };
-
-                    function focusMove(_, pid) {
-
-                        getWurst();
-                        getText(pid);
-
-                        if (curFocusPosition==0) {
-                            focus.call(moveChartV, margin.top);
-                            curFocusPosition = 1;
-                        } else {
-                            focus.call(moveChartV, focusCenter);
-                            curFocusPosition = 0;
-                        }
-                    };
-
-                    function moveChartV(path, v) {
-                        path.transition("moveChartV")
-                            .duration(NFS)
-                            .attr("transform", 
-                                 "translate(" + margin.left + "," + v + ")");
-                    };
-
-                    // function getJump(eid, pid) {
+                        if (barType=="wurst") {
+                            getWurst();
+                        } else if (barType=="real") {
+                            getReal("episode", colorMode);
+                        };
                         
-                    //     focusMove("", pid)
-                    //     getSize(eid, "")
-
-                    // }
-
-                    function getSize(args) {
-
-                        let eid = args[0],
-                            pid = args[1],
-                            sizeCondition = args[2]
-
-
-                        if (eid=="clean") {
-                            getWurst()
-                        };
-
-                        if (sizeCondition==1) {
-                            resizer(cleanDate);
-                            // sizeCondition=1;
-                        } else {
-                            resizer(xMin);
-                            // sizeCondition=0;
-                        };
-
                         getText(pid);
                     };
 
@@ -490,17 +610,28 @@
 
                         var s = Array(leftDate, xMax);
 
-                        bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length;
+                        bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length+0.4;
                         x.domain(s);
 
                         focus.selectAll("rect").call(resizeBars);
                         focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
                         focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
+                        focus.selectAll(".mark").call(resizeMarks);
                         dropDomains();
 
                     };
 
                     // Transitions
+                    
+                    function resizeMarks(path) {
+                        path
+                            .transition("resizeBars")
+                            .duration(NFS)
+                            .attr("cx", 
+                                function() {
+                                    return x(marksData[this.id.replace("m", "")][1])+bandWidth/2
+                                });
+                    }
 
                     function resizeBars(path) {
                         path
@@ -529,14 +660,45 @@
                             .transition("wurstOpaciter")
                             .duration(NFS)
                             .attr("opacity", v);
-                    }
+                    };
 
                     function pik(path) {
                         path
                             .transition("pik")
                             .duration(NFS)
-                            .attr("height", function(d) { return d.weeksum*yScaler; })
-                            .attr("y", function(d) { return height-d.weeksum*yScaler; });
+                            .attr("height", function(d) { 
+                                return d.weeksum*yScaler;
+                            })
+                            .attr("y", function(d) { return y(d.weeksum); });
+                    };
+
+                    function pikMark(path) {
+                        
+                        path
+                            .transition("pikMark")
+                            .duration(NFS)
+                            .attr("cy", 
+                                function() {
+                                    return y(marksData[this.id.replace("m", "")][0])-10
+                                }
+                            )
+                            .attr("opacity", 1);
+                        };
+
+                    function pikColor(path, colorMode) {
+                        path
+                            .transition("pikColor")
+                            .duration(NFS)
+                            .attr("fill", function(d) {
+
+                                if (colorMode == "black") {
+                                    return "#494a4d"
+                                    // return "#F0F1F2"
+                                } else if (colorMode == "colored") {
+                                    return colorise(d.date, d.weeksum)
+                                }
+
+                            });
                     };
 
                     function pook(path) {
@@ -547,12 +709,27 @@
                             .attr("y", height-wurstH);
                     };
 
+                    function pookColor(path) {
+                        path
+                            .transition("pookColor")
+                            .duration(NFS)
+                            .attr("fill", function(d) { return colorise(d.date, d.weeksum) });
+                    };
+
+                    function pookMark(path, o) {
+                        path
+                            .transition("pookColor")
+                            .duration(NFS)
+                            .attr("cy", height-wurstH-10)
+                            .attr("opacity", o);
+                    }
+
                     function navigate(path, i) {
                         path
                             .transition("navigate")
                             .duration(NFS)
                             .attr("transform", 
-                                "translate(" + margin.left/3 + "," + navigatorX[i] + ")")
+                                "translate(" + hTr + "," + navigatorX[i] + ")")
                     };
 
                     // Scroll
@@ -563,7 +740,7 @@
 
                     scroll.on('active', function(index){
                         // d3.selectAll('.step')
-                        //     .transition().duration(0)
+                        //     .transition().duration(NFS*2)
                         //     .style('opacity', function (d, i) {return i === index ? 1 : 0;});
 
                         activeIndex = index
@@ -575,7 +752,7 @@
                                 activationFunctions[i][1]
                                 // activationFunctions[i][2]
                             );
-                            circle.call(navigate, i);
+                            theCircle.call(navigate, i);
                         })
                         lastIndex = activeIndex;
                     });
@@ -584,5 +761,4 @@
             </script>
         </div>
     </div>
-    
 </body>
