@@ -25,9 +25,10 @@
         
 
         <div id="sections">
-            <section class="step"
+            <!-- <section class="step"
                 style="background-image: url('https://news.usni.org/wp-content/uploads/2014/07/12013-2.jpg'); background-size: 100%; background-position:center;">
-                1</section>
+                1</section> -->
+            <section class="step">1</section>
             <section class="step">2</section>
             <section class="step">3</section>
             <section class="step">4</section>
@@ -173,8 +174,9 @@
 
                 Promise.all([
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
-                    d3.json('../data/Scroll0001/article_script.json')
-                ]).then(([data, articleScript]) => {
+                    d3.json('../data/Scroll0001/article_script.json'),
+                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv")
+                ]).then(([data, articleScript, googleData]) => {
 
                     let activationFunctions = [
                         [dropAll, ["p1", "real", "black"]],
@@ -273,6 +275,11 @@
 
                     });
 
+                    googleData.forEach(d => {
+                        d.date = parseTime(d.date),
+                        d.search_index = parseFloat(d.search_index)
+                    });
+
                     // Draw
 
                     var xMin = d3.min(data, function(d) { return d.date; });
@@ -337,8 +344,8 @@
                     .data(data)
                     .enter().append("rect")
                         .attr("class", function(d) { return d.episode; })
-                        // .attr("fill", "#494a4d")
-                        .attr("fill", "#F0F1F2")
+                        .attr("fill", "#494a4d")
+                        // .attr("fill", "#F0F1F2")
                         .attr("id", function(d) { return "b"+d.dateStr; })
                         .attr("x", function(d) { return x(d.date); })
                         .attr("width", bandWidth)
@@ -353,6 +360,44 @@
                             return getColor(value);
                         }
                     };
+
+                    focus.append("g").attr("clip-path", "url(#clip)")
+                        .append("path")
+                        .datum(googleData)
+                        // .attr("id", "googleData")
+                        .attr("fill", "none")
+                        .attr("opacity", 1)
+                        .attr("stroke-width", 8)
+                        .attr("stroke", "#ffffff")
+                        .attr("stroke-linejoin", "round")
+                        .attr("stroke-linecap", "round")
+                        .attr(
+                            "d", 
+                            d3.line()
+                            // .curve(d3.curveCatmullRom)
+                            .curve(d3.curveCatmullRom)
+                            .x(d => x(d.date))
+                            .y(d => y(d.search_index*40000))
+                        );
+
+                    focus.append("g").attr("clip-path", "url(#clip)")
+                        .append("path")
+                        .datum(googleData)
+                        // .attr("id", "googleData")
+                        .attr("fill", "none")
+                        .attr("opacity", 1)
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "#00abe5")
+                        .attr("stroke-linejoin", "round")
+                        .attr("stroke-linecap", "round")
+                        .attr(
+                            "d", 
+                            d3.line()
+                            // .curve(d3.curveCatmullRom)
+                            .curve(d3.curveCatmullRom)
+                            .x(d => x(d.date))
+                            .y(d => y(d.search_index*40000))
+                        );
 
                     const marks = focus.append("g");
                     marks.attr("clip-path", "url(#clip)");
@@ -647,8 +692,8 @@
                             .attr("fill", function(d) {
 
                                 if (colorMode == "black") {
-                                    // return "#494a4d"
-                                    return "#F0F1F2"
+                                    return "#494a4d"
+                                    // return "#F0F1F2"
                                 } else if (colorMode == "colored") {
                                     return colorise(d.date, d.weeksum)
                                 }
@@ -695,7 +740,7 @@
 
                     scroll.on('active', function(index){
                         // d3.selectAll('.step')
-                        //     .transition().duration(NFS)
+                        //     .transition().duration(NFS*2)
                         //     .style('opacity', function (d, i) {return i === index ? 1 : 0;});
 
                         activeIndex = index
