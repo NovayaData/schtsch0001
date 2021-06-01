@@ -246,7 +246,7 @@
                     const theCircle = circlesContainer.select("#ctheCircle");
 
                     
-                    d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
+                    // d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
 
                     // Transform data
 
@@ -285,8 +285,10 @@
                     var xMin = d3.min(data, function(d) { return d.date; });
                     var xMax = d3.max(data, function(d) { return d.date; });
 
-                    weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
-                    yScaler = (H*0.7)/weeksumMax;
+                    var weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
+                    var yScaler = (H*0.7)/weeksumMax;
+
+                    var bandWidth = width/data.length+0.4;
 
                     Math.round(weeksumMax/10000)*10000
 
@@ -294,6 +296,9 @@
                         .range([0, width]);
 
                     var y = d3.scaleLinear()
+                        .range([height, height-Math.round(weeksumMax/10000)*10000*yScaler]);
+
+                    var y2 = d3.scaleLinear()
                         .range([height, height-Math.round(weeksumMax/10000)*10000*yScaler]);
 
                     x.domain([xMin, xMax]);
@@ -329,6 +334,20 @@
                             .attr('text-anchor', 'end')
                             .attr("class", "textSmaller");
 
+                    var y2x = bandWidth*1.5+width;
+
+                    y2.domain([0, 100]);
+                        focus.append("g")
+                            .attr("id", "Y2")
+                            .attr("opacity", 1)
+                            .attr("transform", "translate("+y2x+",0)")
+                            .call(d3.axisLeft(y2)
+                                .tickSize(0)
+                                .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ))
+                            .selectAll("text")
+                                .attr('text-anchor', 'start')
+                                .attr("class", "textSmaller2");
+
                     function dropDomains() {
                         focus.selectAll(".domain")
                             .remove()
@@ -337,7 +356,6 @@
                     dropDomains();
 
                     var bars = focus.append("g");
-                    bandWidth = width/data.length+0.4;
 
                     bars.attr("clip-path", "url(#clip)");
                     bars.selectAll("bar")

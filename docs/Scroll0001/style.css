@@ -125,6 +125,19 @@ body::-webkit-scrollbar {
     color: #212226;
 }
 
+.textSmaller2 {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+    color: #00abe5;
+}
+
 #headers {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
