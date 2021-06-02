@@ -34,16 +34,35 @@
             <section class="step">4</section>
             <section class="step">5</section>
             <section class="step">6</section>
-            <!-- <section class="step" 
-                style="background-image: url('https://foreignpolicy.com/wp-content/uploads/2019/12/GettyImages-Russia_ukraine-tanks-464495524.jpg?w=1500'); background-size: 100%; background-position:center;">
-                7
-            </section> -->
             <section class="step">7</section>
             <section class="step">8</section>
             <section class="step">9</section>
             <section class="step">10</section>
             <section class="step">11</section>
             <section class="step">12</section>
+            <section class="step">13</section>
+            <section class="step">14</section>
+            <section class="step">15</section>
+            <section class="step">16</section>
+            <section class="step">17</section>
+            <section class="step">18</section>
+            <section class="step">19</section>
+            <section class="step">20</section>
+            <section class="step">21</section>
+            <section class="step">22</section>
+            <section class="step">23</section>
+            <section class="step">24</section>
+            <section class="step">25</section>
+            <section class="step">26</section>
+            <section class="step">27</section>
+            <section class="step">28</section>
+            <section class="step">29</section>
+            <section class="step">30</section>
+            <section class="step">31</section>
+            <section class="step">32</section>
+            <section class="step">33</section>
+            <section class="step">34</section>
+            <section class="step">35</section>
         </div>
 
         <div id="chartArea" >
@@ -180,19 +199,42 @@
                     d3.csv("../data/Scroll0001/google_search_index_Donbas.csv")
                 ]).then(([data, articleScript, googleData]) => {
 
-                    let activationFunctions = [
-                        [dropAll, ["p0", "zero", "black"]],
-                        [dropAll, ["p1", "real", "black"]],
-                        [dropAll, ["p2", "real", "colored"]],
-                        [dropAll, ["p3", "wurst", ""]],
-                        [getAction, ["e1", "p4", [], ["m2"]]],
-                        [getAction, ["e2", "p5", ["m2"], []]],
-                        [getAction, ["e5", "p5", [], []]],
-                        [getSize, ["clean", "p6", 0, []]],
-                        [getSize, ["clean", "p7", 1, ["m1"]]],
-                        [getAction, ["e3", "p7", ["m1"], []]],
-                        [getAction, ["e4", "p7", [], []]],
-                        [dropAll, ["pEnd", "wurst", ""]]
+                    const activationFunctions = [
+                                [dropAll, ["p0", "zero", "black"]],
+                                [dropAll, ["p1", "real", "black"]],
+                                [dropAll, ["p1", "real", "colored"]],
+                                [dropAll, ["p2", "wurst", ""]],
+                            [getSize, ["clean", "p2", 0, []]],
+                            [getSize, ["clean", "p2", 1, []]],
+                        [getAction, ["e1", "p3", [], []]],
+                        [getAction, ["e1", "p4", [], []]],
+                        [getAction, ["e2", "p5", [], []]],
+                        [getAction, ["e3", "p6", [], []]],
+                                [dropAll, ["p7", "wurst", ""]],
+                                [dropAll, ["p8", "wurst", ""]],
+                        [getAction, ["e4", "p9", [], []]],
+                        [getAction, ["e5", "p10", [], []]],
+                                [dropAll, ["p11", "wurst", ""]],
+                        [getAction, ["e6", "p12", [], []]],
+                                [dropAll, ["p13", "wurst", ""]],
+                        [getAction, ["e7", "p14", [], []]],
+                                [dropAll, ["p15", "wurst", ""]],
+                        [getAction, ["e8", "p16", [], []]],
+                        [getAction, ["e8", "p17", [], []]],
+                        [getAction, ["e8", "p18", [], []]],
+                        [getAction, ["e9", "p19", [], []]],
+                        [getAction, ["e9", "p20", [], []]],
+                                [dropAll, ["p21", "wurst", ""]],
+                        [getAction, ["e8", "p22", [], []]],
+                        [getAction, ["e8", "p23", [], []]],
+                        [getAction, ["e8", "p24", [], []]],
+                        [getAction, ["e10", "p25", [], []]],
+                                [dropAll, ["p26", "wurst", ""]],
+                                [dropAll, ["p27", "wurst", ""]],
+                                [dropAll, ["p28", "wurst", ""]],
+                                [dropAll, ["p29", "wurst", ""]],
+                                [dropAll, ["p30", "wurst", ""]],
+                                [dropAll, ["pEnd", "real", "black"]]
                     ];
 
                     // Finish page
@@ -202,18 +244,18 @@
 
                     Object.keys(articleScript.paragraphs).forEach(
                         function(p) {
-                            paragraphs
-                                .append("span")
-                                .attr("id", "f"+p)
-                                .style("opacity", 0)
-                                .attr("class", "paragraphFalseText")
-                                .html(articleScript.paragraphs[p]);
+                            // paragraphs
+                            //     .append("span")
+                            //     .attr("id", "f"+p)
+                            //     .style("opacity", 0)
+                            //     .attr("class", "paragraphFalseText")
+                            //     .html(articleScript.paragraphs[p]);
                             paragraphs
                                 .append("span")
                                 .attr("id", p)
                                 .style("opacity", 0)
                                 .attr("class", "paragraphText")
-                                .html(articleScript.paragraphs[p]);
+                                .html(articleScript.paragraphs[p].join('<p></p>'));
                         }
                     );
 
@@ -254,7 +296,6 @@
                     // Transform data
 
                     var marksData = {};
-
                     data.forEach(d => {
                         d.dateStr = d.date;
                         d.date = parseTime(d.date);
@@ -265,6 +306,7 @@
                         Object.keys(articleScript.episodes).forEach( function(eKey) {
 
                             let eList = articleScript.episodes[eKey];
+
                             eList.forEach(function(e) {
 
                                 let minDate = parseTime(e[0]),
@@ -272,10 +314,25 @@
 
                                 if (d.date >= minDate && d.date <= maxDate) {
                                     d.episode += eKey+" ";
-                                }
+                                };
+
                             })
                         });
 
+                    });
+
+                    var fakeBars = [];
+                    
+                    Object.keys(articleScript.episodes).forEach( function(eKey) {
+
+                        let eList = articleScript.episodes[eKey];
+
+                        eList.forEach(function(e) {
+                            let minDate = parseTime(e[0]),
+                                maxDate = parseTime(e[1]);
+
+                            fakeBars.push([eKey, minDate, maxDate])
+                        })
                     });
 
                     googleData.forEach(d => {
@@ -354,6 +411,20 @@
                     dropDomains();
 
                     var barsFake = focus.append("g");
+                    barsFake.attr("clip-path", "url(#clip)");
+
+                    fakeBars.forEach( function(fb) {
+                        barsFake.append("rect")
+                            .attr("class", fb[0])
+                            .attr("fill", "#f0f1f2")
+                            // .attr("id", function(d) { return iPref+d.dateStr; })
+                            .attr("x", x(fb[1]))
+                            .attr("width", x(fb[2])-x(fb[1])+bandWidth)
+                            .attr("height", 40000*yScaler)
+                            .attr("y", y(40000))
+                            .attr("opacity", 0);
+                    });
+
                     var bars = focus.append("g");
                     
                     function addBars(group, color, iPref, cSuf, defaultH, o) {
@@ -373,7 +444,7 @@
                             .attr("opacity", o);
                     };
 
-                    addBars(barsFake, "#f0f1f2", "bf", " fake", 40000, 0);
+                    // addBars(barsFake, "#f0f1f2", "bf", " fake", 40000, 0);
                     addBars(bars, "#494a4d", "b", " wurst", 0, 1);
 
                     function colorise(date, value) {
@@ -384,43 +455,27 @@
                         }
                     };
 
-                    focus.append("g").attr("clip-path", "url(#clip)")
+                    function addLine(color, lineWidth) {
+                        focus.append("g").attr("clip-path", "url(#clip)")
                         .append("path")
                         .datum(googleData)
-                        // .attr("id", "googleData")
                         .attr("fill", "none")
                         .attr("opacity", 1)
-                        .attr("stroke-width", 8)
-                        .attr("stroke", "#ffffff")
+                        .attr("stroke-width", lineWidth)
+                        .attr("stroke", color)
                         .attr("stroke-linejoin", "round")
                         .attr("stroke-linecap", "round")
                         .attr(
                             "d", 
                             d3.line()
-                            // .curve(d3.curveCatmullRom)
                             .curve(d3.curveCatmullRom)
                             .x(d => x(d.date))
                             .y(d => y(d.search_index*40000))
                         );
+                    }
 
-                    focus.append("g").attr("clip-path", "url(#clip)")
-                        .append("path")
-                        .datum(googleData)
-                        // .attr("id", "googleData")
-                        .attr("fill", "none")
-                        .attr("opacity", 1)
-                        .attr("stroke-width", 2)
-                        .attr("stroke", "#00abe5")
-                        .attr("stroke-linejoin", "round")
-                        .attr("stroke-linecap", "round")
-                        .attr(
-                            "d", 
-                            d3.line()
-                            // .curve(d3.curveCatmullRom)
-                            .curve(d3.curveCatmullRom)
-                            .x(d => x(d.date))
-                            .y(d => y(d.search_index*40000))
-                        );
+                    addLine("#ffffff", 6);
+                    addLine("#00abe5", 2);
 
                     const marks = focus.append("g");
                     marks.attr("clip-path", "url(#clip)");
@@ -580,10 +635,11 @@
                     };
 
                     function getText(pid) {
-                        d3.selectAll(".paragraphFalseText").filter(function() {
-                            return this.id != "f"+pid
-                        }).call(textOpaciter, 0);
-                        d3.select("#f"+pid).call(textOpaciter, 0.8);
+                        // d3.selectAll(".paragraphFalseText").filter(function() {
+                        //     return this.id != "f"+pid
+                        // }).call(textOpaciter, 0);
+                        // d3.select("#f"+pid).call(textOpaciter, 0);
+                        // fakeText
 
                         d3.selectAll(".paragraphText").filter(function() {
                             return this.id != pid
@@ -660,7 +716,9 @@
                         x.domain(s);
 
                         bars.selectAll("rect").call(resizeBars);
-                        barsFake.selectAll("rect").call(resizeBars);
+
+                        barsFake.selectAll("rect").call(resizeFakeBars);
+
                         focus.selectAll("path").call(resizeLine);
                         focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
                         focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
@@ -687,7 +745,7 @@
                             .duration(NFS)
                             .attr("d", d3.line()
                                 .curve(d3.curveCatmullRom)
-                                .x(function(d) { console.log(d); return x(d.date) })
+                                .x(function(d) { return x(d.date) })
                                 .y(function(d) { return y(d.search_index*40000) }))
                     };
 
@@ -697,6 +755,14 @@
                             .duration(NFS)
                             .attr("width", bandWidth)
                             .attr("x", function(d) { return x(d.date); });
+                    };
+
+                    function resizeFakeBars(path) {
+                        path
+                            .transition("resizeFakeBars")
+                            .duration(NFS)
+                            .attr("x", function(d, i) {return x(fakeBars[i][1]); })
+                            .attr("width", function(d, i) { return x(fakeBars[i][2])-x(fakeBars[i][1])+bandWidth ; });
                     };
 
                     function resizeAx(path, a, t, f) {
