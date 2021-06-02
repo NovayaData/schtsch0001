@@ -34,14 +34,16 @@
             <section class="step">4</section>
             <section class="step">5</section>
             <section class="step">6</section>
-            <section class="step" 
+            <!-- <section class="step" 
                 style="background-image: url('https://foreignpolicy.com/wp-content/uploads/2019/12/GettyImages-Russia_ukraine-tanks-464495524.jpg?w=1500'); background-size: 100%; background-position:center;">
                 7
-            </section>
+            </section> -->
+            <section class="step">7</section>
             <section class="step">8</section>
             <section class="step">9</section>
             <section class="step">10</section>
             <section class="step">11</section>
+            <section class="step">12</section>
         </div>
 
         <div id="chartArea" >
@@ -179,6 +181,7 @@
                 ]).then(([data, articleScript, googleData]) => {
 
                     let activationFunctions = [
+                        [dropAll, ["p0", "zero", "black"]],
                         [dropAll, ["p1", "real", "black"]],
                         [dropAll, ["p2", "real", "colored"]],
                         [dropAll, ["p3", "wurst", ""]],
@@ -214,7 +217,7 @@
                         }
                     );
 
-                    var curParagraph = "p1";
+                    var curParagraph = "p0";
                     getText(curParagraph);
 
                     var navigatorX = activationFunctions.map(
@@ -323,30 +326,24 @@
                     addXAx("Xmonths", 0, height+5, d3.timeMonth, d3.timeFormat("%-m"));
                     addXAx("X", 1, height+20, d3.timeYear, d3.timeFormat("| %Y"));
 
-                    y.domain([0, 40000]);
-                    focus.append("g")
-                        .attr("id", "Y")
-                        .attr("opacity", 1)
-                        .call(d3.axisLeft(y)
-                            .tickSize(0)
-                            .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ))
-                        .selectAll("text")
-                            .attr('text-anchor', 'end')
-                            .attr("class", "textSmaller");
-
                     var y2x = bandWidth*1.5+width;
 
-                    y2.domain([0, 100]);
+                    function addY(aY, domainR, tranlateX, textClass, i, anc) {
+                        aY.domain([0, domainR]);
                         focus.append("g")
-                            .attr("id", "Y2")
+                            .attr("id", i)
                             .attr("opacity", 1)
-                            .attr("transform", "translate("+y2x+",0)")
-                            .call(d3.axisLeft(y2)
+                            .attr("transform", "translate("+tranlateX+",0)")
+                            .call(d3.axisLeft(aY)
                                 .tickSize(0)
                                 .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ))
                             .selectAll("text")
-                                .attr('text-anchor', 'start')
-                                .attr("class", "textSmaller2");
+                                .attr('text-anchor', anc)
+                                .attr("class", textClass);
+                    };
+
+                    addY(y, 40000, 0, "textSmaller", "Y", "end");
+                    addY(y2, 100, y2x, "textSmaller2", "Y2", "start");
 
                     function dropDomains() {
                         focus.selectAll(".domain")
@@ -355,21 +352,28 @@
 
                     dropDomains();
 
+                    var barsFake = focus.append("g");
                     var bars = focus.append("g");
+                    
+                    function addBars(group, color, iPref, cSuf, defaultH, o) {
+                        group.attr("clip-path", "url(#clip)");
+                        group.selectAll("bar")
+                        .data(data)
+                        .enter().append("rect")
+                            .attr("class", function(d) { return d.episode + cSuf; })
+                            .attr("fill", color)
+                            .attr("id", function(d) { return iPref+d.dateStr; })
+                            .attr("x", function(d) { return x(d.date); })
+                            .attr("width", bandWidth)
+                            .attr("height", defaultH*yScaler)
+                            .attr("y", y(defaultH))
+                            // .attr("height", function(d) { return d.weeksum*yScaler})
+                            // .attr("y", function(d) { return y(d.weeksum); })
+                            .attr("opacity", o);
+                    };
 
-                    bars.attr("clip-path", "url(#clip)");
-                    bars.selectAll("bar")
-                    .data(data)
-                    .enter().append("rect")
-                        .attr("class", function(d) { return d.episode; })
-                        .attr("fill", "#494a4d")
-                        // .attr("fill", "#F0F1F2")
-                        .attr("id", function(d) { return "b"+d.dateStr; })
-                        .attr("x", function(d) { return x(d.date); })
-                        .attr("width", bandWidth)
-                        .attr("height", function(d) { return d.weeksum*yScaler})
-                        .attr("y", function(d) { return y(d.weeksum); })
-                        .attr("opacity", 1);
+                    addBars(barsFake, "#f0f1f2", "bf", " fake", 40000, 0);
+                    addBars(bars, "#494a4d", "b", " wurst", 0, 1);
 
                     function colorise(date, value) {
                         if (date < cleanDate) {
@@ -509,7 +513,7 @@
                         marker(midsDel, "off");
 
                         if (eid && eid!="clean") {
-                            getReal(eid, "colored")
+                            getReal(eid, "black")
                         } else if (eid=="clean") {
                             getWurst();
                         };
@@ -525,24 +529,29 @@
                     function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
-                            }).call(wurstOpaciter, 0.5).call(pookColor).call(pook)
+                        }).call(wurstOpaciter, 0.5).call(pookColor).call(pook)
 
-                            let curReal = focus.selectAll("."+eid)
+                        barsFake.selectAll("rect").filter(function() {
+                                return !this.classList.contains(eid)
+                        }).call(wurstOpaciter, 0)
+                        barsFake.selectAll("."+eid).call(wurstOpaciter, 1)
 
-                            curReal.call(wurstOpaciter, 1).call(pik).call(pikColor, colorMode);
+                        let curReal = bars.selectAll("."+eid)
 
-                            let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
-                            if (curMarksIds) {
-                                marks.selectAll(".on").filter( function() { return curMarksIds.includes(this.id) } )
-                                    .call(pikMark);
-                                marks.selectAll(".on").filter( function() { return !curMarksIds.includes(this.id) } )
-                                    .call(pookMark, 0.5);
-                            };
+                        curReal.call(wurstOpaciter, 1).call(pik).call(pikColor, colorMode);
 
-                            marks.selectAll("circle:not(.on)").call(pookMark, 0);
+                        let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
+                        if (curMarksIds) {
+                            marks.selectAll(".on").filter( function() { return curMarksIds.includes(this.id) } )
+                                .call(pikMark);
+                            marks.selectAll(".on").filter( function() { return !curMarksIds.includes(this.id) } )
+                                .call(pookMark, 0.5);
+                        };
 
-                            focus.select("#Xmonths").attr("opacity", 1);
-                            focus.select("#Y").attr("opacity", 1);
+                        marks.selectAll("circle:not(.on)").call(pookMark, 0);
+
+                        focus.select("#Xmonths").attr("opacity", 1);
+                        focus.select("#Y").attr("opacity", 1);
                     };
 
                     function getSize(args) {
@@ -597,11 +606,25 @@
                     function getWurst() {
                         focus.select("#Y").attr("opacity", 0);
                         focus.select("#Xmonths").attr("opacity", 0);
+                        barsFake.selectAll("rect").call(wurstOpaciter, 0)
 
-                        bars.selectAll("rect")
+                        bars.selectAll(".wurst")
                             .call(wurstOpaciter, 1)
                             .call(pookColor)
                             .call(pook)
+
+                        marks.selectAll(".on").call(pookMark, 1);
+                    };
+
+                    function getZero() {
+                        focus.select("#Y").attr("opacity", 0);
+                        focus.select("#Xmonths").attr("opacity", 0);
+                        barsFake.selectAll("rect").call(wurstOpaciter, 0)
+
+                        bars.selectAll(".wurst")
+                            .call(wurstOpaciter, 1)
+                            .call(pookColor)
+                            .call(pookZero)
 
                         marks.selectAll(".on").call(pookMark, 1);
                     };
@@ -618,7 +641,9 @@
                         if (barType=="wurst") {
                             getWurst();
                         } else if (barType=="real") {
-                            getReal("episode", colorMode);
+                            getReal("wurst", colorMode);
+                        } else if (barType=="zero") {
+                            getZero();
                         };
                         
                         getText(pid);
@@ -631,7 +656,8 @@
                         bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length+0.4;
                         x.domain(s);
 
-                        focus.selectAll("rect").call(resizeBars);
+                        bars.selectAll("rect").call(resizeBars);
+                        barsFake.selectAll("rect").call(resizeBars);
                         focus.selectAll("path").call(resizeLine);
                         focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
                         focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
@@ -728,6 +754,14 @@
                                 }
 
                             });
+                    };
+
+                    function pookZero(path) {
+                        path
+                            .transition("pookZero")
+                            .duration(NFS)
+                            .attr("height", 0)
+                            .attr("y", y(0));
                     };
 
                     function pook(path) {
