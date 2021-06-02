@@ -91,7 +91,7 @@ body::-webkit-scrollbar {
     font-family: 'Roboto', sans-serif;
     font-weight:400;
     height: 100vh;
-    font-size: 12;
+    font-size: 24;
     color: none;
     /* background-color: burlywood; */
     /* opacity: 0; */
@@ -146,9 +146,9 @@ body::-webkit-scrollbar {
     -ms-user-select: none;
     user-select: none;
     position: absolute;
-    z-index: 100;
+    z-index: 90;
     padding-top: 3%;
-    width: 94%;
+    width: 88%;
     left: 6%;
     margin: 0;
 }
