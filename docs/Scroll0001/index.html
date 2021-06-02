@@ -420,8 +420,10 @@
                             // .attr("id", function(d) { return iPref+d.dateStr; })
                             .attr("x", x(fb[1]))
                             .attr("width", x(fb[2])-x(fb[1])+bandWidth)
-                            .attr("height", 40000*yScaler)
-                            .attr("y", y(40000))
+                            .attr("height", H-(H-y(0)))
+                            .attr("y", 0)
+                            // .attr("height", 40000*yScaler)
+                            // .attr("y", y(40000))
                             .attr("opacity", 0);
                     });
 
