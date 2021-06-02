@@ -429,7 +429,7 @@
                                     marks.append("circle")
                                         .attr("id", "m"+mark[0])
                                         .attr("class", "mark "+m)
-                                        .attr("r", bandWidth*2)
+                                        .attr("r", bandWidth*1.5)
                                         .attr("fill", "#00ace5")
                                         .attr("opacity", 0)
                                         .attr("text", mark[1])
@@ -632,6 +632,7 @@
                         x.domain(s);
 
                         focus.selectAll("rect").call(resizeBars);
+                        focus.selectAll("path").call(resizeLine);
                         focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
                         focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
                         focus.selectAll(".mark").call(resizeMarks);
@@ -650,6 +651,16 @@
                                     return x(marksData[this.id.replace("m", "")][1])+bandWidth/2
                                 });
                     }
+
+                    function resizeLine(path) {
+                        path
+                            .transition("resizeLine")
+                            .duration(NFS)
+                            .attr("d", d3.line()
+                                .curve(d3.curveCatmullRom)
+                                .x(function(d) { console.log(d); return x(d.date) })
+                                .y(function(d) { return y(d.search_index*40000) }))
+                    };
 
                     function resizeBars(path) {
                         path
