@@ -344,6 +344,7 @@
 
                     addY(y, 40000, 0, "textSmaller", "Y", "end");
                     addY(y2, 100, y2x, "textSmaller2", "Y2", "start");
+                    focus.select("#Y").attr("opacity", 0);
 
                     function dropDomains() {
                         focus.selectAll(".domain")
@@ -513,7 +514,7 @@
                         marker(midsDel, "off");
 
                         if (eid && eid!="clean") {
-                            getReal(eid, "black")
+                            getReal(eid, "colored")
                         } else if (eid=="clean") {
                             getWurst();
                         };
@@ -529,7 +530,8 @@
                     function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
-                        }).call(wurstOpaciter, 0.5).call(pookColor).call(pook)
+                        }).call(pookColor).call(pook).call(wurstOpaciter, 0.5)
+                        // .call(wurstOpaciter, 0.5)
 
                         barsFake.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
@@ -538,7 +540,8 @@
 
                         let curReal = bars.selectAll("."+eid)
 
-                        curReal.call(wurstOpaciter, 1).call(pik).call(pikColor, colorMode);
+                        curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
+                        // .call(wurstOpaciter, 1)
 
                         let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
                         if (curMarksIds) {
