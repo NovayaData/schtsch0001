@@ -22,48 +22,7 @@
         <div id="paragraphs">
         </div>
 
-        
-
         <div id="sections">
-            <!-- <section class="step"
-                style="background-image: url('https://news.usni.org/wp-content/uploads/2014/07/12013-2.jpg'); background-size: 100%; background-position:center;">
-                1</section> -->
-            <section class="step">1</section>
-            <section class="step">2</section>
-            <section class="step">3</section>
-            <section class="step">4</section>
-            <section class="step">5</section>
-            <section class="step">6</section>
-            <section class="step">7</section>
-            <section class="step">8</section>
-            <section class="step">9</section>
-            <section class="step">10</section>
-            <section class="step">11</section>
-            <section class="step">12</section>
-            <section class="step">13</section>
-            <section class="step">14</section>
-            <section class="step">15</section>
-            <section class="step">16</section>
-            <section class="step">17</section>
-            <section class="step">18</section>
-            <section class="step">19</section>
-            <section class="step">20</section>
-            <section class="step">21</section>
-            <section class="step">22</section>
-            <section class="step">23</section>
-            <section class="step">24</section>
-            <section class="step">25</section>
-            <section class="step">26</section>
-            <section class="step">27</section>
-            <section class="step">28</section>
-            <section class="step">29</section>
-            <section class="step">30</section>
-            <section class="step">31</section>
-            <section class="step">32</section>
-            <section class="step">33</section>
-            <section class="step">34</section>
-            <section class="step">35</section>
-            <section class="step">36</section>
         </div>
 
         <div id="chartArea" >
@@ -202,11 +161,11 @@
 
                     const activationFunctions = [
                                 [dropAll, ["p0", "zero", "black"]],
-                                [dropAll, ["p1", "real", "black"]],
+                                [dropAll, ["p1_0", "real", "black"]],
                                 [dropAll, ["p1", "real", "colored"]],
-                                [dropAll, ["p2", "wurst", ""]],
-                            [getSize, ["clean", "p2a", 0, []]],
-                            [getSize, ["clean", "p2b", 1, []]],
+                                [dropAll, ["p2_0", "wurst", ""]],
+                            [getSize, ["clean", "p2_1", 0, []]],
+                            [getSize, ["clean", "p2", 1, []]],
                         [getAction, ["e1", "p3", [], []]],
                         [getAction, ["e1", "p4", [], []]],
                         [getAction, ["e2", "p5", [], []]],
@@ -241,7 +200,18 @@
                     // Finish page
 
                     const paragraphs = d3.select("#paragraphs");
-                    // const sections = d3.select("#sections");
+                    const sections = d3.select("#sections");
+
+                    activationFunctions.forEach(
+                        function(_, i) {
+                            i+=1;
+                            sections
+                                .append("section")
+                                .attr("id", "step"+i)
+                                .attr("class", "step")
+                                .html(i+" 🐷")
+                        }
+                    );
 
                     Object.keys(articleScript.paragraphs).forEach(
                         function(p) {
@@ -251,45 +221,30 @@
                             //     .style("opacity", 0)
                             //     .attr("class", "paragraphFalseText")
                             //     .html(articleScript.paragraphs[p]);
-                            paragraphs
-                                .append("span")
-                                .attr("id", p)
-                                .style("opacity", 0)
-                                .attr("class", "paragraphText")
-                                .html(articleScript.paragraphs[p].join('<p></p>'));
+                            let abz = articleScript.paragraphs[p];
+                            
+                            abz.forEach( function(a, i) {
+                                paragraphs
+                                    .append("span")
+                                    .attr("id", function() {
+                                        if (i==abz.length-1) {
+                                        // на самом деле надо оставлять только 0
+                                            return p;
+                                        } else {
+                                            return p+"_"+i;
+                                        }
+                                    })
+                                    .style("opacity", 0)
+                                    .attr("class", "paragraphText")
+                                    .html(abz.slice(0, i+1).join('<p></p>'));
+                            } )
                         }
                     );
+
+                    console.log(paragraphs);
 
                     var curParagraph = "p0";
                     getText(curParagraph);
-
-                    var navigatorX = activationFunctions.map(
-                        d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
-                    );
-
-                    var circlesContainer = svg.append("g");
-                    var hTr = W-margin.right/2;
-
-                    function addCircle(i, hPos, color) {
-                        
-
-                        circlesContainer
-                            .append("circle")
-                            .attr("id", "c"+i)
-                            .attr("r", "4px")
-                            .attr("fill", color)
-                            .attr("transform", 
-                                "translate(" + hTr + "," + hPos + ")");
-                    };
-
-                    navigatorX.forEach(
-                        function(d, i) {
-                            addCircle(i, d, "#ececec")
-                        }
-                    );
-
-                    addCircle("theCircle", navigatorX[0], "#b0b0b0");
-                    const theCircle = circlesContainer.select("#ctheCircle");
 
                     
                     // d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
@@ -498,7 +453,6 @@
                                         .attr("text", mark[1])
                                         .attr("cx", markWidth)
                                         .attr("cy", height-wurstH-10);
-                                        // .attr("cy", y(marksData[mark[0]][0])-10);
                                 }
                             )
                         }
@@ -510,6 +464,57 @@
                         let da = new Intl.DateTimeFormat('ru', { day: 'numeric' }).format(date);
                         return `${da} ${mo}`;
                     };
+
+                    var navigatorX = activationFunctions.map(
+                        d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
+                    );
+
+                    var circlesContainer = svg.append("g");
+                    var hTr = W-margin.right/2;
+
+                    function addCircle(i, hPos, color) {
+                        circlesContainer
+                            .append("circle")
+                            .attr("id", function() { i+=1; return "stepC"+i })
+                            .attr("r", "5px")
+                            .attr("fill", color)
+                            .attr("transform", 
+                                "translate(" + hTr + "," + hPos + ")");
+                    };
+
+                    navigatorX.forEach(
+                        function(d, i) {
+                            addCircle(i, d, "#ececec")
+                        }
+                    );
+
+                    var circlesNav = circlesContainer.selectAll("circle");
+
+                    circlesNav
+                        .on("mouseover", function(d) {
+                            d3.select(this).attr("fill", "#bf381d");
+                            // d3.select(this).attr("fill", "#00abe5");
+                    });
+
+                    // circlesNav
+                    //     .on("mousemove", function(d) {
+                    //         d3.select(this).attr("fill", "#00abe5");
+                    //     })
+
+                    circlesNav
+                        .on("mouseleave", function(d) {
+                            d3.select(this).attr("fill", "#ececec");
+                        });
+
+                    
+
+                    circlesNav
+                        .on("click", function(d) {
+                            document.getElementById(this.id.replace("C", "")).scrollIntoView();
+                        });
+
+                    addCircle("theCircle", navigatorX[0], "#b0b0b0");
+                    const theCircle = circlesContainer.select("#stepCtheCircle1");
 
                     // Actions
 
@@ -820,7 +825,6 @@
 
                                 if (colorMode == "black") {
                                     return "#494a4d"
-                                    // return "#F0F1F2"
                                 } else if (colorMode == "colored") {
                                     return colorise(d.date, d.weeksum)
                                 }
@@ -874,9 +878,6 @@
                     let lastIndex, activeIndex = 0;
 
                     scroll.on('active', function(index){
-                        // d3.selectAll('.step')
-                        //     .transition().duration(NFS*2)
-                        //     .style('opacity', function (d, i) {return i === index ? 1 : 0;});
 
                         activeIndex = index
                         let sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
@@ -885,7 +886,6 @@
                         scrolledSections.forEach(i => {
                             activationFunctions[i][0](
                                 activationFunctions[i][1]
-                                // activationFunctions[i][2]
                             );
                             theCircle.call(navigate, i);
                         })
