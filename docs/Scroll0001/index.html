@@ -346,7 +346,7 @@
                     var xMax = d3.max(data, function(d) { return d.date; });
 
                     var weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
-                    var yScaler = (H*0.7)/weeksumMax;
+                    var yScaler = (H*0.75)/weeksumMax;
 
                     var bandWidth = width/data.length+0.4;
 
