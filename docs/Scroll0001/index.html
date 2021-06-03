@@ -19,9 +19,6 @@
 
     <div id="graphic">
 
-        <div id="paragraphs">
-        </div>
-
         <div id="sections">
         </div>
 
@@ -160,112 +157,89 @@
                 ]).then(([data, articleScript, googleData]) => {
 
                     const activationFunctions = [
-                                [dropAll, ["p0", "zero", "black"]],
-                                [dropAll, ["p0_1", "zero", "black"]],
-                                [dropAll, ["p1", "real", "black"]],
-                                [dropAll, ["p1_1", "real", "colored"]],
-                                [dropAll, ["p2", "wurst", ""]],
-                            [getSize, ["clean", "p2_1", 0, []]],
-                            [getSize, ["clean", "p2_2", 1, []]],
-                        [getAction, ["e1", "p3", [], []]],
-                        [getAction, ["e1", "p3_1", [], []]],
-                        [getAction, ["e1", "p4", [], []]],
-                        [getAction, ["e1", "p4_1", [], []]],
-                        [getAction, ["e2", "p5", [], []]],
-                        [getAction, ["e2", "p5_1", [], []]],
-                        [getAction, ["e2", "p5_2", [], []]],
-                        [getAction, ["e3", "p6", [], []]],
-                        [getAction, ["e3", "p6_1", [], []]],
-                                [dropAll, ["p7", "wurst", ""]],
-                                [dropAll, ["p7_1", "wurst", ""]],
-                                [dropAll, ["p8", "wurst", ""]],
-                                [dropAll, ["p8_1", "wurst", ""]],
-                        [getAction, ["e4", "p9", [], []]],
-                        [getAction, ["e4", "p9_1", [], []]],
-                        [getAction, ["e5", "p10", [], []]],
-                                [dropAll, ["p11", "wurst", ""]],
-                        [getAction, ["e6", "p12", [], []]],
-                        [getAction, ["e6", "p12_1", [], []]],
-                        [getAction, ["e6", "p12_1", [], []]],
-                                [dropAll, ["p13", "wurst", ""]],
-                                [dropAll, ["p13_1", "wurst", ""]],
-                        [getAction, ["e7", "p14", [], []]],
-                        [getAction, ["e7", "p14_1", [], []]],
-                                [dropAll, ["p15", "wurst", ""]],
-                        [getAction, ["e8", "p16", [], []]],
-                        [getAction, ["e8", "p16_1", [], []]],
-                        [getAction, ["e8", "p17", [], []]],
-                        [getAction, ["e8", "p17_1", [], []]],
-                        [getAction, ["e8", "p18", [], []]],
-                        [getAction, ["e8", "p18_1", [], []]],
-                        [getAction, ["e9", "p19", [], []]],
-                        [getAction, ["e9", "p19_1", [], []]],
-                        [getAction, ["e9", "p20", [], []]],
-                        [getAction, ["e9", "p20_1", [], []]],
-                                [dropAll, ["p21", "wurst", ""]],
-                                [dropAll, ["p21_1", "wurst", ""]],
-                        [getAction, ["e8", "p22", [], []]],
-                        [getAction, ["e8", "p22_1", [], []]],
-                        [getAction, ["e8", "p23", [], []]],
-                        [getAction, ["e8", "p24", [], []]],
-                        [getAction, ["e10", "p25", [], []]],
-                        [getAction, ["e10", "p25_1", [], []]],
-                                [dropAll, ["p26", "wurst", ""]],
-                                [dropAll, ["p27", "wurst", ""]],
-                                [dropAll, ["p28", "wurst", ""]],
-                                [dropAll, ["p29", "wurst", ""]],
-                                [dropAll, ["p30", "wurst", ""]],
-                                [dropAll, ["pEnd", "real", "black"]]
+                    [dropAll, ["p0", "zero", "black"]],
+                                [dropAll, ["zero", "black"]],
+                                [dropAll, ["real", "black"]],
+                                [dropAll, ["real", "colored"]],
+                                [dropAll, ["wurst", ""]],
+                            [getSize, ["clean", 0, []]],
+                            [getSize, ["clean", 1, []]],
+                        [getAction, ["e1", [], []]],
+                        [getAction, ["e1", [], []]],
+                        [getAction, ["e1", [], []]],
+                        [getAction, ["e1", [], []]],
+                        [getAction, ["e2", [], []]],
+                        [getAction, ["e2", [], []]],
+                        [getAction, ["e2", [], []]],
+                        [getAction, ["e3", [], []]],
+                        [getAction, ["e3", [], []]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                        [getAction, ["e4", [], []]],
+                        [getAction, ["e4", [], []]],
+                        [getAction, ["e5", [], []]],
+                                [dropAll, ["wurst", ""]],
+                        [getAction, ["e6", [], []]],
+                        [getAction, ["e6", [], []]],
+                        [getAction, ["e6", [], []]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                        [getAction, ["e7", [], []]],
+                        [getAction, ["e7", [], []]],
+                                [dropAll, ["wurst", ""]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e9", [], []]],
+                        [getAction, ["e9", [], []]],
+                        [getAction, ["e9", [], []]],
+                        [getAction, ["e9", [], []]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e8", [], []]],
+                        [getAction, ["e10", [], []]],
+                        [getAction, ["e10", [], []]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["wurst", ""]],
+                                [dropAll, ["real", "black"]]
                     ];
 
                     // Finish page
-
-                    const paragraphs = d3.select("#paragraphs");
                     const sections = d3.select("#sections");
-
-                    activationFunctions.forEach(
-                        function(_, i) {
-                            i+=1;
-                            sections
-                                .append("section")
-                                .attr("id", "step"+i)
-                                .attr("class", "step")
-                                .html(i+" 🐷")
-                        }
-                    );
 
                     Object.keys(articleScript.paragraphs).forEach(
                         function(p) {
-                            // paragraphs
-                            //     .append("span")
-                            //     .attr("id", "f"+p)
-                            //     .style("opacity", 0)
-                            //     .attr("class", "paragraphFalseText")
-                            //     .html(articleScript.paragraphs[p]);
                             let abz = articleScript.paragraphs[p];
                             
                             abz.forEach( function(a, i) {
-                                paragraphs
+                                i+=1
+                                let curSection = sections.append("section")
+                                    .attr("class", "step")
+                                    .attr("id", p+"_"+i);
+
+                                curSection
                                     .append("span")
-                                    .attr("id", function() {
-                                        if (i==0) {
-                                            return p;
-                                        } else {
-                                            return p+"_"+i;
-                                        }
-                                    })
-                                    .style("opacity", 0)
+                                    .attr("class", "paragraphFalseText")
+                                    .html(a);
+                                
+                                curSection
+                                    .append("span")
                                     .attr("class", "paragraphText")
-                                    .html(abz.slice(0, i+1).join('<p></p>'));
+                                    .html(a);
                             } )
                         }
                     );
-
-                    var curParagraph = "p0";
-                    getText(curParagraph);
-
-                    
-                    // d3.selectAll(".step:last-of-type").style("margin-bottom","50vh");
 
                     // Transform data
 
@@ -493,25 +467,27 @@
                     function addCircle(i, hPos, color) {
                         circlesContainer
                             .append("circle")
-                            .attr("id", function() { i+=1; return "stepC"+i })
+                            .attr("id", function() { return "C"+i })
                             .attr("r", "4px")
                             .attr("fill", color)
                             .attr("transform", 
                                 "translate(" + hTr + "," + hPos + ")");
                     };
 
-                    navigatorX.forEach(
+                    var sectionsNodes = d3.select("#sections").selectAll(".step").nodes()
+                    
+                    sectionsNodes.forEach(
                         function(d, i) {
-                            addCircle(i, d, "#ececec")
+                            addCircle(d.id, navigatorX[i], "#ececec")
                         }
                     );
 
                     var circlesNav = circlesContainer.selectAll("circle");
+                    var circlesNavNodes = circlesNav.nodes();
 
                     circlesNav
                         .on("mouseover", function(d) {
                             d3.select(this).attr("fill", "#bf381d");
-                            // d3.select(this).attr("fill", "#00abe5");
                     });
 
                     circlesNav
@@ -521,20 +497,15 @@
 
                     circlesNav
                         .on("click", function(d) {
-                            // let i = circlesNav.nodes().indexOf(this);
-                            // let activate = activationFunctions[i];
-                            // activate[0](activate[1]);
-                            document.getElementById(this.id.replace("C", "")).scrollIntoView();
+                            document.getElementById(this.id.replace("C", "")).scrollIntoView(
+                                {behavior: "smooth"}
+                                );
                         });
 
                     addCircle("theCircle", navigatorX[0], "#b0b0b0");
-                    const theCircle = circlesContainer.select("#stepCtheCircle1");
+                    const theCircle = circlesContainer.select("#CtheCircle");
 
                     // Actions
-
-                    function paintCircle(i) {
-                        circlesContainer.select("circle").filter()
-                    };
 
                     function marker(mids, mode) {
                         if (mids) {
@@ -583,9 +554,8 @@
                     function getAction(args) {
 
                         let eid = args[0],
-                            pid = args[1],
-                            mids = args[2],
-                            midsDel = args[3];
+                            mids = args[1],
+                            midsDel = args[2];
 
                         marker(mids, "on");
                         marker(midsDel, "off");
@@ -596,19 +566,12 @@
                             getWurst();
                         };
 
-                        if (pid && pid!="clean") {
-                            getText(pid)
-                        } else if (pid=="clean") {
-                            getBlanc();
-                        };
-
                     };
 
                     function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
                         }).call(pookColor).call(pook).call(wurstOpaciter, 0.5)
-                        // .call(wurstOpaciter, 0.5)
 
                         barsFake.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
@@ -618,7 +581,6 @@
                         let curReal = bars.selectAll("."+eid)
 
                         curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
-                        // .call(wurstOpaciter, 1)
 
                         let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
                         if (curMarksIds) {
@@ -636,9 +598,8 @@
 
                     function getSize(args) {
                         let eid = args[0],
-                            pid = args[1],
-                            sizeCondition = args[2],
-                            midsDel = args[3];
+                            sizeCondition = args[1],
+                            midsDel = args[2];
 
                         marker(midsDel, "off");
                         marks.selectAll("circle:not(.on)").call(pookMark, 0);
@@ -652,29 +613,7 @@
                         } else {
                             resizer(xMin);
                         };
-
-                        getText(pid);
                     };
-
-                    function getText(pid) {
-                        // d3.selectAll(".paragraphFalseText").filter(function() {
-                        //     return this.id != "f"+pid
-                        // }).call(textOpaciter, 0);
-                        // d3.select("#f"+pid).call(textOpaciter, 0);
-                        // fakeText
-
-                        d3.selectAll(".paragraphText").filter(function() {
-                            return this.id != pid
-                        }).call(textOpaciter, 0);
-                        d3.select("#"+pid).call(textOpaciter, 1);
-                    };
-
-                    function textOpaciter(path, o) {
-                        path
-                            .transition("textOpaciter")
-                            .duration(NFS)
-                            .style("opacity", o);
-                    }
 
                     function getWurst() {
                         focus.select("#Y").attr("opacity", 0);
@@ -702,14 +641,9 @@
                         marks.selectAll(".on").call(pookMark, 1);
                     };
 
-                    function getBlanc() {
-                        d3.selectAll(".paragraphText").call(textOpaciter, 0);
-                    };
-
                     function dropAll(args) {
-                        let pid = args[0],
-                            barType = args[1],
-                            colorMode = args[2];
+                        let barType = args[0],
+                            colorMode = args[1];
 
                         if (barType=="wurst") {
                             getWurst();
@@ -719,7 +653,6 @@
                             getZero();
                         };
                         
-                        getText(pid);
                     };
 
                     function resizer(leftDate) {
