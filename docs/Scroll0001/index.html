@@ -8,7 +8,6 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
-
     <div id="headers">
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
@@ -97,6 +96,20 @@
                     }
                 }
 
+                // function getColor(v) {
+                //     if (colorSteps[0]>v && v>=0){
+                //         return "#ffed26"
+                //     } else if (colorSteps[1]>v && v>=colorSteps[0]){
+                //         return "#ffc300"
+                //     } else if (colorSteps[2]>v && v>=colorSteps[1]){
+                //         return "#ff9800"
+                //     } else if (colorSteps[3]>v && v>=colorSteps[2]){
+                //         return "#f56b03"
+                //     } else if (v>=colorSteps[3]){
+                //         return "#e5381d"
+                //     }
+                // }
+
                 function getColorG(v) {
                     if (colorSteps[0]>v && v>=0){
                         return "#ececec"
@@ -142,8 +155,9 @@
                 var parseTime = d3.timeParse("%Y-%m-%d");
                 var bandWidth;
 
+                // var wurstH = H*0.02;
                 var wurstH = H*0.035;
-                var NFS = 250;
+                var NFS = 400;
 
                 // var sizeCondition = 0;
                 var cleanDate = parseTime("2016-01-01");
@@ -326,6 +340,7 @@
                     var xMax = d3.max(data, function(d) { return d.date; });
 
                     var weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
+                    // var yScaler = (H*0.4)/weeksumMax;
                     var yScaler = (H*0.75)/weeksumMax;
 
                     var bandWidth = width/data.length+0.4;
@@ -343,7 +358,7 @@
 
                     x.domain([xMin, xMax]);
 
-                    function addXAx(i, o, h, t, f) {
+                    function addXAx(i, o, h, t, f, ts) {
                         focus.append("g")
                             .attr("clip-path", "url(#clip)")
                             .attr("id", i)
@@ -351,8 +366,8 @@
                             .attr("transform", "translate(0," + h + ")")
                             .call(
                                 d3.axisBottom(x)
-                                    .tickSize(0)
-                                    .ticks(t)
+                                    .tickSize(ts)
+                                    .ticks( t )
                                     .tickFormat(f)
                                 )
                             .selectAll("text")
@@ -360,10 +375,11 @@
                                 .attr("class", "textSmaller");
                     };
                     
-                    addXAx("Xmonths", 0, height+5, d3.timeMonth, d3.timeFormat("%-m"));
-                    addXAx("X", 1, height+20, d3.timeYear, d3.timeFormat("| %Y"));
+                    addXAx("Xmonths", 1, height+5, d3.timeMonth, d3.timeFormat("%-"), 5);
+                    addXAx("Xseasons", 1, height+5, d3.timeMonth.every(3), d3.timeFormat("%-"), 10);
+                    addXAx("X", 1, height+5, d3.timeYear, d3.timeFormat("%Y"), 15);
 
-                    var y2x = bandWidth*1.5+width;
+                    var y2x = bandWidth*2+width;
 
                     function addY(aY, domainR, tranlateX, textClass, i, anc) {
                         aY.domain([0, domainR]);
@@ -375,7 +391,7 @@
                                 .tickSize(0)
                                 .tickFormat(d => {  
                                     if (H<W) {
-                                        return d3.format(",.0f")(d).replace(",", ' ');
+                                        return d3.format(",.0f")(d).replace(",", "\xa0");
                                     } else {
                                         return d3.format(",.0f")(d).replace(",000", 'k');
                                     }
@@ -385,8 +401,8 @@
                                 .attr("class", textClass);
                     };
 
-                    addY(y, 40000, 0, "textSmaller", "Y", "end");
-                    addY(y2, 100, y2x, "textSmaller2", "Y2", "start");
+                    addY(y, 40000, 0, "textSmaller2", "Y", "end");
+                    addY(y2, 100, y2x, "textSmaller", "Y2", "start");
                     focus.select("#Y").attr("opacity", 0);
 
                     function dropDomains() {
@@ -462,8 +478,8 @@
                         );
                     }
 
-                    addLine("#ffffff", 6);
-                    addLine("#00abe5", 2);
+                    addLine("#ffffff", bandWidth*2);
+                    addLine("#212226", bandWidth/2);
 
                     const marks = focus.append("g");
                     marks.attr("clip-path", "url(#clip)");
@@ -648,6 +664,7 @@
 
                     };
 
+                    // var barsAll = bars.selectAll("rect").nodes();
                     function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
@@ -665,7 +682,16 @@
                         } else {
                             colorLegend.call(wurstOpaciter, 1);
                         };
-                        
+
+
+                        // let curRealNodes = curReal.nodes(),
+                        //     aI = barsAll.indexOf(curRealNodes[0]),
+                        //     bI = barsAll.indexOf(curRealNodes[curRealNodes.length-1]);
+
+                        // let aDate = data[aI].date,
+                        //     bDate = data[bI].date;
+
+                        // resizer(aDate, bDate);
 
                         curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
 
@@ -679,7 +705,7 @@
 
                         marks.selectAll("circle:not(.on)").call(pookMark, 0);
 
-                        focus.select("#Xmonths").attr("opacity", 1);
+                        // focus.select("#Xmonths").attr("opacity", 1);
                         focus.select("#Y").attr("opacity", 1);
                     };
 
@@ -698,16 +724,18 @@
                         };
 
                         if (sizeCondition==1) {
-                            resizer(cleanDate);
+                            resizer(cleanDate, xMax);
                         } else {
-                            resizer(xMin);
+                            resizer(xMin, xMax);
                         };
                     };
 
                     function getWurst() {
                         focus.select("#Y").attr("opacity", 0);
-                        focus.select("#Xmonths").attr("opacity", 0);
+                        // focus.select("#Xmonths").attr("opacity", 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
+
+                        resizer(xMin, xMax);
 
                         bars.selectAll(".wurst")
                             .call(wurstOpaciter, 1)
@@ -719,7 +747,7 @@
 
                     function getZero() {
                         focus.select("#Y").attr("opacity", 0);
-                        focus.select("#Xmonths").attr("opacity", 0);
+                        // focus.select("#Xmonths").attr("opacity", 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
 
                         bars.selectAll(".wurst")
@@ -748,11 +776,11 @@
                         
                     };
 
-                    function resizer(leftDate) {
+                    function resizer(leftDate, rightDate) {
 
-                        var s = Array(leftDate, xMax);
+                        var s = Array(leftDate, rightDate);
 
-                        bandWidth = width/data.filter(function(d) { return d.date > leftDate;}).length+0.4;
+                        bandWidth = width/data.filter(function(d) { return d.date > leftDate && d.date < rightDate;}).length+0.4;
                         x.domain(s);
 
                         bars.selectAll("rect").call(resizeBars);
@@ -760,8 +788,9 @@
                         barsFake.selectAll("rect").call(resizeFakeBars);
 
                         focus.selectAll("path").call(resizeLine);
-                        focus.select("#X").call(resizeAx, x, d3.timeYear, "| %Y");
-                        focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-m");
+                        focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", 15);
+                        focus.select("#Xseasons").call(resizeAx, x, d3.timeMonth.every(3), d3.timeFormat("%-"), 10);
+                        focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-", 5);
                         focus.selectAll(".mark").call(resizeMarks);
                         dropDomains();
 
@@ -805,12 +834,12 @@
                             .attr("width", function(d, i) { return x(fakeBars[i][2])-x(fakeBars[i][1])+bandWidth ; });
                     };
 
-                    function resizeAx(path, a, t, f) {
+                    function resizeAx(path, a, t, f, ts) {
                         path
                             .transition("resizeAx")
                             .duration(NFS)
                             .call(d3.axisBottom(a)
-                                .tickSize(0)
+                                .tickSize(ts)
                                 .ticks(t)
                                 .tickFormat(d3.timeFormat(f))
                             )
@@ -856,7 +885,7 @@
                             .attr("fill", function(d) {
 
                                 if (colorMode == "black") {
-                                    return "#494a4d";
+                                    return "#b0b0b0";
                                 } else if (colorMode == "colored") {
                                     return colorise(d.date, d.weeksum);
                                 }
