@@ -474,18 +474,20 @@
                                 "translate(" + hTr + "," + hPos + ")");
                     };
 
-                    d3.select("#sections").selectAll(".step").nodes().forEach(
+                    var sectionsNodes = d3.select("#sections").selectAll(".step").nodes()
+                    
+                    sectionsNodes.forEach(
                         function(d, i) {
                             addCircle(d.id, navigatorX[i], "#ececec")
                         }
                     );
 
                     var circlesNav = circlesContainer.selectAll("circle");
+                    var circlesNavNodes = circlesNav.nodes();
 
                     circlesNav
                         .on("mouseover", function(d) {
                             d3.select(this).attr("fill", "#bf381d");
-                            // d3.select(this).attr("fill", "#00abe5");
                     });
 
                     circlesNav
@@ -495,17 +497,15 @@
 
                     circlesNav
                         .on("click", function(d) {
-                            document.getElementById(this.id.replace("C", "")).scrollIntoView();
+                            document.getElementById(this.id.replace("C", "")).scrollIntoView(
+                                {behavior: "smooth"}
+                                );
                         });
 
                     addCircle("theCircle", navigatorX[0], "#b0b0b0");
                     const theCircle = circlesContainer.select("#CtheCircle");
 
                     // Actions
-
-                    function paintCircle(i) {
-                        circlesContainer.select("circle").filter()
-                    };
 
                     function marker(mids, mode) {
                         if (mids) {
