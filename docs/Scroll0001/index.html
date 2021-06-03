@@ -262,12 +262,12 @@
 
                                 curSection
                                     .append("span")
-                                    .attr("class", "paragraphFalseText")
+                                    .attr("class", "paragraph paragraphFalseText")
                                     .html(a);
                                 
                                 curSection
                                     .append("span")
-                                    .attr("class", "paragraphText")
+                                    .attr("class", "paragraph paragraphText")
                                     .html(a);
                             } )
                         }
@@ -373,7 +373,13 @@
                             .attr("transform", "translate("+tranlateX+",0)")
                             .call(d3.axisLeft(aY)
                                 .tickSize(0)
-                                .tickFormat(d => { return d3.format(",.0f")(d).replace(",", ' ') } ))
+                                .tickFormat(d => {  
+                                    if (H<W) {
+                                        return d3.format(",.0f")(d).replace(",", ' ');
+                                    } else {
+                                        return d3.format(",.0f")(d).replace(",000", 'k');
+                                    }
+                                } ))
                             .selectAll("text")
                                 .attr('text-anchor', anc)
                                 .attr("class", textClass);
@@ -506,36 +512,41 @@
                                 "translate(" + hTr + "," + hPos + ")");
                     };
 
-                    var sectionsNodes = d3.select("#sections").selectAll(".step").nodes()
+                    var theCircle;
+
+                    if (H<W) {
+                        var sectionsNodes = d3.select("#sections").selectAll(".step").nodes()
                     
-                    sectionsNodes.forEach(
-                        function(d, i) {
-                            addCircle(d.id, navigatorX[i], "#ececec")
-                        }
-                    );
+                        sectionsNodes.forEach(
+                            function(d, i) {
+                                addCircle(d.id, navigatorX[i], "#ececec")
+                            }
+                        );
 
-                    var circlesNav = circlesContainer.selectAll("circle");
-                    var circlesNavNodes = circlesNav.nodes();
+                        var circlesNav = circlesContainer.selectAll("circle");
+                        var circlesNavNodes = circlesNav.nodes();
 
-                    circlesNav
-                        .on("mouseover", function(d) {
-                            d3.select(this).attr("fill", "#bf381d");
-                    });
-
-                    circlesNav
-                        .on("mouseleave", function(d) {
-                            d3.select(this).attr("fill", "#ececec");
+                        circlesNav
+                            .on("mouseover", function(d) {
+                                d3.select(this).attr("fill", "#bf381d");
                         });
 
-                    circlesNav
-                        .on("click", function(d) {
-                            document.getElementById(this.id.replace("C", "")).scrollIntoView(
-                                {behavior: "smooth"}
-                                );
-                        });
+                        circlesNav
+                            .on("mouseleave", function(d) {
+                                d3.select(this).attr("fill", "#ececec");
+                            });
 
-                    addCircle("theCircle", navigatorX[0], "#b0b0b0");
-                    const theCircle = circlesContainer.select("#CtheCircle");
+                        circlesNav
+                            .on("click", function(d) {
+                                document.getElementById(this.id.replace("C", "")).scrollIntoView(
+                                    {behavior: "smooth"}
+                                    );
+                            });
+
+                        addCircle("theCircle", navigatorX[0], "#b0b0b0");
+                        theCircle = circlesContainer.select("#CtheCircle");
+                    };
+                    
 
                     let leftB = width*0.25,
                         wid = width*0.1;
@@ -908,7 +919,10 @@
                             activationFunctions[i][0](
                                 activationFunctions[i][1]
                             );
-                            theCircle.call(navigate, i);
+                            if (H<W) {
+                                theCircle.call(navigate, i);
+                            }
+                            
                         })
                         lastIndex = activeIndex;
                     });

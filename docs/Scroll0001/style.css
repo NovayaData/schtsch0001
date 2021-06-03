@@ -19,37 +19,31 @@ body::-webkit-scrollbar {
     height: 100vh;
 }
 
-.paragraphText {
-    margin-top: 12%;
-    margin-left: 25vw;
-    width: 50vw;
+.paragraph {
+    margin-top: 18%;
+    margin-left: 5vw;
+    width: 90vw;
     position: absolute;
     font-family: 'Lora', serif;
     font-weight:400;
-    color: #494a4d;
     font-size: 18px;
     letter-spacing: .015em;
     line-height: 25px;
 }
 
+.paragraphText {
+    color: #494a4d;
+}
+
 .paragraphFalseText {
-    margin-top: 12%;
-    margin-left: 25vw;
-    width: 50vw;
-    position: absolute;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    font-family: 'Lora', serif;
-    font-weight:400;
     background-color: #ffffff;
     color: #ffffff;
-    font-size: 18px;
-    letter-spacing: .015em;
-    line-height: 25px;
     opacity: 0.8;
 }
 
@@ -143,10 +137,19 @@ body::-webkit-scrollbar {
     .header1 {
         font-size: 20px
     }
+
 }
 
 @media (min-width: 700px) {
     .header1 {
         font-size: 36px
     }
+
+    .paragraph {
+        margin-top: 18%;
+        margin-left: 25vw;
+        width: 50vw;
+        position: absolute;
+    }
+
 }
