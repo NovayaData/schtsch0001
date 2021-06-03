@@ -474,7 +474,7 @@
                         circlesContainer
                             .append("circle")
                             .attr("id", function() { i+=1; return "stepC"+i })
-                            .attr("r", "5px")
+                            .attr("r", "4px")
                             .attr("fill", color)
                             .attr("transform", 
                                 "translate(" + hTr + "," + hPos + ")");
@@ -494,20 +494,16 @@
                             // d3.select(this).attr("fill", "#00abe5");
                     });
 
-                    // circlesNav
-                    //     .on("mousemove", function(d) {
-                    //         d3.select(this).attr("fill", "#00abe5");
-                    //     })
-
                     circlesNav
                         .on("mouseleave", function(d) {
                             d3.select(this).attr("fill", "#ececec");
                         });
 
-                    
-
                     circlesNav
                         .on("click", function(d) {
+                            // let i = circlesNav.nodes().indexOf(this);
+                            // let activate = activationFunctions[i];
+                            // activate[0](activate[1]);
                             document.getElementById(this.id.replace("C", "")).scrollIntoView();
                         });
 
