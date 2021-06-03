@@ -151,8 +151,7 @@
                 Promise.all([
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
                     d3.json('../data/Scroll0001/article_script.json'),
-                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv"),
-                    d3.json("../data/Scroll0001/test.json")
+                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv")
                 ]).then(([data, articleScript, googleData]) => {
 
                     // const sections = d3.select("#sections");
