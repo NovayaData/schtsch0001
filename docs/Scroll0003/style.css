@@ -14,42 +14,29 @@ body::-webkit-scrollbar {
     background: transparent;
 }
 
-#paragraphs {
-    position: fixed;
-    z-index: 10;
-    height: 40%;
-    width: 50%;
+.step {
+    width: 100%;
+    height: 100vh;
 }
 
 .paragraphText {
-    position: fixed;
-    /* z-index: 4; */
-    margin-top: 9%;
-    margin-left: 25%;
-    max-height: 40%;
-    width: 50%;
-    /* -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none; */
+    margin-top: 12%;
+    margin-left: 25vw;
+    width: 50vw;
+    position: absolute;
     font-family: 'Lora', serif;
     font-weight:400;
     color: #494a4d;
     font-size: 18px;
     letter-spacing: .015em;
     line-height: 25px;
-    
 }
 
 .paragraphFalseText {
-    position: fixed;
-    z-index: 3;
-    margin-top: 9%;
-    margin-left: 25%;
-    max-height: 40%;
-    width: 50%;
+    margin-top: 12%;
+    margin-left: 25vw;
+    width: 50vw;
+    position: absolute;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -58,38 +45,21 @@ body::-webkit-scrollbar {
     user-select: none;
     font-family: 'Lora', serif;
     font-weight:400;
-    background-color: ffffff;
-    color: #ffffff;;
+    background-color: #ffffff;
+    color: #ffffff;
     font-size: 18px;
     letter-spacing: .015em;
     line-height: 25px;
-    
+    opacity: 0.8;
 }
 
 #sections {
     position: absolute;
     display: inline-block;
-    width: 100%;
+    width: 95%;
     height: 100%;
     margin-top: 0;
-    /* z-index: 90; */
-    /* opacity: 0; */
-}
-
-.step {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    font-family: 'Roboto', sans-serif;
-    font-weight:400;
-    height: 100vh;
-    font-size: 24;
-    color: none;
-    /* background-color: burlywood; */
-    /* opacity: 0; */
+    z-index: 90;
 }
 
 /* .picture {
@@ -165,8 +135,6 @@ body::-webkit-scrollbar {
 }
 
 .axis {
-    /* stroke-width: 0.5px; */
-    /* stroke: #888; */
     font: 10px;
     color: black;
   }
