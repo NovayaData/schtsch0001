@@ -9,10 +9,6 @@
 </head>
 <body>
 
-    <!-- <img class="picture" alt="test2" src="https://s0.rbk.ru/v6_top_pics/media/img/1/90/756184010255901.jpg"> -->
-    <!-- bgcolor="#f7f7f7" -->
-    <!-- style="overflow: hidden;" -->
-
     <div id="headers">
         <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
     </div>
@@ -85,30 +81,32 @@
                     return scroll;
                 };
 
+                var colorSteps = [279.4, 2695.8, 5163, 7207.2];
+
                 function getColor(v) {
-                    if (279.4>v && v>=0){
+                    if (colorSteps[0]>v && v>=0){
                         return "#ffed26"
-                    } else if (2695.8>v && v>=279.4){
+                    } else if (colorSteps[1]>v && v>=colorSteps[0]){
                         return "#fbbf00"
-                    } else if (5163>v && v>=2695.8){
+                    } else if (colorSteps[2]>v && v>=colorSteps[1]){
                         return "#ee9100"
-                    } else if (7207.2>v && v>=5163){
+                    } else if (colorSteps[3]>v && v>=colorSteps[2]){
                         return "#da6513"
-                    } else if (v>=7207.2){
+                    } else if (v>=colorSteps[3]){
                         return "#bf381d"
                     }
                 }
 
                 function getColorG(v) {
-                    if (279.4>v && v>=0){
+                    if (colorSteps[0]>v && v>=0){
                         return "#ececec"
-                    } else if (2695.8>v && v>=279.4){
+                    } else if (colorSteps[1]>v && v>=colorSteps[0]){
                         return "#cfcfcf"
-                    } else if (5163>v && v>=2695.8){
+                    } else if (colorSteps[2]>v && v>=colorSteps[1]){
                         return "#b0b0b0"
-                    } else if (7207.2>v && v>=5163){
+                    } else if (colorSteps[3]>v && v>=colorSteps[2]){
                         return "#949494"
-                    } else if (v>=7207.2){
+                    } else if (v>=colorSteps[3]){
                         return "#787878"
                     }
                 }
@@ -153,12 +151,47 @@
                 Promise.all([
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
                     d3.json('../data/Scroll0001/article_script.json'),
-                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv")
+                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv"),
+                    d3.json("../data/Scroll0001/test.json")
                 ]).then(([data, articleScript, googleData]) => {
 
+                    // const sections = d3.select("#sections");
+                    // var activationFunctions = [];
+
+                    // const actionsDict = {
+                    //     "dropAll":dropAll,
+                    //     "getSize":getSize,
+                    //     "getAction":getAction
+                    // };
+
+                    // Object.keys(articleScript.paragraphs).forEach(
+                    //     function(p, i) {
+                    //         let abz = articleScript.paragraphs[p][1];
+
+                    //         activationFunctions.push(articleScript.paragraphs[p][0]);
+
+                    //         i+=1
+                    //         let curSection = sections.append("section")
+                    //             .attr("class", "step")
+                    //             .attr("id", p+"_"+i);
+                            
+                    //         curSection
+                    //             .append("span")
+                    //             .attr("class", "paragraphFalseText")
+                    //             .html(a);
+                            
+                    //         curSection
+                    //             .append("span")
+                    //             .attr("class", "paragraphText")
+                    //             .html(a);
+
+                    //         } )
+                    //     }
+                    // );
+
                     const activationFunctions = [
-                    [dropAll, ["p0", "zero", "black"]],
-                                [dropAll, ["zero", "black"]],
+                                [dropAll, ["zero", ""]],
+                                [dropAll, ["zero", ""]],
                                 [dropAll, ["real", "black"]],
                                 [dropAll, ["real", "colored"]],
                                 [dropAll, ["wurst", ""]],
@@ -505,6 +538,43 @@
                     addCircle("theCircle", navigatorX[0], "#b0b0b0");
                     const theCircle = circlesContainer.select("#CtheCircle");
 
+                    let leftB = width*0.25,
+                        wid = width*0.1;
+
+                    var colorLegend = focus.append("g")
+                        .attr("id", "colorLegend")
+                        .attr("opacity", 0),
+                        legendSteps = [0].concat(colorSteps);
+
+                    legendSteps.forEach(
+                        function(colorValue) {
+                            curG = colorLegend.append("g");
+                            curG.append("rect")
+                                .attr("y", 0)
+                                .attr("x", leftB)
+                                .attr("width", wid)
+                                .attr("height", bandWidth*2)
+                                .attr("fill", function() {return getColor(colorValue) });
+                            curG.append("g")
+                                .append("text")
+                                .attr("class", "textSmaller")
+                                .attr("fill", "#0f0f0f")
+                                .attr("x", leftB)
+                                .attr("y", bandWidth*6)
+                                .attr("text-anchor", "middle")
+                                .text( function() {
+                                    if (colorValue==0) {
+                                        return "";
+                                    } else {
+                                        return colorValue.toString().replace(".", ",");
+                                    }
+                                } );
+
+                            leftB+=wid;
+                        }
+                    )
+                                
+
                     // Actions
 
                     function marker(mids, mode) {
@@ -580,6 +650,13 @@
 
                         let curReal = bars.selectAll("."+eid)
 
+                        if (colorMode == "black") {
+                            colorLegend.call(wurstOpaciter, 0);
+                        } else {
+                            colorLegend.call(wurstOpaciter, 1);
+                        };
+                        
+
                         curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
 
                         let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
@@ -603,6 +680,8 @@
 
                         marker(midsDel, "off");
                         marks.selectAll("circle:not(.on)").call(pookMark, 0);
+
+                        colorLegend.call(wurstOpaciter, 1);
 
                         if (eid=="clean") {
                             getWurst()
@@ -635,7 +714,7 @@
 
                         bars.selectAll(".wurst")
                             .call(wurstOpaciter, 1)
-                            .call(pookColor)
+                            // .call(pookColor)
                             .call(pookZero)
 
                         marks.selectAll(".on").call(pookMark, 1);
@@ -645,11 +724,15 @@
                         let barType = args[0],
                             colorMode = args[1];
 
+                        
+
                         if (barType=="wurst") {
+                            colorLegend.call(wurstOpaciter, 1);
                             getWurst();
                         } else if (barType=="real") {
                             getReal("wurst", colorMode);
                         } else if (barType=="zero") {
+                            colorLegend.call(wurstOpaciter, 0);
                             getZero();
                         };
                         
@@ -763,9 +846,9 @@
                             .attr("fill", function(d) {
 
                                 if (colorMode == "black") {
-                                    return "#494a4d"
+                                    return "#494a4d";
                                 } else if (colorMode == "colored") {
-                                    return colorise(d.date, d.weeksum)
+                                    return colorise(d.date, d.weeksum);
                                 }
 
                             });
