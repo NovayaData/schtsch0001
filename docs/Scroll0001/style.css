@@ -151,5 +151,10 @@ body::-webkit-scrollbar {
         width: 50vw;
         position: absolute;
     }
-
+    .textSmaller {
+        font-size: 12px;
+    }
+    .textSmaller2 {
+        font-size: 12px;
+    }
 }

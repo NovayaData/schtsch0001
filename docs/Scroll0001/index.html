@@ -116,6 +116,34 @@
                     width = W - margin.left - margin.right,
                     height = H - margin.top - margin.bottom;
 
+                var curSet;
+
+                var desktopSettings = {
+                    yScalerP : 0.75,
+                    wurstH : H*0.035,
+                    monthFormat : "%b",
+                    yearHeight : H*0.0275,
+                    yearTick : 0,
+                    legendPosP : 0.25,
+                    legendWP : 0.1
+                },
+                
+                mobileSettings = {
+                    yScalerP : 0.4,
+                    wurstH : H*0.02,
+                    monthFormat : "%-",
+                    yearHeight : 0,
+                    yearTick : H*0.015,
+                    legendPosP : 0.125,
+                    legendWP : 0.15
+                };
+
+                if (H>W) {
+                    curSet = mobileSettings;
+                } else {
+                    curSet = desktopSettings;
+                }
+
                 var svg = d3.select("#chartArea").append("svg")
                     .attr("width", W)
                     .attr("height", H)
@@ -141,8 +169,7 @@
                 var parseTime = d3.timeParse("%Y-%m-%d");
                 var bandWidth;
 
-                // var wurstH = H*0.02;
-                var wurstH = H*0.035;
+                var wurstH = curSet.wurstH;
                 var NFS = 400;
 
                 // var sizeCondition = 0;
@@ -152,10 +179,12 @@
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
                     d3.json('../data/Scroll0001/article_script.json'),
                     d3.csv("../data/Scroll0001/google_search_index_Donbas.csv"),
-                    d3.json("../data/settings/timeFormatRu.json")
-                ]).then(([data, articleScript, googleData, localeRuTime]) => {
+                    d3.json("../data/settings/timeFormatRu.json"),
+                    d3.json("../data/settings/formatRu.json")
+                ]).then(([data, articleScript, googleData, localeRuTime, locatRu]) => {
 
                     d3.timeFormatDefaultLocale(localeRuTime);
+                    d3.formatDefaultLocale(locatRu);
 
                     // const sections = d3.select("#sections");
                     // var activationFunctions = [];
@@ -336,7 +365,7 @@
 
                     var weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
                     // var yScaler = (H*0.4)/weeksumMax;
-                    var yScaler = (H*0.75)/weeksumMax;
+                    var yScaler = H*curSet.yScalerP/weeksumMax;
 
                     var bandWidth = width/data.length+0.4;
 
@@ -369,10 +398,12 @@
                                 .attr('text-anchor', 'start')
                                 .attr("class", "textSmaller");
                     };
+
+                    // console.log(5/H);
                     
-                    addXAx("Xmonths", 1, height+5, d3.timeMonth, d3.timeFormat("%-"), 5);
-                    addXAx("Xseasons", 1, height+5, d3.timeMonth.every(3), d3.timeFormat("%b"), 10);
-                    addXAx("X", 1, height+25, d3.timeYear, d3.timeFormat("%Y"), 0);
+                    addXAx("Xmonths", 1, height, d3.timeMonth, d3.timeFormat("%-"), H*0.005);
+                    addXAx("Xseasons", 1, height, d3.timeMonth.every(3), d3.timeFormat(curSet.monthFormat), H*0.01);
+                    addXAx("X", 1, height+curSet.yearHeight, d3.timeYear, d3.timeFormat("%Y"), curSet.yearTick);
 
                     var y2x = bandWidth*2+width;
 
@@ -386,9 +417,9 @@
                                 .tickSize(0)
                                 .tickFormat(d => {  
                                     if (H<W) {
-                                        return d3.format(",.0f")(d).replace(",", "\xa0");
+                                        return d3.format(",.0f")(d);
                                     } else {
-                                        return d3.format(",.0f")(d).replace(",000", 'k');
+                                        return d3.format(",.0f")(d).replace("\u0020000", 'k');
                                     }
                                 } ))
                             .selectAll("text")
@@ -559,8 +590,8 @@
                     };
                     
 
-                    let leftB = width*0.25,
-                        wid = width*0.1;
+                    let leftB = width*curSet.legendPosP,
+                        wid = width*curSet.legendWP;
 
                     var colorLegend = focus.append("g")
                         .attr("id", "colorLegend")
@@ -574,20 +605,20 @@
                                 .attr("y", 0)
                                 .attr("x", leftB)
                                 .attr("width", wid)
-                                .attr("height", bandWidth*2)
+                                .attr("height", wurstH/3)
                                 .attr("fill", function() {return getColor(colorValue) });
                             curG.append("g")
                                 .append("text")
                                 .attr("class", "textSmaller")
                                 .attr("fill", "#0f0f0f")
                                 .attr("x", leftB)
-                                .attr("y", bandWidth*6)
+                                .attr("y", wurstH)
                                 .attr("text-anchor", "middle")
                                 .text( function() {
                                     if (colorValue==0) {
                                         return "";
                                     } else {
-                                        return colorValue.toString().replace(".", ",");
+                                        return d3.format(",.0f")(colorValue);
                                     }
                                 } );
 
@@ -769,9 +800,9 @@
                         barsFake.selectAll("rect").call(resizeFakeBars);
 
                         focus.selectAll("path").call(resizeLine);
-                        focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", 0);
-                        focus.select("#Xseasons").call(resizeAx, x, d3.timeMonth.every(3), d3.timeFormat("%b"), 10);
-                        focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-", 5);
+                        focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", curSet.yearTick);
+                        focus.select("#Xseasons").call(resizeAx, x, d3.timeMonth.every(3), d3.timeFormat(curSet.monthFormat), H*0.01);
+                        focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-", H*0.005);
                         focus.selectAll(".mark").call(resizeMarks);
                         dropDomains();
 
