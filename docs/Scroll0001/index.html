@@ -80,7 +80,7 @@
                     return scroll;
                 };
 
-                var colorSteps = [279.4, 2695.8, 5163, 7207.2];
+                var colorSteps = [1391.60, 3554.20, 5611.60, 7598.80];
 
                 function getColor(v) {
                     if (colorSteps[0]>v && v>=0){
@@ -115,6 +115,8 @@
                     margin = {top: H*0.06, right: W*0.06, bottom: H*0.06, left: W*0.06},
                     width = W - margin.left - margin.right,
                     height = H - margin.top - margin.bottom;
+
+                var sc = 1; 
 
                 var curSet;
 
@@ -575,7 +577,6 @@
                         );
 
                         var circlesNav = circlesContainer.selectAll("circle");
-                        var circlesNavNodes = circlesNav.nodes();
 
                         circlesNav
                             .on("mouseover", function(d) {
@@ -585,13 +586,22 @@
                         circlesNav
                             .on("mouseleave", function(d) {
                                 d3.select(this).attr("fill", "#ececec");
+                                sc = 1;
                             });
 
                         circlesNav
                             .on("click", function(d) {
-                                document.getElementById(this.id.replace("C", "")).scrollIntoView(
-                                    {behavior: "smooth"}
-                                    );
+
+                                let curId = this.id.replace("C", "");
+                                let i = circlesNav.nodes().indexOf(this);
+
+                                sc = 0;
+                                document.getElementById(curId).scrollIntoView(
+                                    // {behavior: "smooth"} 
+                                );
+                                activationFunctions[i][0](
+                                    activationFunctions[i][1]
+                                )
                             });
 
                         addCircle("theCircle", navigatorX[0], "#b0b0b0");
@@ -782,6 +792,7 @@
                     };
 
                     function dropAll(args) {
+
                         let barType = args[0],
                             colorMode = args[1];
 
@@ -966,9 +977,13 @@
                         let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
 
                         scrolledSections.forEach(i => {
-                            activationFunctions[i][0](
-                                activationFunctions[i][1]
-                            );
+                            if (sc == 1) {
+                                console.log("!");
+                                activationFunctions[i][0](
+                                    activationFunctions[i][1]
+                                );
+                            }
+                            
                             if (H<W) {
                                 theCircle.call(navigate, i);
                             }
