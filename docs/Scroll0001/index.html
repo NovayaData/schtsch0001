@@ -738,17 +738,15 @@
                         };
 
                         if (sizeCondition==1) {
-                            resizer(cleanDate, xMax);
+                            resizer(cleanDate);
                         } else {
-                            resizer(xMin, xMax);
+                            resizer(xMin);
                         };
                     };
 
                     function getWurst() {
                         focus.select("#Y").attr("opacity", 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
-
-                        resizer(xMin, xMax);
 
                         bars.selectAll(".wurst")
                             .call(wurstOpaciter, 1)
@@ -774,8 +772,6 @@
                         let barType = args[0],
                             colorMode = args[1];
 
-                        
-
                         if (barType=="wurst") {
                             colorLegend.call(wurstOpaciter, 1);
                             getWurst();
@@ -788,11 +784,11 @@
                         
                     };
 
-                    function resizer(leftDate, rightDate) {
+                    function resizer(leftDate) {
 
-                        var s = Array(leftDate, rightDate);
+                        var s = Array(leftDate, xMax);
 
-                        bandWidth = width/data.filter(function(d) { return d.date > leftDate && d.date < rightDate;}).length+0.4;
+                        bandWidth = width/data.filter(function(d) { return d.date > leftDate; }).length+0.4;
                         x.domain(s);
 
                         bars.selectAll("rect").call(resizeBars);
