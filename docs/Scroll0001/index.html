@@ -376,8 +376,8 @@
                     };
                     
                     addXAx("Xmonths", 1, height+5, d3.timeMonth, d3.timeFormat("%-"), 5);
-                    addXAx("Xseasons", 1, height+5, d3.timeMonth.every(3), d3.timeFormat("%-"), 10);
-                    addXAx("X", 1, height+5, d3.timeYear, d3.timeFormat("%Y"), 15);
+                    addXAx("Xseasons", 1, height+5, d3.timeMonth.every(3), d3.timeFormat("%b"), 10);
+                    addXAx("X", 1, height+25, d3.timeYear, d3.timeFormat("%Y"), 0);
 
                     var y2x = bandWidth*2+width;
 
