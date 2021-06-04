@@ -788,8 +788,8 @@
                         barsFake.selectAll("rect").call(resizeFakeBars);
 
                         focus.selectAll("path").call(resizeLine);
-                        focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", 15);
-                        focus.select("#Xseasons").call(resizeAx, x, d3.timeMonth.every(3), d3.timeFormat("%-"), 10);
+                        focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", 0);
+                        focus.select("#Xseasons").call(resizeAx, x, d3.timeMonth.every(3), d3.timeFormat("%b"), 10);
                         focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-", 5);
                         focus.selectAll(".mark").call(resizeMarks);
                         dropDomains();
