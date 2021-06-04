@@ -96,20 +96,6 @@
                     }
                 }
 
-                // function getColor(v) {
-                //     if (colorSteps[0]>v && v>=0){
-                //         return "#ffed26"
-                //     } else if (colorSteps[1]>v && v>=colorSteps[0]){
-                //         return "#ffc300"
-                //     } else if (colorSteps[2]>v && v>=colorSteps[1]){
-                //         return "#ff9800"
-                //     } else if (colorSteps[3]>v && v>=colorSteps[2]){
-                //         return "#f56b03"
-                //     } else if (v>=colorSteps[3]){
-                //         return "#e5381d"
-                //     }
-                // }
-
                 function getColorG(v) {
                     if (colorSteps[0]>v && v>=0){
                         return "#ececec"
@@ -165,8 +151,11 @@
                 Promise.all([
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
                     d3.json('../data/Scroll0001/article_script.json'),
-                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv")
-                ]).then(([data, articleScript, googleData]) => {
+                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv"),
+                    d3.json("../data/settings/timeFormatRu.json")
+                ]).then(([data, articleScript, googleData, localeRuTime]) => {
+
+                    d3.timeFormatDefaultLocale(localeRuTime);
 
                     // const sections = d3.select("#sections");
                     // var activationFunctions = [];
@@ -338,6 +327,12 @@
 
                     var xMin = d3.min(data, function(d) { return d.date; });
                     var xMax = d3.max(data, function(d) { return d.date; });
+
+                    const locale = d3.formatLocale({
+                        decimal: ",",
+                        thousands: "\u00a0",
+                        grouping: [3],
+                    });
 
                     var weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
                     // var yScaler = (H*0.4)/weeksumMax;
@@ -683,16 +678,6 @@
                             colorLegend.call(wurstOpaciter, 1);
                         };
 
-
-                        // let curRealNodes = curReal.nodes(),
-                        //     aI = barsAll.indexOf(curRealNodes[0]),
-                        //     bI = barsAll.indexOf(curRealNodes[curRealNodes.length-1]);
-
-                        // let aDate = data[aI].date,
-                        //     bDate = data[bI].date;
-
-                        // resizer(aDate, bDate);
-
                         curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
 
                         let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
@@ -704,8 +689,6 @@
                         };
 
                         marks.selectAll("circle:not(.on)").call(pookMark, 0);
-
-                        // focus.select("#Xmonths").attr("opacity", 1);
                         focus.select("#Y").attr("opacity", 1);
                     };
 
@@ -732,7 +715,6 @@
 
                     function getWurst() {
                         focus.select("#Y").attr("opacity", 0);
-                        // focus.select("#Xmonths").attr("opacity", 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
 
                         resizer(xMin, xMax);
@@ -747,7 +729,6 @@
 
                     function getZero() {
                         focus.select("#Y").attr("opacity", 0);
-                        // focus.select("#Xmonths").attr("opacity", 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
 
                         bars.selectAll(".wurst")
