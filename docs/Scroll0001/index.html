@@ -117,7 +117,7 @@
                     height = H - margin.top - margin.bottom;
 
                 var sc = 1; 
-
+                var curS = 0;
                 var curSet;
 
                 var desktopSettings = {
@@ -223,62 +223,64 @@
                     // );
 
                     const activationFunctions = [
-                                [dropAll, ["zero", ""]],
-                                [dropAll, ["zero", ""]],
-                                [dropAll, ["real", "black"]],
-                                [dropAll, ["real", "colored"]],
-                                [dropAll, ["wurst", ""]],
-                            [getSize, ["clean", 0, []]],
-                            [getSize, ["clean", 1, []]],
-                        [getAction, ["e1", [], []]],
-                        [getAction, ["e1", [], []]],
-                        [getAction, ["e1", [], []]],
-                        [getAction, ["e1", [], []]],
-                        [getAction, ["e2", [], []]],
-                        [getAction, ["e2", [], []]],
-                        [getAction, ["e2", [], []]],
-                        [getAction, ["e3", [], []]],
-                        [getAction, ["e3", [], []]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                        [getAction, ["e4", [], []]],
-                        [getAction, ["e4", [], []]],
-                        [getAction, ["e5", [], []]],
-                                [dropAll, ["wurst", ""]],
-                        [getAction, ["e6", [], []]],
-                        [getAction, ["e6", [], []]],
-                        [getAction, ["e6", [], []]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                        [getAction, ["e7", [], []]],
-                        [getAction, ["e7", [], []]],
-                                [dropAll, ["wurst", ""]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e9", [], []]],
-                        [getAction, ["e9", [], []]],
-                        [getAction, ["e9", [], []]],
-                        [getAction, ["e9", [], []]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e8", [], []]],
-                        [getAction, ["e10", [], []]],
-                        [getAction, ["e10", [], []]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["wurst", ""]],
-                                [dropAll, ["real", "black"]]
+                                [dropAll, ["zero", "", 0]],
+                                [dropAll, ["zero", "", 0]],
+                                [dropAll, ["real", "black", 0]],
+                                [dropAll, ["real", "colored", 0]],
+                                [dropAll, ["wurst", "", 0]],
+                            [dropAll, ["wurst", "", 1]],
+                            [dropAll, ["wurst", "", 1]],
+                            // [getSize, ["clean", 0, []]],
+                            // [getSize, ["clean", 1, []]],
+                        [getAction, ["e1", [], [], 1]],
+                        [getAction, ["e1", [], [], 1]],
+                        [getAction, ["e1", [], [], 1]],
+                        [getAction, ["e1", [], [], 1]],
+                        [getAction, ["e2", [], [], 1]],
+                        [getAction, ["e2", [], [], 1]],
+                        [getAction, ["e2", [], [], 1]],
+                        [getAction, ["e3", [], [], 1]],
+                        [getAction, ["e3", [], [], 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                        [getAction, ["e4", [], [], 1]],
+                        [getAction, ["e4", [], [], 1]],
+                        [getAction, ["e5", [], [], 1]],
+                                [dropAll, ["wurst", "", 1]],
+                        [getAction, ["e6", [], [], 1]],
+                        [getAction, ["e6", [], [], 1]],
+                        [getAction, ["e6", [], [], 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                        [getAction, ["e7", [], [], 1]],
+                        [getAction, ["e7", [], [], 1]],
+                                [dropAll, ["wurst", "", 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e9", [], [], 1]],
+                        [getAction, ["e9", [], [], 1]],
+                        [getAction, ["e9", [], [], 1]],
+                        [getAction, ["e9", [], [], 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e8", [], [], 1]],
+                        [getAction, ["e10", [], [], 1]],
+                        [getAction, ["e10", [], [], 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["wurst", "", 1]],
+                                [dropAll, ["real", "black", 1]]
                     ];
 
                     // Finish page
@@ -696,7 +698,12 @@
 
                         let eid = args[0],
                             mids = args[1],
-                            midsDel = args[2];
+                            midsDel = args[2],
+                            s = args[3];
+
+                        if (curS!=s) {
+                            getSize(s);
+                        }
 
                         marker(mids, "on");
                         marker(midsDel, "off");
@@ -746,25 +753,27 @@
                         
                     };
 
-                    function getSize(args) {
-                        let eid = args[0],
-                            sizeCondition = args[1],
-                            midsDel = args[2];
+                    function getSize(sizeCondition) {
+                        // let eid = args[0],
+                        //     sizeCondition = args[1],
+                        //     midsDel = args[2];
 
-                        marker(midsDel, "off");
-                        marks.selectAll("circle:not(.on)").call(pookMark, 0);
+                        // marker(midsDel, "off");
+                        // marks.selectAll("circle:not(.on)").call(pookMark, 0);
 
-                        colorLegend.call(wurstOpaciter, 1);
+                        // colorLegend.call(wurstOpaciter, 1);
 
-                        if (eid=="clean") {
-                            getWurst()
-                        };
+                        // if (eid=="clean") {
+                        //     getWurst()
+                        // };
 
                         if (sizeCondition==1) {
                             resizer(cleanDate);
                         } else {
                             resizer(xMin);
                         };
+
+                        curS = sizeCondition;
                     };
 
                     function getWurst() {
@@ -780,7 +789,7 @@
                     };
 
                     function getZero() {
-                        focus.select(".Y").call(wurstOpaciter, 0);
+                        focus.selectAll(".Y").call(wurstOpaciter, 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
 
                         bars.selectAll(".wurst")
@@ -794,7 +803,12 @@
                     function dropAll(args) {
 
                         let barType = args[0],
-                            colorMode = args[1];
+                            colorMode = args[1],
+                            s = args[2];
+
+                        if (curS!=s) {
+                            getSize(s);
+                        }
 
                         if (barType=="wurst") {
                             colorLegend.call(wurstOpaciter, 1);
