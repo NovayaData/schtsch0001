@@ -80,7 +80,9 @@
                     return scroll;
                 };
 
-                var colorSteps = [1391.60, 3554.20, 5611.60, 7598.80];
+                colorSteps = [1390, 3550, 5610, 7600];
+
+                // var colorSteps = [1391.60, 3554.20, 5611.60, 7598.80];
 
                 function getColor(v) {
                     if (colorSteps[0]>v && v>=0){
@@ -619,11 +621,18 @@
                         .attr("opacity", 0),
                         legendSteps = [0].concat(colorSteps);
 
+                    colorLegend.append("text")
+                                .attr("class", "textSmaller")
+                                .attr("x", leftB)
+                                .attr("y", 0)
+                                .attr("text-anchor", "start")
+                                .text( "Количество выстрелов за неделю" );
+
                     legendSteps.forEach(
                         function(colorValue) {
                             curG = colorLegend.append("g");
                             curG.append("rect")
-                                .attr("y", 0)
+                                .attr("y", wurstH/4)
                                 .attr("x", leftB)
                                 .attr("width", wid)
                                 .attr("height", wurstH/3)
@@ -631,9 +640,9 @@
                             curG.append("g")
                                 .append("text")
                                 .attr("class", "textSmaller")
-                                .attr("fill", "#0f0f0f")
+                                // .attr("fill", "#0f0f0f")
                                 .attr("x", leftB)
-                                .attr("y", wurstH)
+                                .attr("y", wurstH/4+wurstH/3+12)
                                 .attr("text-anchor", "middle")
                                 .text( function() {
                                     if (colorValue==0) {
