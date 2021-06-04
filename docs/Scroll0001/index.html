@@ -407,11 +407,12 @@
 
                     var y2x = bandWidth*2+width;
 
-                    function addY(aY, domainR, tranlateX, textClass, i, anc) {
+                    function addY(aY, domainR, tranlateX, textClass, i, axClass, textColor, anc, o) {
                         aY.domain([0, domainR]);
                         focus.append("g")
                             .attr("id", i)
-                            .attr("opacity", 1)
+                            .attr("class", axClass)
+                            .attr("opacity", o)
                             .attr("transform", "translate("+tranlateX+",0)")
                             .call(d3.axisLeft(aY)
                                 .tickSize(0)
@@ -424,12 +425,20 @@
                                 } ))
                             .selectAll("text")
                                 .attr('text-anchor', anc)
-                                .attr("class", textClass);
+                                .attr("class", textClass)
+                                .attr("fill", function(d) {
+                                    if (textColor=="colored") {
+                                        return getColor(d);
+                                    } else {
+                                        return textColor;
+                                    }
+                                });
                     };
 
-                    addY(y, 40000, 0, "textSmaller2", "Y", "end");
-                    addY(y2, 100, y2x, "textSmaller", "Y2", "start");
-                    focus.select("#Y").attr("opacity", 0);
+                    addY(y, 40000, 0, "textSmaller", "Y", "Y", "#b0b0b0", "end", 0);
+                    addY(y, 40000, 0, "textSmaller", "Y1", "Y", "colored", "end", 0);
+                    addY(y2, 100, y2x, "textSmaller", "Y2", "Yg", "#212226", "start", 1);
+                    // focus.select(".Y").attr("opacity", 0);
 
                     function dropDomains() {
                         focus.selectAll(".domain")
@@ -705,8 +714,12 @@
 
                         if (colorMode == "black") {
                             colorLegend.call(wurstOpaciter, 0);
+                            focus.select("#Y1").call(wurstOpaciter, 0);
+                            focus.select("#Y").call(wurstOpaciter, 1);
                         } else {
                             colorLegend.call(wurstOpaciter, 1);
+                            focus.select("#Y").call(wurstOpaciter, 0);
+                            focus.select("#Y1").call(wurstOpaciter, 1);
                         };
 
                         curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
@@ -720,7 +733,7 @@
                         };
 
                         marks.selectAll("circle:not(.on)").call(pookMark, 0);
-                        focus.select("#Y").attr("opacity", 1);
+                        
                     };
 
                     function getSize(args) {
@@ -745,7 +758,7 @@
                     };
 
                     function getWurst() {
-                        focus.select("#Y").attr("opacity", 0);
+                        focus.select(".Y").call(wurstOpaciter, 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
 
                         bars.selectAll(".wurst")
@@ -757,7 +770,7 @@
                     };
 
                     function getZero() {
-                        focus.select("#Y").attr("opacity", 0);
+                        focus.select(".Y").call(wurstOpaciter, 0);
                         barsFake.selectAll("rect").call(wurstOpaciter, 0)
 
                         bars.selectAll(".wurst")
