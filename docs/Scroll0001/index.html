@@ -584,12 +584,20 @@
 
                         circlesNav
                             .on("mouseover", function(d) {
-                                d3.select(this).attr("fill", "#bf381d");
+                                d3.select(this)
+                                    .transition()
+                                    .duration(50)
+                                    .attr("fill", "#bf381d")
+                                    .attr("r", "6px");
                         });
 
                         circlesNav
                             .on("mouseleave", function(d) {
-                                d3.select(this).attr("fill", "#ececec");
+                                d3.select(this)
+                                    .transition()
+                                    .duration(50)
+                                    .attr("fill", "#ececec")
+                                    .attr("r", "4px");
                                 sc = 1;
                             });
 

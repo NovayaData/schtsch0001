@@ -17,12 +17,13 @@ body::-webkit-scrollbar {
 .step {
     width: 100%;
     height: 100vh;
+    /* background-color: coral; */
 }
 
 .paragraph {
-    margin-top: 18%;
-    margin-left: 5vw;
-    width: 88vw;
+    /* margin-top: 12%; */
+    /* margin-left: 5vw; */
+    max-width: 88vw;
     position: absolute;
     font-family: 'Lora', serif;
     font-weight:400;
