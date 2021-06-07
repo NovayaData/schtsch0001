@@ -1,0 +1,13 @@
+#container {
+    width: 100vw;
+    height: 50vh;
+    background-color: crimson;
+}
+
+@media (min-width: 710px) {
+    #container {
+        width: 710px;
+        height: 435px;
+        background-color: darkcyan;
+    }
+}
