@@ -1,6 +1,6 @@
 #container {
-    width: 710px;
-    height: 435px;
+    width: 100vw;
+    height: 50vh;
     background-color: crimson;
 }
 
@@ -53,4 +53,12 @@
     font-size: 21px;
     color: #494a4d;
     line-height: 30px;
+}
+
+@media (min-width: 710px) {
+    #container {
+        width: 710px;
+        height: 435px;
+        background-color: burlywood;
+    }
 }
