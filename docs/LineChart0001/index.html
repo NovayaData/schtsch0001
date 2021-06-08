@@ -24,10 +24,20 @@
 
                 const svgConst = d3.select("#chart")
 
-                d3.xml("./lineChartDesktop.svg")
+                var chartDesktop = "./lineChartDesktop.svg",
+                    chartMobile = "./lineChartMobile.svg";
+
+                var curChart;
+
+                if (W<700) {
+                    curChart = chartMobile;
+                } else {
+                    curChart = chartDesktop;
+                }
+
+                d3.xml(curChart)
                     .then(data => {
                         svgConst
-                            // .style("height","100%")
                             .style("width","100%");
                         
                         svgConst
