@@ -11,12 +11,18 @@
     
     <div id="container">
         <div id="headers">
-            <h1 class="header1">Дубинка правосудия</h1>
+            <h1 class="header1"></h1>
         </div>
         <div id="bs">
-
             <div id="info" class="theSmallest">Источник: Судебный департамент при ВС РФ</div>
             <div id="logo"></div>
+        </div>
+        <div id="chart">
+            <script>
+                const W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+                d3.select("#container").html(W + "_" + H);
+            </script>
         </div>
     </div>
 </body>
