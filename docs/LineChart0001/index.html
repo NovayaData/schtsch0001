@@ -9,18 +9,18 @@
 </head>
 <body>
     <div id="container">
-        <!-- <div id="headers">
+        <div id="headers">
             <h1 id="header1" class="header1"></h1>
-        </div> -->
+        </div>
         <!-- <div id="bs">
             <div id="info" class="theSmallest">Источник: Судебный департамент при ВС РФ</div>
             <div id="logo"></div>
         </div> -->
-        <div id="chart">
+        <div id="chart" style = "width: 100%;">
             <script>
                 const W = document.getElementById('container').clientWidth,
                     H = document.getElementById('container').clientHeight;
-                // d3.select("#header1").html(W + "_" + H);
+                d3.select("#header1").html(W + "_" + H);
 
                 var SH = 700*(W/400);
 
@@ -40,7 +40,7 @@
                 d3.xml(curChart)
                     .then(data => {
                         svgConst
-                            .style("width",W+"px")
+                            // .style("width",W+"px")
                             .style("height",SH+"px");
                         svgConst
                             .node().append(data.documentElement);
