@@ -55,9 +55,9 @@
     line-height: 30px;
 }
 
-@media (min-width: 710px) {
+@media (min-width: 700px) {
     #container {
-        width: 710px;
+        width: 700px;
         height: 435px;
         background-color: burlywood;
     }
