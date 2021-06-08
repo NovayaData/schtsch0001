@@ -4,24 +4,6 @@
     /* background-color: crimson; */
 }
 
-#headers {
-    /* -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none; */
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100vw;
-    margin: 0px;
-    border: 0px;
-    padding: 0px;
-    /* background-color: darkorange;
-    opacity: 0.5; */
-}
-
 #info {
     position: relative;
 }
@@ -50,14 +32,6 @@
     margin: 0px;
     border: 0px;
     padding: 0px;
-}
-
-.header1 {
-    font-family: 'Roboto', sans-serif;
-    font-weight:700;
-    font-size: 21px;
-    color: #494a4d;
-    line-height: 30px;
 }
 
 @media (min-width: 700px) {
