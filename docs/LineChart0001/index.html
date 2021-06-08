@@ -24,17 +24,23 @@
 
                 const svgConst = d3.select("#chart")
 
+                var SH;
+
                 var chartDesktop = "./lineChartDesktop.svg",
                     chartMobile = "./lineChartMobile.svg";
 
                 if (W<700) {
                     curChart = chartMobile;
+                    SH=W*H/700;
                 } else {
                     curChart = chartDesktop;
+                    SH=W;
                 }
 
                 d3.xml(curChart)
                     .then(data => {
+                        svgConst
+                            .style("width", SH+"px");
                         svgConst
                             .node().append(data.documentElement);
                     });
