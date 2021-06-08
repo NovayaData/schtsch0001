@@ -9,18 +9,30 @@
 </head>
 <body>
     <div id="container">
-        <div id="headers">
+        <!-- <div id="headers">
             <h1 id="header1" class="header1"></h1>
-        </div>
-        <div id="bs">
+        </div> -->
+        <!-- <div id="bs">
             <div id="info" class="theSmallest">Источник: Судебный департамент при ВС РФ</div>
             <div id="logo"></div>
-        </div>
+        </div> -->
         <div id="chart">
             <script>
                 const W = document.getElementById('container').clientWidth,
                     H = document.getElementById('container').clientHeight;
-                d3.select("#header1").html(W + "_" + H);
+                // d3.select("#header1").html(W + "_" + H);
+
+                const svgConst = d3.select("#chart")
+
+                d3.xml("./lineChartDesktop.svg")
+                    .then(data => {
+                        svgConst
+                            // .style("height","100%")
+                            .style("width","100%");
+                        
+                        svgConst
+                            .node().append(data.documentElement);
+                    });
             </script>
         </div>
     </div>
