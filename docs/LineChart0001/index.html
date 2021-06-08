@@ -38,7 +38,7 @@
                 d3.xml(curChart)
                     .then(data => {
                         svgConst
-                            .style("width","100%");
+                            .style("width",W+"px");
                         
                         svgConst
                             .node().append(data.documentElement);
