@@ -22,6 +22,8 @@
                     H = document.getElementById('container').clientHeight;
                 // d3.select("#header1").html(W + "_" + H);
 
+                var SH = 700*(W/400);
+
                 const svgConst = d3.select("#chart")
 
                 var chartDesktop = "./lineChartDesktop.svg",
@@ -38,8 +40,8 @@
                 d3.xml(curChart)
                     .then(data => {
                         svgConst
-                            .style("width",W+"px");
-                        
+                            .style("width",W+"px")
+                            .style("height",SH+"px");
                         svgConst
                             .node().append(data.documentElement);
                     });
