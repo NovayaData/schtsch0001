@@ -22,28 +22,19 @@
                     H = document.getElementById('container').clientHeight;
                 // d3.select("#header1").html(W + "_" + H);
 
-                var 
-
                 const svgConst = d3.select("#chart")
 
                 var chartDesktop = "./lineChartDesktop.svg",
                     chartMobile = "./lineChartMobile.svg";
 
-                var curChart;
-
                 if (W<700) {
                     curChart = chartMobile;
-                    SH = 700*(W/400);
                 } else {
                     curChart = chartDesktop;
-                    SH = 700;
                 }
 
                 d3.xml(curChart)
                     .then(data => {
-                        svgConst
-                            // .style("width",W+"px")
-                            .style("height",SH+"px");
                         svgConst
                             .node().append(data.documentElement);
                     });
