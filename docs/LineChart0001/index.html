@@ -22,7 +22,7 @@
                     H = document.getElementById('container').clientHeight;
                 d3.select("#header1").html(W + "_" + H);
 
-                var SH = 700*(W/400);
+                var 
 
                 const svgConst = d3.select("#chart")
 
@@ -33,8 +33,10 @@
 
                 if (W<700) {
                     curChart = chartMobile;
+                    SH = 700*(W/400);
                 } else {
                     curChart = chartDesktop;
+                    SH = 700;
                 }
 
                 d3.xml(curChart)
