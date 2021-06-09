@@ -1,0 +1,173 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <div id="container">
+        <!-- <div id="bs">
+            <div id="info" class="theSmallest">Источник: Судебный департамент при ВС РФ</div>
+            <div id="logo"></div>
+        </div> -->
+        <button id="b1" class="off">НАЛОЖИТЬ</button>
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margin = {
+                    top: W*0.5, 
+                    bottom: H*0.5, 
+                    right: W*0.03,
+                    left: W*0.03
+                    };
+                
+                var width = W - margin.left - margin.right;
+                    height = H*0.1;
+
+                var x = d3.scaleLinear().range([0, width])
+                    .domain([0, 100]);
+                var y = d3.scaleLinear().range([height, 0])
+                    y.domain([0, 350]);
+
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                svg.append("text")
+                    .attr("opacity", 1)
+                    .attr("id", "header")
+                    .attr("x", 0)
+                    .attr("y", 21)
+                    .attr("text-anchor", "start")
+                    .attr("fill", "#494a4d")
+                    .text("Великолепная семерка ЕР");
+                
+                d3.csv("../data/LineChart0002/MskList3.csv").then( function(data) {
+                    
+                    var cand = [
+                        ["АБАЕВ Герман Борисович"],
+                        ["ЯЩУК Александр Михайлович"],
+                        ["ЛОЕВ Семён Владимирович"],
+                        ["БАЙР Марк Михайлович"],
+                        ["БРЕДИХИН Антон Викторович"],
+                        ["ДАНИЛОВА Анна Геннадьевна"],
+                        ["БАБОШИНА Алина Олеговна"]
+                    ]
+
+                    var center;
+
+                    cand.forEach(
+                        function(c, i) {
+
+                            let name = c[0];
+                            let yMove = height*1.2*(i);
+
+                            if (i==3) {
+                                center = yMove;
+                            };
+
+                            cand[i].push(yMove);
+
+                            let curChart = svg.append("g")
+                                .attr("width", width)
+                                .attr("height", height)
+                                .attr("class", name+" chart")
+                                .attr("opacity", 1)
+                                .attr("transform", "translate("+margin.left+","+yMove+")");
+                            
+                            curChart.append("g")
+                                .attr("opacity", 0)
+                                .attr("transform", "translate(0," + height + ")")
+                                .call(d3.axisBottom(x).tickSize(0));
+                            
+                            curChart.append("g")
+                                .attr("opacity", 0)
+                                .call(d3.axisLeft(y).tickSize(0));
+                            
+                            curChart.append("path")
+                                .datum(data.slice(0, 100))
+                                .attr("fill", "#494a4d")
+                                .attr(
+                                    "d", 
+                                    d3.area()
+                                        .curve(d3.curveStep)
+                                        .x(d => x(data.indexOf(d)))
+                                        .y0(y(0))
+                                        .y1(d => y(d[name]))
+                                );
+
+                            curChart.append("text")
+                                .attr("opacity", 1)
+                                .attr("class", "textSmaller name")
+                                .attr("x", 0)
+                                .attr("y", height+15)
+                                .attr("text-anchor", "start")
+                                .attr("fill", "#A6A6A6")
+                                .text(name);
+                            
+                        }
+                    );
+
+                    var BB = d3.select("#b1");
+                    BB.on("click", function() {
+                            let curState = BB.node().getAttribute("class"),
+                                charts = svg.selectAll(".chart"),
+                                names = svg.selectAll(".name");
+
+                            if (curState=="off") {
+                                charts.call(moverCenter);
+                                names.call(opaciter, 0);
+                                BB.attr("class", "on");
+                            } else {
+                                charts.call(moverHome);
+                                names.call(opaciter, 1)
+                                BB.attr("class", "off");
+                            }
+                        }
+                    )
+
+                    // Transitions
+
+                    var NFS = 1200;
+
+                    function opaciter(path, o) {
+                        path
+                            .transition("opaciter")
+                            .duration(NFS)
+                            .attr("opacity", o)
+                    }
+
+                    function moverCenter(path) {
+                        path
+                            .transition("moverCenter")
+                            .duration(NFS)
+                            .attr("opacity", 0.15)
+                            .attr("transform", "translate("+margin.left+"," + center + ")");
+                    };
+
+                    function moverHome(path) {
+                        path
+                            .transition("moverHome")
+                            .duration(NFS)
+                            .attr("opacity", 1)
+                            .attr(
+                                "transform", 
+                                function(d, i) {
+                                    return "translate("+margin.left+"," + cand[i][1] + ")"
+                                }
+                            );
+                    };
+
+                });
+                
+            </script>
+        </div>
+    </div>
+</body>
