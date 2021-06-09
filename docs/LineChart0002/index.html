@@ -28,7 +28,7 @@
                     };
                 
                 var width = W - margin.left - margin.right;
-                    height = H*0.1;
+                    height = H*0.09;
 
                 var x = d3.scaleLinear().range([0, width])
                     .domain([0, 100]);
@@ -48,6 +48,15 @@
                     .attr("text-anchor", "start")
                     .attr("fill", "#494a4d")
                     .text("Великолепная семерка ЕР");
+
+                svg.append("text")
+                    .attr("opacity", 1)
+                    .attr("class", "textSmaller")
+                    .attr("x", 0)
+                    .attr("y", 51)
+                    .attr("text-anchor", "start")
+                    .attr("fill", "#494a4d")
+                    .text("Как выглядит «серийное» голосование на 100 избирательных участках");
                 
                 d3.csv("../data/LineChart0002/MskList3.csv").then( function(data) {
                     
@@ -67,7 +76,7 @@
                         function(c, i) {
 
                             let name = c[0];
-                            let yMove = height*1.2*(i);
+                            let yMove = height*1.2*(i) + 66;
 
                             if (i==3) {
                                 center = yMove;
