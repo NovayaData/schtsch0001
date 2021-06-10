@@ -14,65 +14,6 @@
         <!-- <button id="b1" class="off">сравнить</button> -->
         <div id="chart" style = "width: 100%; height: 100%;">
             <script>
-                function scroller(){
-                    let container = d3.select('body')
-                    let dispatch = d3.dispatch('active', 'progress');
-                    let sections = d3.selectAll('.step')
-                    let sectionPositions
-                    let currentIndex = -1
-                    let containerStart = 0;
-
-                    function scroll(){
-                        d3.select(window)
-                        .on('scroll.scroller', position)
-                        .on('resize.scroller', resize)
-                        resize();
-                        let timer = d3.timer(function() {
-                        position();
-                        timer.stop();
-                        });
-                    }
-
-                    function resize(){
-                        sectionPositions = [];
-                        let startPos;
-                        sections.each(function(d, i) {
-                            let top = this.getBoundingClientRect().top;
-
-                            if (i === 0 ){
-                                startPos = top;
-                            }
-
-                            sectionPositions.push(top - startPos);
-                        });
-                    }
-
-                    function position() {
-                        let pos = window.pageYOffset - 300 - containerStart;
-                        let sectionIndex = d3.bisect(sectionPositions, pos);
-                        sectionIndex = Math.min(sections.size()-1, sectionIndex);
-                        if (currentIndex !== sectionIndex){
-                        dispatch.call('active', this, sectionIndex);
-                        currentIndex = sectionIndex;
-                        }
-                        let prevIndex = Math.max(sectionIndex - 1, 0);
-                        let prevTop = sectionPositions[prevIndex]
-                        let progress = (pos - prevTop) / (sectionPositions[sectionIndex]   - prevTop);
-                        dispatch.call('progress', this, currentIndex, progress)
-                    }
-
-                    scroll.container = function(value) {
-                        if (arguments.legth === 0){
-                        return container
-                        }
-                        container = value
-                        return scroll
-                    }
-                    scroll.on = function(action, callback){
-                        dispatch.on(action, callback)
-                    };
-                    return scroll;
-                };
 
                 var W = document.getElementById('container').clientWidth,
                     H = document.getElementById('container').clientHeight;
@@ -316,39 +257,29 @@
                     };
 
                     if (H>W) {
-                        let sections = d3.select("#container")
-                            .append("div")
-                            .attr("id", "#sections")
-                            .style("z-index", 90);
-                        sections
-                            .append("section")
-                            .attr("class", "step");
-                        sections
-                            .append("section")
-                            .attr("class", "step");
+                        let lc = cand[6][1]+height+12;
+                        var BB = svg.append("text")
+                            .attr("opacity", 1)
+                            .attr("class", "off")
+                            .attr("x", width*0.5)
+                            .attr("y", (H-15-lc)/2+lc)
+                            .attr("text-anchor", "middle")
+                            .attr("alignment-baseline", "central")
+                            .attr("fill", "#494a4d")
+                            .text("сравнить");
 
-                        d3.select("#chart").style("position", "fixed").style("z-index", 1);
-
-                        var activationFunctions = [off, on];
-
-                        let scroll = scroller().container(d3.select('#graphic'));
-                            scroll();
-                        let lastIndex, activeIndex = 0;
-
-                        scroll.on('active', function(index){
-
-                            activeIndex = index
-                            let sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
-                            let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
-
-                            scrolledSections.forEach(i => {
-                                activationFunctions[i]()
-                            })
-                            lastIndex = activeIndex;
+                        BB.on("click", function() {
+                                let curState = BB.node().getAttribute("class");
+                                
+                                if (curState=="off") {
+                                    on();
+                                    BB.attr("class", "on");
+                                } else {
+                                    off();
+                                    BB.attr("class", "off");
+                                }
                         });
                     } else {
-
-
                         var BB = svg.append("text")
                             .attr("opacity", 1)
                             .attr("class", "off")
