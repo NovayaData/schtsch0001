@@ -213,21 +213,72 @@
                                 .attr("text-anchor", "start")
                                 .attr("fill", "#494a4d")
                                 .text(name);
+
+                                
                             
                         }
                     );
 
+                    var explTxt = "На всех участках за кандидатов голосовала^одна и та же «организованная группа»"
+                    var b = explTxt.split('^');
+
+                    if (H>W) {
+                        svg.append("text")
+                        .attr("id", "expl")
+                        .attr("class", "textSmaller")
+                        .attr("x", 0)
+                        .attr("y", center+height+12)
+                        .attr("text-anchor", "start")
+                        .attr("fill", "#494a4d")
+                        .attr("opacity", 0)
+
+                        .selectAll('tspan').data(b)
+                        .enter().append('tspan')
+                        .text(function(d) {
+                            return d;
+                        })
+                        .attr("fill", "#494a4d")
+                        .attr("alignment-baseline", "hanging")
+                        .attr("text-anchor", "start")
+                        .attr("lengthAdjust", "spacingAndGlyphs")
+                        .attr('dy', '1.2em').attr('x', '0');
+                    } else {
+                        svg.append("text")
+                        .attr("id", "expl")
+                        .attr("class", "textSmaller")
+                        .attr("x", 0)
+                        .attr("y", center+height+12)
+                        .attr("alignment-baseline", "hanging")
+                        .attr("text-anchor", "start")
+                        .attr("fill", "#494a4d")
+                        .attr("opacity", 0)
+                        .text(explTxt.replace("^", " "))
+                    }
+
+                    // svg.append("text")
+                    //     .attr("id", "expl")
+                    //     .attr("class", "textSmaller")
+                    //     .attr("x", 0)
+                    //     .attr("y", center+height+12)
+                    //     .attr("text-anchor", "start")
+                    //     .attr("fill", "#494a4d")
+                    //     .attr("opacity", 0)
+                    //     .text("");
+
                     var charts = svg.selectAll(".chart"),
-                        names = svg.selectAll(".name");
+                        names = svg.selectAll(".name"),
+                        expl = svg.select("#expl");
 
                     function off() {
                         charts.call(moverHome);
                         names.call(opaciter, 1);
+                        expl.call(opaciter, 0);
                     };
 
                     function on() {
                         charts.call(moverCenter);
                         names.call(opaciter, 0);
+                        expl.call(opaciter, 1);
                     };
 
                     off();
@@ -311,7 +362,7 @@
                                 let curState = BB.node().getAttribute("class");
                                 
                                 if (curState=="off") {
-                                    on()
+                                    on();
                                     BB.attr("class", "on");
                                 } else {
                                     off();
