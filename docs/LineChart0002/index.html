@@ -102,35 +102,60 @@
                 svg.append("text")
                     .attr("opacity", 1)
                     .attr("id", "header")
-                    .attr("x", 0)
+                    .attr("x", margin.left)
                     .attr("y", 0)
                     .attr("alignment-baseline", "hanging")
                     .attr("text-anchor", "start")
                     .attr("fill", "#494a4d")
                     .text("Великолепная семерка ЕР");
 
-                svg.append("text")
+                var fullTxt = 'Как выглядит «серийное» голосование^на 100 избирательных участках'
+                var b = fullTxt.split('^');
+
+                if (H>W) {
+                    svg.append("text")
                     .attr("opacity", 1)
-                    .attr("class", "textSmaller")
-                    .attr("x", 0)
-                    .attr("y", 36)
+                    .attr("class", "textSmall")
+                    .attr("x", margin.left)
+                    .attr("y", 21)
+
+                    .selectAll('tspan').data(b)
+                    .enter().append('tspan')
+                    .text(function(d) {
+                        return d;
+                    })
+                    .attr("fill", "#494a4d")
                     .attr("alignment-baseline", "hanging")
                     .attr("text-anchor", "start")
+                    .attr("lengthAdjust", "spacingAndGlyphs")
+                    .attr('dy', '1.2em').attr('x', '0');
+                } else {
+                    svg.append("text")
+                    .attr("opacity", 1)
+                    .attr("class", "textSmall")
+                    .attr("x", margin.left)
+                    .attr("y", 36)
                     .attr("fill", "#494a4d")
-                    .text("Как выглядит «серийное» голосование на 100 избирательных участках");
+                    .attr("alignment-baseline", "hanging")
+                    .attr("text-anchor", "start")
+                    .text(fullTxt.replace("^", " "))
+                }
 
                 svg.append("text")
                     .attr("opacity", 1)
-                    .attr("class", "textSmaller")
-                    .attr("x", 0)
+                    .attr("class", "textSmall")
+                    .attr("x", margin.left)
                     .attr("y", H)
                     .attr("alignment-baseline", "ideographic")
                     .attr("text-anchor", "start")
                     .attr("fill", "#A6A6A6")
                     .text("Источник: «Единая Россия»");
-                
-                d3.csv("../data/LineChart0002/MskList3.csv").then( function(data) {
-                    
+
+                Promise.all([
+                    d3.csv("../data/LineChart0002/MskList3.csv"),
+                    d3.xml('../pics/LogoWhite.svg')
+                ]).then(([data, logo]) => {
+
                     var cand = [
                         ["АБАЕВ Герман Борисович"],
                         ["ЯЩУК Александр Михайлович"],
@@ -147,7 +172,7 @@
                         function(c, i) {
 
                             let name = c[0];
-                            let yMove = height*Sc*(i) + 66;
+                            let yMove = height*Sc*(i) + 76;
 
                             if (i==3) {
                                 center = yMove;
@@ -173,7 +198,7 @@
                             
                             curChart.append("path")
                                 .datum(data.slice(0, 100))
-                                .attr("fill", "#494a4d")
+                                .attr("fill", "#00ace5")
                                 .attr(
                                     "d", 
                                     d3.area()
@@ -187,9 +212,9 @@
                                 .attr("opacity", 1)
                                 .attr("class", "textSmaller name")
                                 .attr("x", 0)
-                                .attr("y", height+15)
+                                .attr("y", height+12)
                                 .attr("text-anchor", "start")
-                                .attr("fill", "#A6A6A6")
+                                .attr("fill", "#494a4d")
                                 .text(name);
                             
                         }
@@ -209,6 +234,15 @@
                     };
 
                     off();
+
+                    // logoSvg = svg.append("g")
+                    //     .node()
+                    //     .append(logo.documentElement);
+                    //     // .attr("id", "logo");
+
+                    // logoSvg = svg.select("#logo");
+                    // logoSvg.attr("height", "15px").attr("x", 100);
+
 
                     // Transitions
 
@@ -241,9 +275,6 @@
                                 }
                             );
                     };
-
-                    console.log(H);
-                    console.log(svg);
 
                     if (H>W) {
                         let sections = d3.select("#container")
@@ -288,13 +319,6 @@
                             .attr("fill", "#494a4d")
                             .text("сравнить");
 
-                        // var BB = d3.select("#container")
-                        //     .append("button")
-                        //     .attr("id", "b1")
-                        //     .attr("class", "off")
-                        //     .html("сравнить")
-                        //     .style("z-index", 90);
-                        // var BB = d3.select("#b1");
                         BB.on("click", function() {
                                 let curState = BB.node().getAttribute("class");
                                 
@@ -305,8 +329,17 @@
                                     off();
                                     BB.attr("class", "off");
                                 }
-                            }
-                        );
+                        });
+
+                        BB.on("mouseover", function() {
+                            BB.style("cursor", "pointer");
+                            BB.attr("fill", "#00ace5");
+                        });
+
+                        BB.on("mouseout", function() {
+                            BB.style("cursor", "default");
+                            BB.attr("fill", "#494a4d"); 
+                        });
                     }
 
                 });

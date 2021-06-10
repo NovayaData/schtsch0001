@@ -39,7 +39,7 @@ body::-webkit-scrollbar {
     height: 100vh;
 }
 
-.textSmaller {
+.textSmall {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -47,6 +47,18 @@ body::-webkit-scrollbar {
     -ms-user-select: none;
     user-select: none;
     font-size: 15px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+.textSmaller {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 12px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
 }
