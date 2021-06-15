@@ -176,10 +176,10 @@
                 .append("rect")
                     .attr("width", width)
                     .attr("height", height+50)
-                    .attr("transform", "translate(-20,-12)");;
+                    .attr("transform", "translate(-50,-12)");;
 
-                var cases = svg.append("g").attr("clip-path", "url(#clip)");
-                var deaths = svg.append("g").attr("clip-path", "url(#clip)");
+                var cases = svg.append("g").attr("opacity", 1).attr("clip-path", "url(#clip)");
+                var deaths = svg.append("g").attr("opacity", 1).attr("clip-path", "url(#clip)");
 
                 function addChart(path, tr, tit) {
                     trW = margin.left2+tr;
@@ -326,7 +326,8 @@
                     svg.selectAll(".Y")
                         .transition()
                         .duration(400)
-                        .call(yAxis);
+                        .call(yAxis)
+                        .selectAll("text").attr("class", "textSmaller");
 
                     if (noDeaths.includes(rId)) {
                         deaths.call(opciter, 0);
@@ -355,7 +356,7 @@
                 function curver(path, curWave, lineData, indicator, i, col, wid) {
 
                     var u = path.selectAll("#line"+curWave+indicator+i)
-                            .data([lineData[curWave][indicator]]);
+                        .data([lineData[curWave][indicator]]);
 
                     u
                         .enter()
