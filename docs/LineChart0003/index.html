@@ -10,7 +10,11 @@
 <body>
 
     <div id="header">
-        <span class="textBig">Сравнение второй и третьей волн в России</span>
+        <span class="textBig dark">Сравнение </span>
+        <span class="textBig ngblue">второй</span>
+        <span class="textBig dark"> и </span>
+        <span class="textBig ngred">третьей</span>
+        <span class="textBig dark"> волн в России</span>
     </div>
     
     <div id="lid">
@@ -43,17 +47,6 @@
                     .attr("width", W)
                     .attr("height", H)
                     .append("g");
-
-                // Заголовок
-                // svg.append("text")
-                //     .attr("opacity", 1)
-                //     .attr("id", "header")
-                //     .attr("x", margin.left)
-                //     .attr("y", 0)
-                //     .attr("alignment-baseline", "hanging")
-                //     .attr("text-anchor", "start")
-                //     .attr("fill", "#494a4d")
-                //     .text("Сравнение второй и третьей волн в России");
 
                 // Источник
                 svg.append("text")
@@ -135,7 +128,7 @@
                 }
 
                 var wavesColors = {
-                    "wave2":"#949494",
+                    "wave2":"#00ace5",
                     "wave3":"#bf381d"
                 }
 

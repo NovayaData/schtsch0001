@@ -29,10 +29,24 @@ body::-webkit-scrollbar {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.textBig {
     font-size: 21px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
+}
+
+.dark {
     color: #494a4d;
+}
+
+.ngblue {
+    color: #00ace5;
+}
+
+.ngred {
+    color: #E5381D;
 }
 
 #sections {
