@@ -1,0 +1,326 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+    <div id="header">
+        <span class="textBig">Сравнение второй и третьей волн в России</span>
+    </div>
+    
+    <div id="lid">
+        <span class="textSmall" >Темпы роста заболеваемости в </span>
+        <select id="selectObl">
+            <option value="100">России</option>
+            <option value="77">Москве</option>
+        </select>
+        <span class="textSmall" > в логарифмической шкале с начала волны </span>
+    </div>
+    
+    <div id="container">
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margin = {
+                    top: H*0.03, 
+                    bottom: H*0.03, 
+                    right: W*0,
+                    left: W*0
+                    };
+                
+                var width = W - margin.left - margin.right;
+                    height = H - margin.top - margin.bottom - H*0.25;
+                
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                // Заголовок
+                // svg.append("text")
+                //     .attr("opacity", 1)
+                //     .attr("id", "header")
+                //     .attr("x", margin.left)
+                //     .attr("y", 0)
+                //     .attr("alignment-baseline", "hanging")
+                //     .attr("text-anchor", "start")
+                //     .attr("fill", "#494a4d")
+                //     .text("Сравнение второй и третьей волн в России");
+
+                // Источник
+                svg.append("text")
+                    .attr("opacity", 1)
+                    .attr("class", "textSmall")
+                    .attr("x", margin.left)
+                    .attr("y", H)
+                    .attr("alignment-baseline", "ideographic")
+                    .attr("text-anchor", "start")
+                    .attr("fill", "#A6A6A6")
+                    .text("Источник: Стопкоронавирус.рф");
+
+                var parseTime = d3.timeParse("%Y-%m-%d");
+
+                var regData = {
+                    "77" : {
+                        "name" : "Москва",
+                        "waves": {
+                            "wave2":["2020-07-22", "2020-09-21"],
+                            "wave3":["2021-03-14", "2021-03-01"]
+                        }
+                    },
+                    "100" : {
+                        "name" : "Россия",
+                        "waves": {
+                            "wave2":["2020-08-29", "2020-08-22"],
+                            "wave3":["2021-05-11", "2021-05-13"]
+                        }
+                    },
+                    "50" : {
+                        "name" : "Московская область",
+                        "waves": {
+                            "wave2":"2020-08-28",
+                            "wave3":"2021-05-10"
+                        }
+                    },
+                    "52" : {
+                        "name" : "Нижегородская область",
+                        "waves": {
+                            "wave2":"2020-08-28",
+                            "wave3":"2021-05-10"
+                        }
+                    },
+                    "66" : {
+                        "name" : "Свердловская область",
+                        "waves": {
+                            "wave2":"2020-08-28",
+                            "wave3":"2021-05-10"
+                        }
+                    },
+                    "91" : {
+                        "name" : "Республика Крым",
+                        "waves": {
+                            "wave2":"2020-08-28",
+                            "wave3":"2021-05-10"
+                        }
+                    },
+                    "3" : {
+                        "name" : "Республика Бурятия",
+                        "waves": {
+                            "wave2":"2020-08-28",
+                            "wave3":"2021-05-10"
+                        }
+                    },
+                    "43" : {
+                        "name" : "Кировская область",
+                        "waves": {
+                            "wave2":"2020-08-28",
+                            "wave3":"2021-05-10"
+                        }
+                    },
+                    "67" : {
+                        "name" : "Смоленская область",
+                        "waves": {
+                            "wave2":"2020-08-28",
+                            "wave3":"2021-05-10"
+                        }
+                    }
+                }
+
+                var wavesColors = {
+                    "wave2":"#949494",
+                    "wave3":"#bf381d"
+                }
+
+                var oneWidth = width/2-W*0.015;
+
+                var x = d3.scaleLinear().range([0, oneWidth])
+                    .domain([0, 150]);
+                var y = d3.scaleLog().range([height, 0]);
+                    // .domain([1, 6]);
+
+                var yAxis = d3.axisLeft().tickSize(0).scale(y);
+                
+
+                var cases = svg.append("g");
+                var deaths = svg.append("g");
+
+                function addChart(path, tr) {
+                    trW = margin.left+tr;
+                    trH = margin.top+H*0.2;
+
+                    path
+                        .attr("width", oneWidth)
+                        .attr("height", height)
+                        .attr("transform", "translate("+trW+","+trH+")");;
+
+                    path
+                        .append("g")
+                        .attr("class", "X")
+                        .attr("opacity", 1)
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x).tickSize(0));
+
+                    path
+                        .append("g")
+                        .attr("class","Y")
+                };
+
+                cases.call(addChart, 0);
+                deaths.call(addChart, oneWidth+W*0.03);
+
+                function getZeroData(curWave, data, ind, indicator, rId) {
+                    let zero = parseTime(regData[rId]["waves"][curWave][ind]),
+                            zeroMinus37 = d3.timeDay.offset(zero, -37),
+                            zeroPlus120 = d3.timeDay.offset(zero, 120);
+
+                    var regionData = data.filter(d => {
+                            return d.date>=zeroMinus37 && d.date<=zeroPlus120;
+                        })
+
+                    regionData = regionData.sort(function(a, b) { return a.date - b.date});
+                    var regionDataClean = regionData.slice(7, regionData.length);
+                    
+                    regionDataClean.forEach(
+                        function(rd, i) {
+                            i+=7;
+
+                            let curSlice = regionData.slice(i-7, i);
+
+                            rd[indicator+"Mean"] = d3.mean(curSlice, d => d[indicator]);
+
+                    });
+
+                    var zeroMean = regionDataClean[30][indicator+"Mean"];
+
+                    regionDataClean.forEach(
+                        function(rd, i) {
+                            rd[indicator+"Times"] = rd[indicator+"Mean"] / zeroMean;
+                            
+                    });
+
+                    return regionDataClean;
+                }
+
+                function getRedionWavesData(data, rId, mode) {
+
+                    let wavesData = {}
+
+                    Object.keys(wavesColors).forEach(curWave => {
+
+                        wavesData[curWave] = {};
+                        wavesData[curWave]["casesNewTimes"] = getZeroData(curWave, data, 0, "casesNew", rId);
+                        wavesData[curWave]["deathsNewTimes"] = getZeroData(curWave, data, 1, "deathsNew", rId);
+                        
+                    });
+
+                    regData[rId]["data"] = wavesData;
+
+                    builder(regData[rId]["data"]);
+
+                };
+                
+                function getRegionData(rId) {
+
+                    d3.json("https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId="+rId).then(data => {
+
+                        data = data.data;
+                        data = data.reverse();
+
+                        data.forEach(
+                            function(d, i) {
+                                if (i!=0) {
+                                    d.deathsNew = d.deadTotal - data[i-1].deadTotal;
+                                }
+                                d.date = parseTime(d.date);
+                            }
+                        );
+
+                        getRedionWavesData(data, rId);
+                    });
+                };
+
+                function action(rId) {
+
+                    if (regData[rId]["data"]) {
+                        builder(regData[rId]["data"]);
+                    } else {
+                        getRegionData(rId);
+                    }
+                };
+
+                function builder(lineData) {
+                    var yMaxes = [];
+
+                    Object.keys(lineData).forEach(curWave => {
+                        console.log(lineData[curWave]["casesNewTimes"]);
+
+                        yMaxes.push(d3.max(lineData[curWave]["casesNewTimes"], function(d) { return d.casesNewTimes; }));
+                        yMaxes.push(d3.max(lineData[curWave]["deathsNewTimes"], function(d) { return d.deathsNewTimes; }));
+                    })
+
+                    var yMax = d3.max(yMaxes);
+
+                    console.log(yMax);
+
+                    y.domain([1, yMax]);
+                    svg.selectAll(".Y")
+                        .transition()
+                        .duration(400)
+                        .call(yAxis);
+                    
+                    Object.keys(lineData).forEach(curWave => {
+
+                        cases.call(curver, curWave, lineData, "casesNewTimes");
+                        deaths.call(curver, curWave, lineData, "deathsNewTimes");
+                        
+                    });
+
+                };
+
+                function curver(path, curWave, lineData, indicator) {
+
+                    var u = path.selectAll("#line"+curWave+indicator)
+                            .data([lineData[curWave][indicator]]);
+
+                    u
+                        .enter()
+                        .append("path")
+                        .attr("id","line"+curWave+indicator)
+                        .merge(u)
+                        .transition()
+                        .duration(400)
+                        .attr("d", d3.line()
+                            .curve(d3.curveCatmullRom)
+                            .x(function(d) { return x(lineData[curWave][indicator].indexOf(d)); })
+                            .y(function(d) { return y(d[indicator]); }))
+                            .attr("fill", "none")
+                            .attr("opacity", 1)
+                            .attr("stroke-width", 1.25)
+                            .attr("stroke-linejoin", "round")
+                            .attr("stroke-linecap", "round")
+                            .attr("stroke", wavesColors[curWave])
+
+                }
+
+                var sel = d3.select("#selectObl");
+                var curSel = sel.property("value");
+
+                action(curSel);
+
+                sel.on('change', function() {
+                    curSel = sel.property("value");
+                    action(curSel);
+                });
+                
+            </script>
+        </div>
+    </div>
+</body>
