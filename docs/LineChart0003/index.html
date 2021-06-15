@@ -43,7 +43,7 @@
                     left2: W*0.04,
                     };
                 
-                var width = W - margin.left - margin.right - margin.left2/2;
+                var width = W - margin.left - margin.right - margin.left2*2;
                     height = H - margin.top - margin.bottom - H*0.25;
                 
                 var svg = d3.select("#chart").append("svg")
@@ -188,7 +188,7 @@
                 }
 
                 cases.call(addChart, 0, "Случаев в день");
-                deaths.call(addChart, oneWidth+W*0.03, "Смертей в день");
+                deaths.call(addChart, oneWidth+W*0.06, "Смертей в день");
 
                 function getZeroData(curWave, data, ind, indicator, rId) {
                     let zero = parseTime(regData[rId]["waves"][curWave][ind]),
