@@ -37,10 +37,11 @@
                     top: H*0.03, 
                     bottom: H*0.03, 
                     right: W*0,
-                    left: W*0
+                    left: W*0,
+                    left2: W*0.04,
                     };
                 
-                var width = W - margin.left - margin.right;
+                var width = W - margin.left - margin.right - margin.left2/2;
                     height = H - margin.top - margin.bottom - H*0.25;
                 
                 var svg = d3.select("#chart").append("svg")
@@ -132,7 +133,7 @@
                     "wave3":"#bf381d"
                 }
 
-                var oneWidth = width/2-W*0.015;
+                var oneWidth = width/2-margin.left2;
 
                 var x = d3.scaleLinear().range([0, oneWidth])
                     .domain([0, 150]);
@@ -145,7 +146,7 @@
                 var deaths = svg.append("g");
 
                 function addChart(path, tr, tit) {
-                    trW = margin.left+tr;
+                    trW = margin.left2+tr;
                     trH = margin.top+H*0.2;
 
                     path
