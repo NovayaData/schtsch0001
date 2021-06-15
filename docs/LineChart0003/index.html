@@ -29,6 +29,9 @@
             <option value="3">Бурятии</options>
             <option value="43">Кировской области</options>
             <option value="67">Смоленской области</options>
+            <option value="78">Санкт-Петербурге</options>
+            <option value="36">Воронежской области</options>
+            <option value="24">Красноярском крае</options>
             <!-- <option value="39">Калининградской области</options> -->
         </select>
     </div>
@@ -59,17 +62,6 @@
                     .attr("width", W)
                     .attr("height", H)
                     .append("g");
-
-                // Источник
-                // svg.append("text")
-                //     .attr("opacity", 1)
-                //     .attr("class", "textSmall")
-                //     .attr("x", margin.left)
-                //     .attr("y", H)
-                //     .attr("alignment-baseline", "ideographic")
-                //     .attr("text-anchor", "start")
-                //     .attr("fill", "#A6A6A6")
-                //     .text("Источник: Стопкоронавирус.рф");
 
                 var parseTime = d3.timeParse("%Y-%m-%d");
 
@@ -142,6 +134,27 @@
                         "waves": {
                             "wave2":["2020-08-10", "2021-04-03"],
                             "wave3":["2020-11-20", "2021-03-21"]
+                        }
+                    },
+                    "78" : {
+                        "name" : "Санкт-Петербурге",
+                        "waves": {
+                            "wave2":["2020-08-12", "2020-09-01"],
+                            "wave3":["2021-04-25", "2021-04-16"]
+                        }
+                    },
+                    "36" : {
+                        "name" : "Воронежской области",
+                        "waves": {
+                            "wave2":["2020-08-03", "2020-10-08"],
+                            "wave3":["2021-05-18", "2021-04-10"]
+                        }
+                    },
+                    "24" : {
+                        "name" : "Красноярском крае",
+                        "waves": {
+                            "wave2":["2020-09-22", "2020-10-04"],
+                            "wave3":["2021-06-1", "2021-06-04"]
                         }
                     }
 
