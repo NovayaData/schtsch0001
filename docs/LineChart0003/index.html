@@ -25,10 +25,10 @@
             <option value="50">Московской области</option>
             <option value="52">Нижегородской области</option>
             <option value="66">Свердловской области</option>
-            <option value="91">Республике Крым</option>
+            <!-- <option value="91">Республике Крым</option>
             <option value="3">Бурятии</options>
             <option value="43">Кировской области</options>
-            <option value="67">Смоленской области</options>
+            <option value="67">Смоленской области</options> -->
             <!-- <option value="39">Калининградской области</options> -->
         </select>
     </div>
@@ -155,7 +155,13 @@
                 var y = d3.scaleLog().range([height, 0]);
                     // .domain([1, 6]);
                 
-                var yAxis = d3.axisLeft().tickSize(1).tickFormat(d => {return d + "x"}).scale(y);
+                var yAxis = d3.axisLeft().tickSize(0).tickFormat(d => {
+
+                    if (d==2 || d%4==0) {
+                        return d + "x"
+                    }
+                    
+                    }).scale(y);
 
                 var cases = svg.append("g");
                 var deaths = svg.append("g");
