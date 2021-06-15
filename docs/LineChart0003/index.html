@@ -165,21 +165,23 @@
 
                     path
                         .append("g")
-                        .attr("class","Y")
+                        .attr("opacity", 0)
+                        .attr("class","Y");
 
-                    path.call(addXText, tit, 0, 0);
-                    path.call(addXText, "0 день", 29, height+12);
-                    path.call(addXText, "120", 149, height+12);
+                    path.call(addXText, tit, 0, 0, "start");
+                    path.call(addXText, "деней", 0, height+12, "start");
+                    path.call(addXText, "0", 29, height+12, "middle");
+                    path.call(addXText, "120", 149, height+12, "middle");
                         
                 };
 
-                function addXText(path, t, i, h) {
+                function addXText(path, t, i, h, anc) {
                     path
                         .append("text")
                         .attr("class", "textSmaller")
                         .attr("x", x(i))
                         .attr("y", h)
-                        .attr("text-anchor", "start")
+                        .attr("text-anchor", anc)
                         .text( t );
                 }
 
