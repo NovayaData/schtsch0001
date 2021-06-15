@@ -16,7 +16,7 @@ body::-webkit-scrollbar {
 
 #lid {
     position: absolute;
-    margin-top: 40px;
+    margin-top: 63px;
     color: #494a4d;
 }
 
@@ -122,4 +122,9 @@ body::-webkit-scrollbar {
 #b1 {
     position: fixed;
     transform: translate(50vw, 30vh);
+}
+
+@media (min-width: 700px) {
+    #lid {
+        margin-top: 42px;
 }

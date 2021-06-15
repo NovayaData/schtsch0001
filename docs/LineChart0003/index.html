@@ -14,7 +14,7 @@
         <span class="textBig ngblue">второй</span>
         <span class="textBig dark"> и </span>
         <span class="textBig ngred">третьей</span>
-        <span class="textBig dark"> волн в регионах</span>
+        <span class="textBig dark"> волн в регионах</span>
     </div>
     
     <div id="lid">
@@ -22,16 +22,16 @@
         <select id="selectObl">
             <option value="100">России</option>
             <option value="77">Москве</option>
+            <option value="78">Санкт-Петербурге</options>
+            <option value="3">Бурятии</options>
+            <option value="36">Воронежской области</options>
+            <option value="43">Кировской области</options>
+            <option value="24">Красноярском крае</options>
             <option value="50">Московской области</option>
             <option value="52">Нижегородской области</option>
-            <option value="66">Свердловской области</option>
             <option value="91">Республике Крым</option>
-            <option value="3">Бурятии</options>
-            <option value="43">Кировской области</options>
+            <option value="66">Свердловской области</option>
             <option value="67">Смоленской области</options>
-            <option value="78">Санкт-Петербурге</options>
-            <option value="36">Воронежской области</options>
-            <option value="24">Красноярском крае</options>
             <!-- <option value="39">Калининградской области</options> -->
         </select>
     </div>
@@ -43,28 +43,6 @@
     <div id="container">
         <div id="chart" style = "width: 100%; height: 100%;">
             <script>
-
-                var W = document.getElementById('container').clientWidth,
-                    H = document.getElementById('container').clientHeight;
-
-                var margin = {
-                    top: H*0.03, 
-                    bottom: H*0.03, 
-                    right: W*0,
-                    left: W*0,
-                    left2: W*0.04,
-                    };
-                
-                var width = W - margin.left - margin.right - margin.left2*2;
-                    height = H - margin.top - margin.bottom - H*0.25;
-                
-                var svg = d3.select("#chart").append("svg")
-                    .attr("width", W)
-                    .attr("height", H)
-                    .append("g");
-
-                var parseTime = d3.timeParse("%Y-%m-%d");
-
                 var regData = {
                     "77" : {
                         "name" : "Москве",
@@ -167,7 +145,49 @@
                     "wave3":"#BF381D"
                 }
 
-                var oneWidth = width/2-margin.left2;
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margin = {
+                    top: H*0.03, 
+                    bottom: H*0.03, 
+                    right: W*0,
+                    left: W*0,
+                    left2: W*0.04,
+                    };
+
+                var adapt = {
+                    desk : {
+
+                        width : W - margin.left - margin.right,
+                        height : H - margin.top - margin.bottom - H*0.25
+                    },
+                    mob : {
+                        width : W - margin.left - margin.right - margin.left2*2,
+                        height : (H - margin.top - margin.bottom)/3
+                    }
+                };
+
+                if (H>W) {
+                    var width = adapt.mob.width,
+                        height = adapt.mob.height;
+                    var oneWidth = width,
+                        tr = 0,
+                        th = height+margin.top*2;
+                } else {
+                    var width = adapt.desk.width,
+                        height = adapt.desk.height;
+                    var oneWidth = width/2-margin.left2*2,
+                        tr = oneWidth+W*0.06,
+                        th = 0;
+                };
+                
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                var parseTime = d3.timeParse("%Y-%m-%d");
 
                 var x = d3.scaleLinear().range([0, oneWidth])
                     .domain([0, 150]);
@@ -182,21 +202,19 @@
                     
                     }).scale(y);
 
-                trH = margin.top+H*0.2;
-
                 svg.append("defs").append("clipPath")
                     .attr("id", "clip")
                 .append("rect")
-                    .attr("width", width)
+                    .attr("width", width*2)
                     .attr("height", height+50)
-                    .attr("transform", "translate(-50,-12)");;
+                    .attr("transform", "translate(-50,-12)");
 
                 var cases = svg.append("g").attr("opacity", 1).attr("clip-path", "url(#clip)");
                 var deaths = svg.append("g").attr("opacity", 1).attr("clip-path", "url(#clip)");
 
-                function addChart(path, tr, tit) {
+                function addChart(path, tr, th, tit) {
                     trW = margin.left2+tr;
-                    trH = margin.top+H*0.2;
+                    trH = margin.top+H*0.2 + th;
 
                     path
                         .attr("width", oneWidth)
@@ -234,16 +252,16 @@
                         .text( t );
                 }
 
-                cases.call(addChart, 0, "Случаев в день");
-                deaths.call(addChart, oneWidth+W*0.06, "Смертей в день");
+                cases.call(addChart, 0, 0, "Случаев в день");
+                deaths.call(addChart, tr, th, "Смертей в день");
 
                 var achtung = deaths
                     .append("text")
                     .attr("class", "textSmaller")
-                    .attr("x", x(14))
+                    .attr("x", x(74))
                     .attr("y", height/2)
                     .attr("opacity", 0)
-                    .attr("text-anchor", "start")
+                    .attr("text-anchor", "middle")
                     .text( "Порядок цифр слишком мал для сравнения" );
 
                 function getZeroData(curWave, data, ind, indicator, rId) {
@@ -340,10 +358,7 @@
                     })
 
                     var yMax = d3.max(yMaxes);
-                    // logScale.ticks(10).map(logFormat10)
-                    // logFormat10alt = logScale.tickFormat(10, "")
                     y.domain([1, yMax]);
-                    // .ticks(10).map(logFormat10alt);
                         
                     svg.selectAll(".Y")
                         .transition()
@@ -395,7 +410,6 @@
                             .x(function(d) { return x(lineData[curWave][indicator].indexOf(d)); })
                             .y(function(d) { return y(d[indicator]); }))
                             .attr("fill", "none")
-                            // .attr("opacity", 1)
                             .attr("stroke-width", wid)
                             .attr("stroke-linejoin", "round")
                             .attr("stroke-linecap", "round")
