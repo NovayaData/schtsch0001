@@ -224,6 +224,15 @@
                 cases.call(addChart, 0, "Случаев в день");
                 deaths.call(addChart, oneWidth+W*0.06, "Смертей в день");
 
+                var achtung = deaths
+                    .append("text")
+                    .attr("class", "textSmaller")
+                    .attr("x", x(14))
+                    .attr("y", height/2)
+                    .attr("opacity", 0)
+                    .attr("text-anchor", "start")
+                    .text( "Порядок цифр слишком мал для сравнения" );
+
                 function getZeroData(curWave, data, ind, indicator, rId) {
                     let zero = parseTime(regData[rId]["waves"][curWave][ind]),
                             zeroMinus37 = d3.timeDay.offset(zero, -37),
@@ -330,9 +339,11 @@
                         .selectAll("text").attr("class", "textSmaller");
 
                     if (noDeaths.includes(rId)) {
-                        deaths.call(opciter, 0);
+                        deaths.selectAll(".line").call(opciter, 0);
+                        achtung.call(opciter, 1);
                     } else {
-                        deaths.call(opciter, 1);
+                        deaths.selectAll(".line").call(opciter, 1);
+                        achtung.call(opciter, 0);
                     }
                     
                     Object.keys(lineData).forEach(curWave => {
@@ -362,6 +373,7 @@
                         .enter()
                         .append("path")
                         .attr("id","line"+curWave+indicator+i)
+                        .attr("class", "line")
                         .merge(u)
                         .transition()
                         .duration(400)
@@ -370,7 +382,7 @@
                             .x(function(d) { return x(lineData[curWave][indicator].indexOf(d)); })
                             .y(function(d) { return y(d[indicator]); }))
                             .attr("fill", "none")
-                            .attr("opacity", 1)
+                            // .attr("opacity", 1)
                             .attr("stroke-width", wid)
                             .attr("stroke-linejoin", "round")
                             .attr("stroke-linecap", "round")
