@@ -25,7 +25,8 @@
             <option value="50">Московской области</option>
             <option value="52">Нижегородской области</option>
             <option value="66">Свердловской области</option>
-            <option value="91">Республике Крым</option>
+            <!-- <option value="91">Республике Крым</option> -->
+            <option value="3">Бурятии</option>
         </select>
     </div>
     
@@ -107,6 +108,13 @@
                             "wave2":["2020-06-03", "2020-08-05"],
                             "wave3":["2021-03-23", "2021-03-22"]
                         }
+                    },
+                    "3" : {
+                        "name" : "Бурятии",
+                        "waves": {
+                            "wave2":["2020-08-12", "2020-08-20"],
+                            "wave3":["2021-05-12", "2021-06-03"]
+                        }
                     }
                 }
 
@@ -147,7 +155,7 @@
 
                     path
                         .append("g")
-                        .attr("opacity",0)
+                        .attr("opacity", 1)
                         .attr("class","Y");
 
                     path.call(addXText, tit, 0, 0, "start");
@@ -260,8 +268,8 @@
                     })
 
                     var yMax = d3.max(yMaxes);
-
                     y.domain([1, yMax]);
+                        
                     svg.selectAll(".Y")
                         .transition()
                         .duration(400)
