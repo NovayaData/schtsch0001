@@ -64,14 +64,14 @@
 
                 var regData = {
                     "77" : {
-                        "name" : "Москва",
+                        "name" : "Москве",
                         "waves": {
                             "wave2":["2020-07-22", "2020-09-21"],
                             "wave3":["2021-03-14", "2021-03-01"]
                         }
                     },
                     "100" : {
-                        "name" : "Россия",
+                        "name" : "России",
                         "waves": {
                             "wave2":["2020-08-29", "2020-08-22"],
                             "wave3":["2021-05-11", "2021-05-13"]
@@ -241,7 +241,7 @@
                 
                 function getRegionData(rId) {
 
-                    d3.json("https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId="+rId).then(data => {
+                    d3.json("https://novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId="+rId).then(data => {
 
                         data = data.data;
                         data = data.reverse();
