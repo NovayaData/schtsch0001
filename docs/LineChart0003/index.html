@@ -163,8 +163,17 @@
                     
                     }).scale(y);
 
-                var cases = svg.append("g");
-                var deaths = svg.append("g");
+                trH = margin.top+H*0.2;
+
+                svg.append("defs").append("clipPath")
+                    .attr("id", "clip")
+                .append("rect")
+                    .attr("width", width)
+                    .attr("height", height+50)
+                    .attr("transform", "translate(-20,-12)");;
+
+                var cases = svg.append("g").attr("clip-path", "url(#clip)");
+                var deaths = svg.append("g").attr("clip-path", "url(#clip)");
 
                 function addChart(path, tr, tit) {
                     trW = margin.left2+tr;
@@ -173,7 +182,7 @@
                     path
                         .attr("width", oneWidth)
                         .attr("height", height)
-                        .attr("transform", "translate("+trW+","+trH+")");;
+                        .attr("transform", "translate("+trW+","+trH+")");
 
                     path
                         .append("g")
