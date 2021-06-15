@@ -151,7 +151,7 @@
                 var cases = svg.append("g");
                 var deaths = svg.append("g");
 
-                function addChart(path, tr) {
+                function addChart(path, tr, tit) {
                     trW = margin.left+tr;
                     trH = margin.top+H*0.2;
 
@@ -173,24 +173,24 @@
                         .append("g")
                         .attr("class","Y")
 
-
-                    path.call(addXText, "0 день", 29);
-                    path.call(addXText, "120", 149);
+                    path.call(addXText, tit, 0, 0);
+                    path.call(addXText, "0 день", 29, height+12);
+                    path.call(addXText, "120", 149, height+12);
                         
                 };
 
-                function addXText(path, t, i) {
+                function addXText(path, t, i, h) {
                     path
                         .append("text")
                         .attr("class", "textSmaller")
                         .attr("x", x(i))
-                        .attr("y", height+12)
+                        .attr("y", h)
                         .attr("text-anchor", "start")
                         .text( t );
                 }
 
-                cases.call(addChart, 0);
-                deaths.call(addChart, oneWidth+W*0.03);
+                cases.call(addChart, 0, "Случаев в день");
+                deaths.call(addChart, oneWidth+W*0.03, "Смертей в день");
 
                 function getZeroData(curWave, data, ind, indicator, rId) {
                     let zero = parseTime(regData[rId]["waves"][curWave][ind]),
