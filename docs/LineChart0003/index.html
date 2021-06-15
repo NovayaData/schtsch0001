@@ -319,7 +319,7 @@
                         
                     svg.selectAll(".Y")
                         .transition()
-                        .duration(400)
+                        .duration(100)
                         .call(yAxis);
                     
                     Object.keys(lineData).forEach(curWave => {
@@ -344,7 +344,7 @@
                         .attr("id","line"+curWave+indicator+i)
                         .merge(u)
                         .transition()
-                        .duration(400)
+                        .duration(100)
                         .attr("d", d3.line()
                             .curve(d3.curveCatmullRom)
                             .x(function(d) { return x(lineData[curWave][indicator].indexOf(d)); })
