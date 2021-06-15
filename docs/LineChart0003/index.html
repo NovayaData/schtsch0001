@@ -32,6 +32,10 @@
             <!-- <option value="39">Калининградской области</options> -->
         </select>
     </div>
+
+    <div id="soso">
+        <span class="textSmall">Источник: Стопкоронавирус.рф</span>
+    </div>
     
     <div id="container">
         <div id="chart" style = "width: 100%; height: 100%;">
@@ -57,15 +61,15 @@
                     .append("g");
 
                 // Источник
-                svg.append("text")
-                    .attr("opacity", 1)
-                    .attr("class", "textSmall")
-                    .attr("x", margin.left)
-                    .attr("y", H)
-                    .attr("alignment-baseline", "ideographic")
-                    .attr("text-anchor", "start")
-                    .attr("fill", "#A6A6A6")
-                    .text("Источник: Стопкоронавирус.рф");
+                // svg.append("text")
+                //     .attr("opacity", 1)
+                //     .attr("class", "textSmall")
+                //     .attr("x", margin.left)
+                //     .attr("y", H)
+                //     .attr("alignment-baseline", "ideographic")
+                //     .attr("text-anchor", "start")
+                //     .attr("fill", "#A6A6A6")
+                //     .text("Источник: Стопкоронавирус.рф");
 
                 var parseTime = d3.timeParse("%Y-%m-%d");
 

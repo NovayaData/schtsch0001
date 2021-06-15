@@ -16,7 +16,8 @@ body::-webkit-scrollbar {
 
 #lid {
     position: absolute;
-    margin-top: 50px;
+    margin-top: 40px;
+    color: #494a4d;
 }
 
 #header {
@@ -29,6 +30,13 @@ body::-webkit-scrollbar {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+#soso {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    color: #979899;
 }
 
 .textBig {
@@ -72,7 +80,6 @@ body::-webkit-scrollbar {
     font-size: 15px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
-    color: #494a4d;
 }
 
 .textSmaller {
