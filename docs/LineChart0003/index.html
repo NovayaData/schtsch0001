@@ -22,6 +22,10 @@
         <select id="selectObl">
             <option value="100">России</option>
             <option value="77">Москве</option>
+            <option value="50">Московской области</option>
+
+
+            
         </select>
         <span class="textSmall" > в логарифмической шкале с начала волны </span>
     </div>
@@ -29,6 +33,8 @@
     <div id="container">
         <div id="chart" style = "width: 100%; height: 100%;">
             <script>
+
+                console.log(d3.scaleSqrt().domain([2, 10]));
 
                 var W = document.getElementById('container').clientWidth,
                     H = document.getElementById('container').clientHeight;
@@ -78,10 +84,10 @@
                         }
                     },
                     "50" : {
-                        "name" : "Московская область",
+                        "name" : "Московской области",
                         "waves": {
-                            "wave2":"2020-08-28",
-                            "wave3":"2021-05-10"
+                            "wave2":["2020-07-28", "2020-08-09"],
+                            "wave3":["2021-03-15", "2021-05-08"]
                         }
                     },
                     "52" : {
@@ -241,7 +247,9 @@
                 
                 function getRegionData(rId) {
 
-                    d3.json("https://novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId="+rId).then(data => {
+                    d3.json("https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId="+rId).then(data => {
+
+                        console.log(data);
 
                         data = data.data;
                         data = data.reverse();
@@ -331,7 +339,7 @@
                     curSel = sel.property("value");
                     action(curSel);
                 });
-                
+
             </script>
         </div>
     </div>
