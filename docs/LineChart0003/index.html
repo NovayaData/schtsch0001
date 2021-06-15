@@ -145,7 +145,7 @@
 
                 var wavesColors = {
                     "wave2":"#00ace5",
-                    "wave3":"#E5381D"
+                    "wave3":"#BF381D"
                 }
 
                 var oneWidth = width/2-margin.left2;
@@ -154,8 +154,8 @@
                     .domain([0, 150]);
                 var y = d3.scaleLog().range([height, 0]);
                     // .domain([1, 6]);
-
-                var yAxis = d3.axisLeft().tickSize(0).scale(y);
+                
+                var yAxis = d3.axisLeft().tickSize(1).tickFormat(d => {return d + "x"}).scale(y);
 
                 var cases = svg.append("g");
                 var deaths = svg.append("g");
@@ -180,7 +180,7 @@
 
                     path
                         .append("g")
-                        .attr("opacity", 0)
+                        .attr("opacity", 1)
                         .attr("class","Y");
 
                     path.call(addXText, tit, 0, 0, "start");
@@ -293,7 +293,10 @@
                     })
 
                     var yMax = d3.max(yMaxes);
+                    // logScale.ticks(10).map(logFormat10)
+                    // logFormat10alt = logScale.tickFormat(10, "")
                     y.domain([1, yMax]);
+                    // .ticks(10).map(logFormat10alt);
                         
                     svg.selectAll(".Y")
                         .transition()
