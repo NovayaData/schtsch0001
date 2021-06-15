@@ -18,14 +18,14 @@
     </div>
     
     <div id="lid">
-        <span class="textSmall" >темпы роста заболеваемости в логарифмической шкале в </span>
+        <span class="textSmall" >Темпы роста заболеваемости в логарифмической шкале в </span>
         <select id="selectObl">
             <option value="100">России</option>
             <option value="77">Москве</option>
             <option value="50">Московской области</option>
             <option value="52">Нижегородской области</option>
             <option value="66">Свердловской области</option>
-            <!-- <option value="91">Республике Крым</option> -->
+            <option value="91">Республике Крым</option>
         </select>
     </div>
     
@@ -147,7 +147,7 @@
 
                     path
                         .append("g")
-                        .attr("opacity", 0)
+                        .attr("opacity",0)
                         .attr("class","Y");
 
                     path.call(addXText, tit, 0, 0, "start");
