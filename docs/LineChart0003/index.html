@@ -25,10 +25,10 @@
             <option value="50">Московской области</option>
             <option value="52">Нижегородской области</option>
             <option value="66">Свердловской области</option>
-            <!-- <option value="91">Республике Крым</option>
+            <option value="91">Республике Крым</option>
             <option value="3">Бурятии</options>
             <option value="43">Кировской области</options>
-            <option value="67">Смоленской области</options> -->
+            <option value="67">Смоленской области</options>
             <!-- <option value="39">Калининградской области</options> -->
         </select>
     </div>
@@ -146,6 +146,8 @@
                     }
 
                 }
+
+                var noDeaths = ["91", "3", "43", "67", "39"];
 
                 var wavesColors = {
                     "wave2":"#00ace5",
@@ -269,7 +271,7 @@
 
                     regData[rId]["data"] = wavesData;
 
-                    builder(regData[rId]["data"]);
+                    builder(regData[rId]["data"], rId);
 
                 };
                 
@@ -296,19 +298,23 @@
                 function action(rId) {
 
                     if (regData[rId]["data"]) {
-                        builder(regData[rId]["data"]);
+                        builder(regData[rId]["data"], rId);
                     } else {
                         getRegionData(rId);
                     }
                 };
 
-                function builder(lineData) {
+                function builder(lineData, rId) {
                     var yMaxes = [];
 
                     Object.keys(lineData).forEach(curWave => {
 
                         yMaxes.push(d3.max(lineData[curWave]["casesNewTimes"], function(d) { return d.casesNewTimes; }));
-                        yMaxes.push(d3.max(lineData[curWave]["deathsNewTimes"], function(d) { return d.deathsNewTimes; }));
+
+                        if (!noDeaths.includes(rId)) {
+                            yMaxes.push(d3.max(lineData[curWave]["deathsNewTimes"], function(d) { return d.deathsNewTimes; }));
+                        }
+
                     })
 
                     var yMax = d3.max(yMaxes);
@@ -319,8 +325,14 @@
                         
                     svg.selectAll(".Y")
                         .transition()
-                        .duration(100)
+                        .duration(400)
                         .call(yAxis);
+
+                    if (noDeaths.includes(rId)) {
+                        deaths.call(opciter, 0);
+                    } else {
+                        deaths.call(opciter, 1);
+                    }
                     
                     Object.keys(lineData).forEach(curWave => {
 
@@ -331,6 +343,13 @@
                         
                     });
 
+                };
+
+                function opciter(path, o) {
+                    path
+                        .transition("opciter")
+                        .duration(400)
+                        .attr("opacity", o);
                 };
 
                 function curver(path, curWave, lineData, indicator, i, col, wid) {
@@ -344,7 +363,7 @@
                         .attr("id","line"+curWave+indicator+i)
                         .merge(u)
                         .transition()
-                        .duration(100)
+                        .duration(400)
                         .attr("d", d3.line()
                             .curve(d3.curveCatmullRom)
                             .x(function(d) { return x(lineData[curWave][indicator].indexOf(d)); })
