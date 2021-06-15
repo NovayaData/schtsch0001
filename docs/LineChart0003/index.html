@@ -30,8 +30,6 @@
         <div id="chart" style = "width: 100%; height: 100%;">
             <script>
 
-                console.log(d3.scaleSqrt().domain([2, 10]));
-
                 var W = document.getElementById('container').clientWidth,
                     H = document.getElementById('container').clientHeight;
 
@@ -245,8 +243,6 @@
 
                     d3.json("https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId="+rId).then(data => {
 
-                        console.log(data);
-
                         data = data.data;
                         data = data.reverse();
 
@@ -276,15 +272,12 @@
                     var yMaxes = [];
 
                     Object.keys(lineData).forEach(curWave => {
-                        console.log(lineData[curWave]["casesNewTimes"]);
 
                         yMaxes.push(d3.max(lineData[curWave]["casesNewTimes"], function(d) { return d.casesNewTimes; }));
                         yMaxes.push(d3.max(lineData[curWave]["deathsNewTimes"], function(d) { return d.deathsNewTimes; }));
                     })
 
                     var yMax = d3.max(yMaxes);
-
-                    console.log(yMax);
 
                     y.domain([1, yMax]);
                     svg.selectAll(".Y")
@@ -294,22 +287,24 @@
                     
                     Object.keys(lineData).forEach(curWave => {
 
-                        cases.call(curver, curWave, lineData, "casesNewTimes");
-                        deaths.call(curver, curWave, lineData, "deathsNewTimes");
+                        deaths.call(curver, curWave, lineData, "deathsNewTimes", "1", "#ffffff", 2.5);
+                        deaths.call(curver, curWave, lineData, "deathsNewTimes", "0", wavesColors[curWave], 1.25);
+                        cases.call(curver, curWave, lineData, "casesNewTimes", "1", "#ffffff", 2.5);
+                        cases.call(curver, curWave, lineData, "casesNewTimes", "0", wavesColors[curWave], 1.25);
                         
                     });
 
                 };
 
-                function curver(path, curWave, lineData, indicator) {
+                function curver(path, curWave, lineData, indicator, i, col, wid) {
 
-                    var u = path.selectAll("#line"+curWave+indicator)
+                    var u = path.selectAll("#line"+curWave+indicator+i)
                             .data([lineData[curWave][indicator]]);
 
                     u
                         .enter()
                         .append("path")
-                        .attr("id","line"+curWave+indicator)
+                        .attr("id","line"+curWave+indicator+i)
                         .merge(u)
                         .transition()
                         .duration(400)
@@ -319,10 +314,10 @@
                             .y(function(d) { return y(d[indicator]); }))
                             .attr("fill", "none")
                             .attr("opacity", 1)
-                            .attr("stroke-width", 1.25)
+                            .attr("stroke-width", wid)
                             .attr("stroke-linejoin", "round")
                             .attr("stroke-linecap", "round")
-                            .attr("stroke", wavesColors[curWave])
+                            .attr("stroke", col)
 
                 }
 
