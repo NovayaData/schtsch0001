@@ -13,7 +13,7 @@
     </div>
     
     <div id="lid">
-        <span class="textSmall">Линия — это время, время — это круг</span>
+        <span class="textSmall">Россия – один из главных аутсайдеров по темпам вакцинации населения</span>
     </div>
 
     <div id="soso">
@@ -28,15 +28,15 @@
 
                 function getColor(v) {
                     if (colorSteps[0]>v && v>=0){
-                        return "#ffed26"
+                        return "#e5381d"
                     } else if (colorSteps[1]>v && v>=colorSteps[0]){
-                        return "#fbbf00"
+                        return "#f56b03"
                     } else if (colorSteps[2]>v && v>=colorSteps[1]){
-                        return "#ee9100"
+                        return "#ff9800"
                     } else if (colorSteps[3]>v && v>=colorSteps[2]){
-                        return "#da6513"
+                        return "#ffc300"
                     } else if (v>=colorSteps[3]){
-                        return "#bf381d"
+                        return "#ffed26"
                     }
                 }
 
@@ -150,6 +150,10 @@
                                 .append("text")
                                 .attr("class", "textSmaller")
                                 .attr("fill", "#F0F1F2")
+                                .attr("stroke-width", 4)
+                                .attr("stroke-linejoin", "round")
+                                .attr("stroke-linecap", "round")
+                                .attr("stroke", "#212226")
                                 .attr("x", function () {
                                     if (x(d.duration)>W/2) {
                                         return x(d.duration)-d.percent_per_day*50-3;
@@ -169,6 +173,47 @@
                                 .text( d.name_ru );
                             }
                     )
+
+                    data.forEach(
+                        function(d) {
+                            names
+                                .append("text")
+                                .attr("class", "textSmaller")
+                                .attr("fill", "#F0F1F2")
+                                .attr("x", function () {
+                                    if (x(d.duration)>W/2) {
+                                        return x(d.duration)-d.percent_per_day*50-3;
+                                    } else {
+                                        return x(d.duration)+d.percent_per_day*50+3;
+                                    }
+                                })
+                                .attr("y", y(d.vaccinated_percent))
+                                .attr("text-anchor", function() {
+                                    if (x(d.duration)>W/2) {
+                                        return "end";
+                                    } else {
+                                        return "start";
+                                    }
+                                })
+                                .attr("alignment-baseline", "middle")
+                                .text( d.name_ru );
+                            }
+                    )
+
+                    function addXText(path, t, i, h, anc, ali) {
+                        path
+                            .append("text")
+                            .attr("class", "textSmaller")
+                            .attr("x", x(xMin-1))
+                            .attr("y", h)
+                            .attr("fill", "#F0F1F2")
+                            .attr("text-anchor", anc)
+                            .attr("alignment-baseline", ali)
+                            .text( t );
+                    };
+
+                    focus.call(addXText, "Недель с начала вакцинации", 0, height+24, "start", "mathematical");
+                    focus.call(addXText, "% привитых ", 0, y(65), "start", "central");
 
                     let leftB = width*curSet.legendPosP,
                         wid = width*curSet.legendWP
@@ -217,19 +262,6 @@
                     )
 
                 });
-
-                // function addXText(path, t, i, h, anc) {
-                //     path
-                //         .append("text")
-                //         .attr("class", "textSmaller")
-                //         .attr("x", x(i))
-                //         .attr("y", h)
-                //         .attr("text-anchor", anc)
-                //         .text( t );
-                // }
-
-                // cases.call(addChart, 0, 0, "Случаев в день");
-                // deaths.call(addChart, tr, th, "Смертей в день");
 
             </script>
         </div>
