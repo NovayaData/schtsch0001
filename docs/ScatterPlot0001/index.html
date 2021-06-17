@@ -1,0 +1,237 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body bgcolor="#212226">
+    <div id="header">
+        <span class="textBig dark">Гонка уколов</span>
+    </div>
+    
+    <div id="lid">
+        <span class="textSmall">Линия — это время, время — это круг</span>
+    </div>
+
+    <div id="soso">
+        <span class="textSmall">Источник: Bloomberg</span>
+    </div>
+    
+    <div id="container">
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var colorSteps = [0.16, 0.25, 0.29, 0.34];
+
+                function getColor(v) {
+                    if (colorSteps[0]>v && v>=0){
+                        return "#ffed26"
+                    } else if (colorSteps[1]>v && v>=colorSteps[0]){
+                        return "#fbbf00"
+                    } else if (colorSteps[2]>v && v>=colorSteps[1]){
+                        return "#ee9100"
+                    } else if (colorSteps[3]>v && v>=colorSteps[2]){
+                        return "#da6513"
+                    } else if (v>=colorSteps[3]){
+                        return "#bf381d"
+                    }
+                }
+
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margin = {
+                    top: H*0.03, 
+                    bottom: H*0.03, 
+                    right: W*0.04,
+                    left: W*0.04
+                    };
+
+                var width = W - margin.left - margin.right,
+                    height = H - margin.top - margin.bottom - H*0.25
+
+                var curSet;
+
+                var desktopSettings = {
+                    wurstH : H*0.035,
+                    legendPosP : 0.25,
+                    legendWP : 0.1
+                },
+
+                mobileSettings = {
+                    wurstH : H*0.02,
+                    legendPosP : 0.125,
+                    legendWP : 0.15
+                };
+
+                if (H>W) {
+                    curSet = mobileSettings;
+                } else {
+                    curSet = desktopSettings;
+                }
+
+                var parseTime = d3.timeParse("%Y-%m-%d");
+                
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                var focus = svg.append("g");
+                focus
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("transform", "translate("+margin.left+","+H*0.2+")");
+
+                d3.csv("../data/ScatterPlot0001/vaccinated_bloomberg_data.csv").then(data => {
+
+                    data.forEach(
+                        function() {
+                            data.duration = parseInt(data.duration);
+                            data.vaccinated_percent = parseFloat(data.vaccinated_percent);
+                        }
+                    )
+
+                    var xMax = d3.max(data, function(d) { return d.duration; });
+                    var xMin = d3.min(data, function(d) { return d.duration; });
+                    var yMax = d3.max(data, function(d) { return d.vaccinated_percent; });
+
+                    var x = d3.scaleLinear()
+                        .range([0, width])
+                        .domain([xMin-1, xMax]);
+                    focus
+                        .append("g")
+                        .attr("class", "ax")
+                        .attr("opacity", 1)
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x).tickSize(0).ticks(xMax-xMin).tickFormat(
+                            
+                            d => {
+                                console.log(d%7==1);
+                                if (d%7==0) {
+                                    return d/7;
+                                }
+                            }
+                        ));
+
+                    var y = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([0, 65]);
+                    focus
+                        .append("g")
+                        .attr("class", "ax")
+                        .attr("opacity", 1)
+                        .call(d3.axisLeft(y).tickSize(0));
+
+                    focus.selectAll(".ax").selectAll("text").attr("class", "textSmaller")
+                    focus.selectAll(".ax").selectAll("path").attr("opacity", 0)
+
+                    var dots = focus.append("g");
+                    var names = focus.append("g");
+                    
+                    dots
+                        .selectAll("circle")
+                        .data(data)
+                        .enter()
+                        .append("circle")
+                        .attr("id", d => d.name)
+                        .attr("fill", d => getColor(d.percent_per_day) )
+                        .attr("r", d => d.percent_per_day*50)
+                        .attr("opacity", 1)
+                        .attr("cx", d => x(d.duration))
+                        .attr("cy", d => y(d.vaccinated_percent))
+
+                    data.forEach(
+                        function(d) {
+                            names
+                                .append("text")
+                                .attr("class", "textSmaller")
+                                .attr("fill", "#F0F1F2")
+                                .attr("x", function () {
+                                    if (x(d.duration)>W/2) {
+                                        return x(d.duration)-d.percent_per_day*50-3;
+                                    } else {
+                                        return x(d.duration)+d.percent_per_day*50+3;
+                                    }
+                                })
+                                .attr("y", y(d.vaccinated_percent))
+                                .attr("text-anchor", function() {
+                                    if (x(d.duration)>W/2) {
+                                        return "end";
+                                    } else {
+                                        return "start";
+                                    }
+                                })
+                                .attr("alignment-baseline", "middle")
+                                .text( d.name_ru );
+                            }
+                    )
+
+                    let leftB = width*curSet.legendPosP,
+                        wid = width*curSet.legendWP
+                        wurstH = curSet.wurstH;
+
+                    var colorLegend = svg.append("g")
+                        .attr("id", "colorLegend")
+                        .attr("opacity", 0)
+                        .attr("y", 41);
+                    
+                    legendSteps = [0].concat(colorSteps);
+
+                    colorLegend.append("text")
+                                .attr("class", "textSmaller")
+                                .attr("x", leftB)
+                                .attr("y", 0)
+                                .attr("text-anchor", "start")
+                                .text( "Количество выстрелов за неделю" );
+
+                    legendSteps.forEach(
+                        function(colorValue) {
+                            curG = colorLegend.append("g");
+                            curG.append("rect")
+                                .attr("y", wurstH/4)
+                                .attr("x", leftB)
+                                .attr("width", wid)
+                                .attr("height", wurstH/3)
+                                .attr("fill", function() {return getColor(colorValue) });
+                            curG.append("g")
+                                .append("text")
+                                .attr("class", "textSmaller")
+                                // .attr("fill", "#0f0f0f")
+                                .attr("x", leftB)
+                                .attr("y", wurstH/4+wurstH/3+12)
+                                .attr("text-anchor", "middle")
+                                .text( function() {
+                                    if (colorValue==0) {
+                                        return "";
+                                    } else {
+                                        return d3.format(",.0f")(colorValue);
+                                    }
+                                } );
+
+                            leftB+=wid;
+                        }
+                    )
+
+                });
+
+                // function addXText(path, t, i, h, anc) {
+                //     path
+                //         .append("text")
+                //         .attr("class", "textSmaller")
+                //         .attr("x", x(i))
+                //         .attr("y", h)
+                //         .attr("text-anchor", anc)
+                //         .text( t );
+                // }
+
+                // cases.call(addChart, 0, 0, "Случаев в день");
+                // deaths.call(addChart, tr, th, "Смертей в день");
+
+            </script>
+        </div>
+    </div>
+</body>
