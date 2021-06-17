@@ -1,0 +1,154 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+    <div id="header">
+        <span class="textBig dark">Это ебанутый график</span>
+    </div>
+    
+    <div id="lid">
+        <span class="textSmall">Линия — это время, время — это круг</span>
+    </div>
+
+    <div id="soso">
+        <span class="textSmall">Источник: Таблица</span>
+    </div>
+    
+    <div id="container">
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var coco = {
+                    "Аргентина" : "",
+                    "Канада" : "",
+                    "Европа" : "",
+                    "Германия" : "",
+                    "Израиль" : "",
+                    "Россия" : "",
+                    "Великобритания" : "",
+                    "США" : ""
+                };
+
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margin = {
+                    top: H*0.03, 
+                    bottom: H*0.03, 
+                    right: W*0.05,
+                    left: W*0.05
+                    };
+
+                var width = W - margin.left - margin.right,
+                    height = H - margin.top - margin.bottom - H*0.25
+
+                var parseTime = d3.timeParse("%Y-%m-%d");
+                
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                var focus = svg.append("g");
+                focus
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("transform", "translate("+margin.left+","+H*0.2+")");
+
+                d3.csv("../data/ScatterLine0001/vaccinated_vs_cases.csv").then(data => {
+
+                    data.forEach(
+                        function() {
+                            data.vaccinated_per_hundred = parseFloat(data.vaccinated_per_hundred);
+                            data.cases_per_million_increase = parseFloat(data.cases_per_million_increase);
+                        }
+                    )
+
+                    // var xMax = d3.max(data, function(d) { return d.vaccinated_per_hundred; });
+                    // var yMax = d3.max(data, function(d) { return d.cases_per_million_increase; });
+
+                    var x = d3.scaleLinear()
+                        .range([0, width])
+                        .domain([0, 65]);
+                    focus
+                        .append("g")
+                        .attr("opacity", 1)
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x));
+
+                    var y = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([0, 1000]);
+                    focus
+                        .append("g")
+                        .attr("opacity", 1)
+                        .call(d3.axisLeft(y));
+
+                    var lines = focus.append("g");
+
+                    Object.keys(coco).forEach(
+                        function(name) {
+
+                            let curCoData = data.filter(d => {
+                                return d.country === name;
+                            });
+
+                            curCoData7 = curCoData.slice(7, curCoData.length);
+
+                            curCoData7.forEach(
+                                function(d, i) {
+                                    i+=7;
+                                    let curSlice = curCoData.slice(i-7, i);
+
+                                    // d.vaccinatedPerNundredMean = d3.mean(curSlice, d => d.vaccinated_per_hundred);
+                                    d.casesPerMillionIncreaseMean = d3.mean(curSlice, d => d.cases_per_million_increase);
+                                }
+                            )
+
+                            lines
+                                .append("path")
+                                .datum(curCoData7)
+                                .attr("id", name+"Path")
+                                .attr("fill", "none")
+                                .attr("opacity", 1)
+                                .attr("stroke-width", 1)
+                                .attr("stroke", "#000000")
+                                .attr("stroke-linejoin", "round")
+                                .attr("stroke-linecap", "round")
+                                .attr(
+                                    "d", 
+                                    d3.line()
+                                    .curve(d3.curveCatmullRom)
+                                    .x(function(d) { return x(d.vaccinated_per_hundred) })
+                                    .y(function(d) { return y(d.casesPerMillionIncreaseMean) })
+                                );
+
+                        }
+                    );
+
+                });
+
+                // function addXText(path, t, i, h, anc) {
+                //     path
+                //         .append("text")
+                //         .attr("class", "textSmaller")
+                //         .attr("x", x(i))
+                //         .attr("y", h)
+                //         .attr("text-anchor", anc)
+                //         .text( t );
+                // }
+
+                // cases.call(addChart, 0, 0, "Случаев в день");
+                // deaths.call(addChart, tr, th, "Смертей в день");
+
+            </script>
+        </div>
+    </div>
+</body>
