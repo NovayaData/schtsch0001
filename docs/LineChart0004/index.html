@@ -9,7 +9,7 @@
 </head>
 <body>
     <div id="header">
-        <span class="textBig dark">Как выросли цены на еду и упали реальные доходы населения с 2010 года</span>
+        <span class="textBig dark">Реальные доходы ниже, чем в 2010 году, а цены на еду — вдвое выше</span>
     </div>
     
     <!-- <div id="lid">
@@ -29,15 +29,32 @@
                 var W = document.getElementById('container').clientWidth,
                     H = document.getElementById('container').clientHeight;
 
-                var margin = {
+                var margins = {mobile : {
                     top: H*0.03, 
                     bottom: H*0.03, 
                     right: W*0.12,
-                    left: W*0.04
-                    };
+                    left: W*0.06,
+                    ttop: 63
+                    },
+                    desktop : {
+                    top: H*0.03, 
+                    bottom: H*0.03, 
+                    right: W*0.06,
+                    left: W*0.04,
+                    ttop: 41
+                    }};
+
+                var margin;
+
+                if (H>W) {
+                    margin = margins.mobile;
+                } else {
+                    margin = margins.desktop;
+                }
+                
 
                 var width = W - margin.left - margin.right,
-                    height = H - margin.top - margin.bottom - 84 - 72
+                    height = H - margin.top - margin.bottom - margin.ttop - 72
 
                 var parseTime = d3.timeParse("%Y");
                 
@@ -50,7 +67,7 @@
                 focus
                     .attr("width", width)
                     .attr("height", height)
-                    .attr("transform", "translate("+margin.left+","+84+")");
+                    .attr("transform", "translate("+margin.left+","+margin.ttop+")");
 
                 Promise.all([
                     d3.csv("../data/LineChart0004/incomes_and_prices_ru.csv"),
@@ -63,6 +80,18 @@
                         pricesCum = 0;
 
                     var yNums =[];
+
+                    if (H>W) {
+
+                        data = data.filter(function(d, i) {
+
+                            if (i%2 == 0) {
+                                    return d;
+                                }
+                            
+                        })
+
+                    };
 
                     data.forEach(
                         function(d) {
