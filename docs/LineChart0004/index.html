@@ -1,0 +1,252 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <div id="header">
+        <span class="textBig dark">Как выросли цены на еду и упали реальные доходы населения с 2010 года</span>
+    </div>
+    
+    <!-- <div id="lid">
+        <span class="textSmall"></span>
+    </div> -->
+
+    <div id="soso">
+        <span class="textSmaller ngblue">*по состоянию на май, в годовом выражении</span><br>
+        <span class="textSmaller ngred">*по состоянию на 1-й квартал, в годовом выражении</span><br><br>
+        <span class="textSmall">Источник: Росстат, ФТС, расчёты «Новой»</span>
+    </div>
+    
+    <div id="container">
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margin = {
+                    top: H*0.03, 
+                    bottom: H*0.03, 
+                    right: W*0.08,
+                    left: W*0.04
+                    };
+
+                var width = W - margin.left - margin.right,
+                    height = H - margin.top - margin.bottom - 84 - 60
+
+                var parseTime = d3.timeParse("%Y");
+                
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                var focus = svg.append("g");
+                focus
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("transform", "translate("+margin.left+","+84+")");
+
+                Promise.all([
+                    d3.csv("../data/LineChart0004/incomes_and_prices_ru.csv"),
+                    d3.json("../data/settings/formatRu.json")
+                ]).then(([data, locatRu]) => {
+
+                    d3.formatDefaultLocale(locatRu);
+
+                    var incomesCum = 0,
+                        pricesCum = 0;
+
+                    var yNums =[];
+
+                    data.forEach(
+                        function(d) {
+                            d.date = parseTime(d.year);
+                            d.incomes = parseFloat(d.incomes);
+                            d.prices = parseFloat(d.prices);
+
+                            incomesCum += d.incomes;
+                            d.incomesCum = incomesCum;
+
+                            pricesCum += d.prices;
+                            d.pricesCum =  pricesCum;
+
+                            yNums.push(pricesCum)
+                            yNums.push(incomesCum)
+                        }
+                    );
+
+                    var xMax = d3.max(data, function(d) { return d.date; });
+                    var xMin = d3.min(data, function(d) { return d.date; });
+
+                    var yMax = d3.max(yNums, d => d );
+                    var yMin = d3.min(yNums, d => d );
+
+                    var x = d3.scaleTime()
+                        .range([0, width])
+                        .domain([xMin, xMax]);
+
+                    var xx = focus
+                        .append("g")
+                        .attr("class", "ax")
+                        .attr("opacity", 1)
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(d3.axisBottom(x).tickSize(0).ticks(d3.timeYear.every()).tickFormat(
+
+                            function(d) {
+
+                                let lab = d3.timeFormat('%Y')(d);
+                                
+                                if (lab == "2021") {
+                                    return lab+"*";
+                                } else {
+                                    return lab;
+                                }
+                            }
+                            
+                        ));
+                    
+                    if (H>W) {
+                        var ticks = xx.selectAll("text");
+                        ticks.each(function(_,i){
+                            if(i%2 !== 0) d3.select(this).remove();
+                        });
+                    };
+
+                    var y = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([yMin-2, yMax]);
+
+                    var yx = focus
+                        .append("g")
+                        .attr("class", "ax")
+                        .attr("opacity", 1)
+                        .call(d3.axisLeft(y).tickSize(0));
+
+                    yx.selectAll("text").attr("opacity", 0)
+
+                    focus.selectAll(".ax").selectAll("text").attr("class", "textSmaller dark")
+                    focus.selectAll(".ax").selectAll("path").attr("opacity", 0)
+
+                    var baseLine = focus.append("g");
+
+                    baseLine
+                        .append("path")
+                        .datum([0, W])
+                        .attr("stroke-width", 1.25)
+                        .attr("stroke", "#979899")
+                        .style("stroke-dasharray", ("6, 6"))
+                        .attr("fill", "none")
+                        .attr(
+                            "d", 
+                            d3.line()
+                                .curve(d3.curveStepAfter)
+                                .x(d => d)
+                                .y(d => y(0))
+                        )
+                        .attr("transform", "translate(-"+margin.left+",0)");;
+
+                    var baseText = baseLine
+                        .append("text")
+                        .attr("class", "textSmaller dark")
+                        .attr("x", d => x(parseTime("2014")))
+                        .attr("y", d => y(0))
+                        .attr("fill", "#979899")
+                        .attr("text-anchor", "middle")
+                        .attr("alignment-baseline", "central")
+                        .text( "2010" );
+
+                    var bbox = baseText.node().getBBox();
+
+                    baseLine.insert('rect','text')
+                        .attr('x', bbox.x-2)
+                        .attr('y', bbox.y)
+                        .attr('width', bbox.width+4)
+                        .attr('height', bbox.height)
+                        .attr('fill', "#ffffff")
+
+
+                    var lines = focus.append("g");
+                    var numbersIncC = focus.append("g");
+                    var numbersInc = focus.append("g");
+                    var numbersPriC = focus.append("g")
+                    var numbersPri = focus.append("g");
+
+                    function addLine(indicator, col) {
+                    
+                        lines
+                            .append("path")
+                            .datum(data)
+                            .attr("stroke-width", 1.25)
+                            .attr("stroke-linejoin", "round")
+                            .attr("stroke-linecap", "round")
+                            .attr("stroke", col)
+                            .attr("fill", "none")
+                            .attr(
+                                "d", 
+                                d3.line()
+                                    .curve(d3.curveStepAfter)
+                                    .x(d => x(d.date))
+                                    .y(d => y(d[indicator]))
+                            );
+
+                    };
+
+                    addLine("incomesCum", "#bf381d");
+                    addLine("pricesCum", "#00ace5");
+
+                    function addXText(path, indicator, col, sW, sCol) {
+
+                        path
+                            .selectAll("text")
+                            .data(data)
+                            .enter()
+                            .append("text")
+                            .attr("class", indicator + " textSmaller dark")
+                            .attr("x", d => x(d.date))
+                            .attr("y", d => y(d[indicator+"Cum"]))
+                            .attr("fill", col)
+                            .attr("stroke-width", sW)
+                            .attr("stroke", sCol)
+                            .attr("stroke-linejoin", "round")
+                            .attr("stroke-linecap", "round")
+                            .attr("text-anchor", "start")
+                            .attr("alignment-baseline", "central")
+                            .text( function(d) {
+                                if (d[indicator]>0) {
+                                    return "+"+d3.format(",.2f")(d[indicator]);
+                                } else if (d[indicator]<0) {
+                                    return d3.format(",.2f")(d[indicator]);
+                                } 
+                            } );
+
+                    };
+
+                    numbersIncC.call(addXText,"incomes", "#bf381d", 6, "#ffffff");
+                    numbersInc.call(addXText,"incomes", "#bf381d", 0, "none");
+                    numbersPriC.call(addXText,"prices", "#00ace5", 6, "#ffffff");
+                    numbersPri.call(addXText,"prices", "#00ace5", 0, "none");
+
+                    // function addXText(path, t, i, h, anc, ali) {
+                    //     path
+                    //         .append("text")
+                    //         .attr("class", "textSmaller")
+                    //         .attr("x", x(xMin-1))
+                    //         .attr("y", h)
+                    //         .attr("fill", "#F0F1F2")
+                    //         .attr("text-anchor", anc)
+                    //         .attr("alignment-baseline", ali)
+                    //         .text( t );
+                    // };
+
+                });
+
+            </script>
+        </div>
+    </div>
+</body>
