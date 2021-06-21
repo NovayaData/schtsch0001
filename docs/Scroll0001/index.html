@@ -81,7 +81,6 @@
                 };
 
                 colorSteps = [1390, 3550, 5610, 7600];
-
                 // var colorSteps = [1391.60, 3554.20, 5611.60, 7598.80];
 
                 function getColor(v) {
@@ -123,24 +122,24 @@
                 var curSet;
 
                 var desktopSettings = {
-                    yScalerP : 0.75,
-                    wurstH : H*0.035,
-                    monthFormat : "%b",
-                    yearHeight : H*0.0275,
-                    yearTick : 0,
-                    legendPosP : 0.25,
-                    legendWP : 0.1
-                },
+                        yScalerP : 0.75,
+                        wurstH : H*0.035,
+                        monthFormat : "%b",
+                        yearHeight : H*0.0275,
+                        yearTick : 0,
+                        legendPosP : 0.25,
+                        legendWP : 0.1
+                    },
                 
-                mobileSettings = {
-                    yScalerP : 0.4,
-                    wurstH : H*0.02,
-                    monthFormat : "%-",
-                    yearHeight : 0,
-                    yearTick : H*0.015,
-                    legendPosP : 0.125,
-                    legendWP : 0.15
-                };
+                    mobileSettings = {
+                        yScalerP : 0.4,
+                        wurstH : H*0.02,
+                        monthFormat : "%-",
+                        yearHeight : 0,
+                        yearTick : H*0.015,
+                        legendPosP : 0.125,
+                        legendWP : 0.15
+                    };
 
                 if (H>W) {
                     curSet = mobileSettings;
@@ -176,7 +175,6 @@
                 var wurstH = curSet.wurstH;
                 var NFS = 400;
 
-                // var sizeCondition = 0;
                 var cleanDate = parseTime("2016-01-01");
 
                 Promise.all([
@@ -190,140 +188,52 @@
                     d3.timeFormatDefaultLocale(localeRuTime);
                     d3.formatDefaultLocale(locatRu);
 
-                    // const sections = d3.select("#sections");
-                    // var activationFunctions = [];
-
-                    // const actionsDict = {
-                    //     "dropAll":dropAll,
-                    //     "getSize":getSize,
-                    //     "getAction":getAction
-                    // };
-
-                    // Object.keys(articleScript.paragraphs).forEach(
-                    //     function(p, i) {
-                    //         let abz = articleScript.paragraphs[p][1];
-
-                    //         activationFunctions.push(articleScript.paragraphs[p][0]);
-
-                    //         i+=1
-                    //         let curSection = sections.append("section")
-                    //             .attr("class", "step")
-                    //             .attr("id", p+"_"+i);
-                            
-                    //         curSection
-                    //             .append("span")
-                    //             .attr("class", "paragraphFalseText")
-                    //             .html(a);
-                            
-                    //         curSection
-                    //             .append("span")
-                    //             .attr("class", "paragraphText")
-                    //             .html(a);
-
-                    //         } )
-                    //     }
-                    // );
-
-                    const activationFunctions = [
-                                [dropAll, ["zero", "", 0]],
-                                [dropAll, ["zero", "", 0]],
-                                [dropAll, ["real", "black", 0]],
-                                [dropAll, ["real", "colored", 0]],
-                                [dropAll, ["wurst", "", 0]],
-                            [dropAll, ["wurst", "", 1]],
-                            [dropAll, ["wurst", "", 1]],
-                            // [getSize, ["clean", 0, []]],
-                            // [getSize, ["clean", 1, []]],
-                        [getAction, ["e1", [], [], 1]],
-                        [getAction, ["e1", [], [], 1]],
-                        [getAction, ["e1", [], [], 1]],
-                        [getAction, ["e1", [], [], 1]],
-                        [getAction, ["e2", [], [], 1]],
-                        [getAction, ["e2", [], [], 1]],
-                        [getAction, ["e2", [], [], 1]],
-                        [getAction, ["e3", [], [], 1]],
-                        [getAction, ["e3", [], [], 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                        [getAction, ["e4", [], [], 1]],
-                        [getAction, ["e4", [], [], 1]],
-                        [getAction, ["e5", [], [], 1]],
-                                [dropAll, ["wurst", "", 1]],
-                        [getAction, ["e6", [], [], 1]],
-                        [getAction, ["e6", [], [], 1]],
-                        [getAction, ["e6", [], [], 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                        [getAction, ["e7", [], [], 1]],
-                        [getAction, ["e7", [], [], 1]],
-                                [dropAll, ["wurst", "", 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e9", [], [], 1]],
-                        [getAction, ["e9", [], [], 1]],
-                        [getAction, ["e9", [], [], 1]],
-                        [getAction, ["e9", [], [], 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e8", [], [], 1]],
-                        [getAction, ["e10", [], [], 1]],
-                        [getAction, ["e10", [], [], 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["wurst", "", 1]],
-                                [dropAll, ["real", "black", 1]]
-                    ];
+                    const sections = d3.select("#sections");
+                    var activationFunctions = [];
+                    var episodes = {};
 
                     // Finish page
-                    const sections = d3.select("#sections");
 
-                    Object.keys(articleScript.paragraphs).forEach(
-                        function(p) {
-                            let abz = articleScript.paragraphs[p];
+                    articleScript.paragraphs.forEach(
+                        function(p, i) {
+                            i+=1
+
+                            let pSet = p[0],
+                                pText = p[1];
+
+                            if (pSet.episodes.length>0) {
+                                episodes["e"+i] = pSet.episodes;
+                                pSet["episode"] = "e"+i
+                            }
+
+                            activationFunctions.push(pSet);
                             
-                            abz.forEach( function(a, i) {
-                                i+=1
-                                let curSection = sections.append("section")
-                                    .attr("class", "step")
-                                    .attr("id", p+"_"+i);
+                            let curSection = sections.append("section")
+                                .attr("class", "step")
+                                .attr("id", p+"_"+i);
 
-                                curSection
-                                    .append("span")
-                                    .attr("class", "paragraph paragraphFalseText")
-                                    .html(a);
-                                
-                                curSection
-                                    .append("span")
-                                    .attr("class", "paragraph paragraphText")
-                                    .html(a);
-                            } )
+                            curSection
+                                .append("span")
+                                .attr("class", "paragraph paragraphFalseText")
+                                .html(pText);
+                            
+                            curSection
+                                .append("span")
+                                .attr("class", "paragraph paragraphText")
+                                .html(pText);
                         }
                     );
 
                     // Transform data
 
-                    var marksData = {};
                     data.forEach(d => {
                         d.dateStr = d.date;
                         d.date = parseTime(d.date);
                         d.episode = "episode ";
 
-                        marksData[d.dateStr] = [d.weeksum, d.date];
+                        Object.keys(episodes).forEach( function(eKey) {
 
-                        Object.keys(articleScript.episodes).forEach( function(eKey) {
-
-                            let eList = articleScript.episodes[eKey];
+                            let eList = episodes[eKey];
 
                             eList.forEach(function(e) {
 
@@ -341,9 +251,9 @@
 
                     var fakeBars = [];
                     
-                    Object.keys(articleScript.episodes).forEach( function(eKey) {
+                    Object.keys(episodes).forEach( function(eKey) {
 
-                        let eList = articleScript.episodes[eKey];
+                        let eList = episodes[eKey];
 
                         eList.forEach(function(e) {
                             let minDate = parseTime(e[0]),
@@ -404,8 +314,6 @@
                                 .attr('text-anchor', 'start')
                                 .attr("class", "textSmaller");
                     };
-
-                    // console.log(5/H);
                     
                     addXAx("Xmonths", 1, height, d3.timeMonth, d3.timeFormat("%-"), H*0.005);
                     addXAx("Xseasons", 1, height, d3.timeMonth.every(3), d3.timeFormat(curSet.monthFormat), H*0.01);
@@ -444,7 +352,6 @@
                     addY(y, 40000, 0, "textSmaller", "Y", "Y", "#b0b0b0", "end", 0);
                     addY(y, 40000, 0, "textSmaller", "Y1", "Y", "colored", "end", 0);
                     addY(y2, 100, y2x, "textSmaller", "Y2", "Yg", "#212226", "start", 1);
-                    // focus.select(".Y").attr("opacity", 0);
 
                     function dropDomains() {
                         focus.selectAll(".domain")
@@ -460,37 +367,28 @@
                         barsFake.append("rect")
                             .attr("class", fb[0])
                             .attr("fill", "#f7f7f7")
-                            // .attr("id", function(d) { return iPref+d.dateStr; })
                             .attr("x", x(fb[1]))
                             .attr("width", x(fb[2])-x(fb[1])+bandWidth)
                             .attr("height", H-(H-y(0)))
                             .attr("y", 0)
-                            // .attr("height", 40000*yScaler)
-                            // .attr("y", y(40000))
                             .attr("opacity", 0);
                     });
 
                     var bars = focus.append("g");
-                    
-                    function addBars(group, color, iPref, cSuf, defaultH, o) {
-                        group.attr("clip-path", "url(#clip)");
-                        group.selectAll("bar")
-                        .data(data)
-                        .enter().append("rect")
-                            .attr("class", function(d) { return d.episode + cSuf; })
-                            .attr("fill", color)
-                            .attr("id", function(d) { return iPref+d.dateStr; })
-                            .attr("x", function(d) { return x(d.date); })
-                            .attr("width", bandWidth)
-                            .attr("height", defaultH*yScaler)
-                            .attr("y", y(defaultH))
-                            // .attr("height", function(d) { return d.weeksum*yScaler})
-                            // .attr("y", function(d) { return y(d.weeksum); })
-                            .attr("opacity", o);
-                    };
 
-                    // addBars(barsFake, "#f0f1f2", "bf", " fake", 40000, 0);
-                    addBars(bars, "#494a4d", "b", " wurst", 0, 1);
+                    bars.attr("clip-path", "url(#clip)");
+                    bars.selectAll("bar")
+                    .data(data)
+                    .enter()
+                        .append("rect")
+                        .attr("class", function(d) { return d.episode + " wurst"; })
+                        .attr("fill", "#494a4d")
+                        .attr("id", function(d) { return "b"+d.dateStr; })
+                        .attr("x", function(d) { return x(d.date); })
+                        .attr("width", bandWidth)
+                        .attr("height", 0*yScaler)
+                        .attr("y", y(0))
+                        .attr("opacity", 1);
 
                     function colorise(date, value) {
                         if (date < cleanDate) {
@@ -522,35 +420,30 @@
                     addLine("#ffffff", bandWidth*2);
                     addLine("#212226", bandWidth/2);
 
-                    const marks = focus.append("g");
-                    marks.attr("clip-path", "url(#clip)");
-
-                    Object.keys(articleScript.marks).forEach(
-                        function(m) {
-                            let mList =  articleScript.marks[m];
-                            mList.forEach(
-                                function(mark) {
-                                    let markWidth = x(marksData[mark[0]][1])+bandWidth/2;
-                                    marks.append("circle")
-                                        .attr("id", "m"+mark[0])
-                                        .attr("class", "mark "+m)
-                                        .attr("r", bandWidth*1.5)
-                                        .attr("fill", "#f7f7f7")
-                                        .attr("opacity", 0)
-                                        .attr("text", mark[1])
-                                        .attr("cx", markWidth)
-                                        .attr("cy", height-wurstH-10);
-                                }
-                            )
-                        }
-                    );
-
                     function getFormatedDate(date) {
                         date = parseTime(date);
                         let mo = new Intl.DateTimeFormat('ru', { month: 'short' }).format(date);
                         let da = new Intl.DateTimeFormat('ru', { day: 'numeric' }).format(date);
                         return `${da} ${mo}`;
                     };
+
+                    // markers = focus.append("g");
+
+                    // Object.keys(articleScript.marks).forEach(
+                    //     function(m) {
+                    //         let date = articleScript.marks[m][0],
+                    //             text = articleScript.marks[m][1];
+                            
+                    //         markers
+                    //             .append("circle")
+                    //             .attr("id", m)
+                    //             .attr("class", "mark")
+                    //             .attr("r", 9)
+                    //             .attr("opacity", 1)
+                    //             .attr("cx", x(parseTime(date)))
+                    //             .attr("cy", y(0)-9);
+                    //     }
+                    // );
 
                     var navigatorX = activationFunctions.map(
                         d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
@@ -563,7 +456,7 @@
                         circlesContainer
                             .append("circle")
                             .attr("id", function() { return "C"+i })
-                            .attr("r", "4px")
+                            .attr("r", "9px")
                             .attr("fill", color)
                             .attr("transform", 
                                 "translate(" + hTr + "," + hPos + ")");
@@ -588,7 +481,7 @@
                                     .transition()
                                     .duration(50)
                                     .attr("fill", "#bf381d")
-                                    .attr("r", "6px");
+                                    .attr("r", "9px");
                         });
 
                         circlesNav
@@ -597,7 +490,7 @@
                                     .transition()
                                     .duration(50)
                                     .attr("fill", "#ececec")
-                                    .attr("r", "4px");
+                                    .attr("r", "9px");
                                 sc = 1;
                             });
 
@@ -609,10 +502,9 @@
 
                                 sc = 0;
                                 document.getElementById(curId).scrollIntoView(
-                                    // {behavior: "smooth"} 
                                 );
-                                activationFunctions[i][0](
-                                    activationFunctions[i][1]
+                                mainAct(
+                                    activationFunctions[i]
                                 )
                             });
 
@@ -648,7 +540,6 @@
                             curG.append("g")
                                 .append("text")
                                 .attr("class", "textSmaller")
-                                // .attr("fill", "#0f0f0f")
                                 .attr("x", leftB)
                                 .attr("y", wurstH/4+wurstH/3+12)
                                 .attr("text-anchor", "middle")
@@ -663,85 +554,43 @@
                             leftB+=wid;
                         }
                     )
-                                
-
+                    
                     // Actions
 
-                    function marker(mids, mode) {
-                        if (mids) {
-                            mids.forEach(
-                                function(mid) {
-                                    let curMarks = marks.select("."+mid)
-                                    curMarks.call(markOn, mode);
-                                    // if (mode=="on") {
-                                    //     curMarks.call(wurstOpaciter, 1);;
-                                    // } else if (mode=="off") {
-                                    //     curMarks.call(wurstOpaciter, 0)
-                                    // };
-                                }
-                            ) 
-                        }
-                    };
+                    function mainAct(args) {
 
-                    function markOn(path, mode) {
-                        path
-                            .attr("opacity", function(d) {
-                                if (mode=="on") {
-                                    return 1;
-                                } else if (mode=="off") {
-                                    return 0;
-                                } else {
-                                    alert("what??" + " " + curClass + " " + mode)
-                                }
-                            })
-                            .attr("class", function() {
-
-                                let curClass = this.getAttribute("class");
-
-                                if (!curClass.includes("on") && mode=="on") {
-                                    return curClass.replace("mark", "mark on");
-                                } else if (curClass.includes("on") && mode=="on") {
-                                    return curClass;
-                                } else if (mode=="off") {
-                                    return curClass.replace("mark on", "mark");
-                                } else {
-                                    alert("what?" + " " + curClass + " " + mode)
-                                }
-                            });
-                            
-                    }
-
-                    function getAction(args) {
-
-                        let eid = args[0],
-                            mids = args[1],
-                            midsDel = args[2],
-                            s = args[3];
-
-                        if (curS!=s) {
-                            getSize(s);
+                        let mode = args.mode,
+                            color = args.color,
+                            episodes = args.episodes,
+                            marks = args.marks,
+                            size = args.size;
+                        
+                        if (curS!=size) {
+                            getSize(size);
                         }
 
-                        marker(mids, "on");
-                        marker(midsDel, "off");
-
-                        if (eid && eid!="clean") {
-                            getReal(eid, "colored")
-                        } else if (eid=="clean") {
+                        if (episodes.length>0 && mode=="real") {
+                            getReal(args.episode, color)
+                        } else if (episodes.length==0 && mode=="real") {
+                            getReal("wurst", color)
+                        } else if (mode=="wurst") {
                             getWurst();
+                        } else if (mode=="zero") {
+                            colorLegend.call(wurstOpaciter, 0);
+                            getZero();
                         };
 
                     };
 
-                    // var barsAll = bars.selectAll("rect").nodes();
                     function getReal(eid, colorMode) {
                         bars.selectAll("rect").filter(function() {
-                                return !this.classList.contains(eid)
+                                return !this.classList.contains(eid);
                         }).call(pookColor).call(pook).call(wurstOpaciter, 0.5)
 
                         barsFake.selectAll("rect").filter(function() {
                                 return !this.classList.contains(eid)
                         }).call(wurstOpaciter, 0)
+
                         barsFake.selectAll("."+eid).call(wurstOpaciter, 1)
 
                         let curReal = bars.selectAll("."+eid)
@@ -757,32 +606,10 @@
                         };
 
                         curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
-
-                        let curMarksIds = curReal.nodes().map(function(d) { return d.id.replace("b", "m")  });
-                        if (curMarksIds) {
-                            marks.selectAll(".on").filter( function() { return curMarksIds.includes(this.id) } )
-                                .call(pikMark);
-                            marks.selectAll(".on").filter( function() { return !curMarksIds.includes(this.id) } )
-                                .call(pookMark, 0.5);
-                        };
-
-                        marks.selectAll("circle:not(.on)").call(pookMark, 0);
                         
                     };
 
                     function getSize(sizeCondition) {
-                        // let eid = args[0],
-                        //     sizeCondition = args[1],
-                        //     midsDel = args[2];
-
-                        // marker(midsDel, "off");
-                        // marks.selectAll("circle:not(.on)").call(pookMark, 0);
-
-                        // colorLegend.call(wurstOpaciter, 1);
-
-                        // if (eid=="clean") {
-                        //     getWurst()
-                        // };
 
                         if (sizeCondition==1) {
                             resizer(cleanDate);
@@ -801,8 +628,6 @@
                             .call(wurstOpaciter, 1)
                             .call(pookColor)
                             .call(pook)
-
-                        marks.selectAll(".on").call(pookMark, 1);
                     };
 
                     function getZero() {
@@ -811,31 +636,7 @@
 
                         bars.selectAll(".wurst")
                             .call(wurstOpaciter, 1)
-                            // .call(pookColor)
                             .call(pookZero)
-
-                        marks.selectAll(".on").call(pookMark, 1);
-                    };
-
-                    function dropAll(args) {
-
-                        let barType = args[0],
-                            colorMode = args[1],
-                            s = args[2];
-
-                        if (curS!=s) {
-                            getSize(s);
-                        }
-
-                        if (barType=="wurst") {
-                            colorLegend.call(wurstOpaciter, 1);
-                            getWurst();
-                        } else if (barType=="real") {
-                            getReal("wurst", colorMode);
-                        } else if (barType=="zero") {
-                            colorLegend.call(wurstOpaciter, 0);
-                            getZero();
-                        };
                         
                     };
 
@@ -850,26 +651,24 @@
 
                         barsFake.selectAll("rect").call(resizeFakeBars);
 
+                        // markers.selectAll(".mark").call(resizeMark);
+
                         focus.selectAll("path").call(resizeLine);
                         focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", curSet.yearTick);
                         focus.select("#Xseasons").call(resizeAx, x, d3.timeMonth.every(3), d3.timeFormat(curSet.monthFormat), H*0.01);
                         focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-", H*0.005);
-                        focus.selectAll(".mark").call(resizeMarks);
                         dropDomains();
 
                     };
 
                     // Transitions
-                    
-                    function resizeMarks(path) {
+
+                    function resizeMark(path) {
                         path
-                            .transition("resizeBars")
+                            .transition("resizeMark")
                             .duration(NFS)
-                            .attr("cx", 
-                                function() {
-                                    return x(marksData[this.id.replace("m", "")][1])+bandWidth/2
-                                });
-                    }
+                            .attr("cx", function(d) { return x( parseTime(articleScript.marks[this.id][0]) ) });
+                    };
 
                     function resizeLine(path) {
                         path
@@ -909,7 +708,7 @@
                         .selectAll("text")
                             .attr('text-anchor', 'start')
                             .attr("class", "textSmaller");
-                    }
+                    };
 
                     function wurstOpaciter(path, v) {
                         path
@@ -927,19 +726,6 @@
                             })
                             .attr("y", function(d) { return y(d.weeksum); });
                     };
-
-                    function pikMark(path) {
-                        
-                        path
-                            .transition("pikMark")
-                            .duration(NFS)
-                            .attr("cy", 
-                                function() {
-                                    return y(marksData[this.id.replace("m", "")][0])-10
-                                }
-                            )
-                            .attr("opacity", 1);
-                        };
 
                     function pikColor(path, colorMode) {
                         path
@@ -979,14 +765,6 @@
                             .attr("fill", function(d) { return colorise(d.date, d.weeksum) });
                     };
 
-                    function pookMark(path, o) {
-                        path
-                            .transition("pookColor")
-                            .duration(NFS)
-                            .attr("cy", height-wurstH-10)
-                            .attr("opacity", o);
-                    }
-
                     function navigate(path, i) {
                         path
                             .transition("navigate")
@@ -1009,9 +787,8 @@
 
                         scrolledSections.forEach(i => {
                             if (sc == 1) {
-                                console.log("!");
-                                activationFunctions[i][0](
-                                    activationFunctions[i][1]
+                                mainAct(
+                                    activationFunctions[i]
                                 );
                             }
                             
