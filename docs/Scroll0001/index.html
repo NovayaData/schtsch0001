@@ -8,16 +8,13 @@
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
-    <!-- <div id="headers">
-        <h1 class="header1">Хронология наблюдений ОБСЕ</h1>
-    </div> -->
 
     <div id="graphic">
 
         <div id="sections">
         </div>
 
-        <div id="chartArea" >
+        <div id="chartArea">
             <script>
 
                 function scroller(){
@@ -80,7 +77,7 @@
                     return scroll;
                 };
 
-                colorSteps = [1390, 3550, 5610, 7600];
+                colorSteps = [2350, 4580, 6100, 7810];
                 // var colorSteps = [1391.60, 3554.20, 5611.60, 7598.80];
 
                 function getColor(v) {
@@ -117,7 +114,7 @@
                     width = W - margin.left - margin.right,
                     height = H - margin.top - margin.bottom;
 
-                var sc = 1; 
+                // var sc = 1; 
                 var curS = 0;
                 var curSet;
 
@@ -427,90 +424,129 @@
                         return `${da} ${mo}`;
                     };
 
-                    // markers = focus.append("g");
+                    markers = focus
+                        .append("g")
+                        .attr("clip-path", "url(#clip)");
+                        // .style("z-index", 2);
 
-                    // Object.keys(articleScript.marks).forEach(
-                    //     function(m) {
-                    //         let date = articleScript.marks[m][0],
-                    //             text = articleScript.marks[m][1];
+                    const tooltip = d3.select("#tooltip")
+                        .append("div")
+                        .attr("id", "tt")
+                        .style("opacity", 0)
+                        .attr("class", "textSmaller");
+                        
+                    Object.keys(articleScript.marks).forEach(
+                        function(m) {
+                            let date = articleScript.marks[m][0],
+                                text = articleScript.marks[m][1];
                             
-                    //         markers
-                    //             .append("circle")
-                    //             .attr("id", m)
-                    //             .attr("class", "mark")
-                    //             .attr("r", 9)
-                    //             .attr("opacity", 1)
-                    //             .attr("cx", x(parseTime(date)))
-                    //             .attr("cy", y(0)-9);
-                    //     }
-                    // );
+                            markers
+                                .append("circle")
+                                .attr("id", m)
+                                .attr("class", "mark" + " m" + date)
+                                .attr("r", 0)
+                                .attr("opacity", 0)
+                                .attr("stroke-width", 3)
+                                .attr("stroke", "#ffffff")
+                                .attr("cx", x(parseTime(date))+bandWidth/2)
+                                .attr("cy", y(0)-9)
+                                .on("mouseover", function(d) {
+                                    d3.select(this).attr("r", 10.5)
 
-                    var navigatorX = activationFunctions.map(
-                        d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
+                                    tooltip
+                                        .html(articleScript.marks[this.id][1])
+                                        .style("opacity", 1)
+                                        .style("top", this.getBBox().y + margin.top - 10.5 + "px");
+
+                                    if (this.getBBox().x <= W*0.75) {
+                                        tooltip
+                                            .style("left", this.getBBox().x + margin.left + bandWidth/2 + 21 + "px");
+                                            // .style("text-anchor", "start");
+                                    } else {
+                                            strLen  = document.getElementById("tt").clientWidth;
+
+                                        tooltip
+                                            .style("left", this.getBBox().x + margin.left + bandWidth/2 - strLen + "px");
+                                            // .style("text-anchor", "end");
+                                    }
+                                        
+
+                                })
+                                .on("mouseleave", function(d) {
+                                    d3.select(this).attr("r", 6);
+                                    tooltip
+                                        .html("")
+                                        .style("opacity", 0);
+                                });
+                        }
                     );
 
-                    var circlesContainer = svg.append("g");
-                    var hTr = W-margin.right/2;
+                    // var navigatorX = activationFunctions.map(
+                    //     d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
+                    // );
 
-                    function addCircle(i, hPos, color) {
-                        circlesContainer
-                            .append("circle")
-                            .attr("id", function() { return "C"+i })
-                            .attr("r", "9px")
-                            .attr("fill", color)
-                            .attr("transform", 
-                                "translate(" + hTr + "," + hPos + ")");
-                    };
+                    // var circlesContainer = svg.append("g");
+                    // var hTr = W-margin.right/2;
 
-                    var theCircle;
+                    // function addCircle(i, hPos, color) {
+                    //     circlesContainer
+                    //         .append("circle")
+                    //         .attr("id", function() { return "C"+i })
+                    //         .attr("r", "9px")
+                    //         .attr("fill", color)
+                    //         .attr("transform", 
+                    //             "translate(" + hTr + "," + hPos + ")");
+                    // };
 
-                    if (H<W) {
-                        var sectionsNodes = d3.select("#sections").selectAll(".step").nodes()
+                    // var theCircle;
+
+                    // if (H<W) {
+                    //     var sectionsNodes = d3.select("#sections").selectAll(".step").nodes()
                     
-                        sectionsNodes.forEach(
-                            function(d, i) {
-                                addCircle(d.id, navigatorX[i], "#ececec")
-                            }
-                        );
+                    //     sectionsNodes.forEach(
+                    //         function(d, i) {
+                    //             addCircle(d.id, navigatorX[i], "#ececec")
+                    //         }
+                    //     );
 
-                        var circlesNav = circlesContainer.selectAll("circle");
+                    //     var circlesNav = circlesContainer.selectAll("circle");
 
-                        circlesNav
-                            .on("mouseover", function(d) {
-                                d3.select(this)
-                                    .transition()
-                                    .duration(50)
-                                    .attr("fill", "#bf381d")
-                                    .attr("r", "9px");
-                        });
+                    //     circlesNav
+                    //         .on("mouseover", function(d) {
+                    //             d3.select(this)
+                    //                 .transition()
+                    //                 .duration(50)
+                    //                 .attr("fill", "#bf381d")
+                    //                 .attr("r", "9px");
+                    //     });
 
-                        circlesNav
-                            .on("mouseleave", function(d) {
-                                d3.select(this)
-                                    .transition()
-                                    .duration(50)
-                                    .attr("fill", "#ececec")
-                                    .attr("r", "9px");
-                                sc = 1;
-                            });
+                    //     circlesNav
+                    //         .on("mouseleave", function(d) {
+                    //             d3.select(this)
+                    //                 .transition()
+                    //                 .duration(50)
+                    //                 .attr("fill", "#ececec")
+                    //                 .attr("r", "9px");
+                    //             sc = 1;
+                    //         });
 
-                        circlesNav
-                            .on("click", function(d) {
+                    //     circlesNav
+                    //         .on("click", function(d) {
 
-                                let curId = this.id.replace("C", "");
-                                let i = circlesNav.nodes().indexOf(this);
+                    //             let curId = this.id.replace("C", "");
+                    //             let i = circlesNav.nodes().indexOf(this);
 
-                                sc = 0;
-                                document.getElementById(curId).scrollIntoView(
-                                );
-                                mainAct(
-                                    activationFunctions[i]
-                                )
-                            });
+                    //             sc = 0;
+                    //             document.getElementById(curId).scrollIntoView(
+                    //             );
+                    //             mainAct(
+                    //                 activationFunctions[i]
+                    //             )
+                    //         });
 
-                        addCircle("theCircle", navigatorX[0], "#b0b0b0");
-                        theCircle = circlesContainer.select("#CtheCircle");
-                    };
+                    //     addCircle("theCircle", navigatorX[0], "#b0b0b0");
+                    //     theCircle = circlesContainer.select("#CtheCircle");
+                    // };
                     
 
                     let leftB = width*curSet.legendPosP,
@@ -569,6 +605,12 @@
                             getSize(size);
                         }
 
+                        markers.selectAll(".mark").call(wurstOpaciter, 0).call(marksize, 0);
+
+                        markers.selectAll(".mark").filter(function() {
+                                return marks.includes(this.id);
+                        }).call(wurstOpaciter, 1).call(marksize, 6);
+
                         if (episodes.length>0 && mode=="real") {
                             getReal(args.episode, color)
                         } else if (episodes.length==0 && mode=="real") {
@@ -579,7 +621,7 @@
                             colorLegend.call(wurstOpaciter, 0);
                             getZero();
                         };
-
+                       
                     };
 
                     function getReal(eid, colorMode) {
@@ -651,7 +693,7 @@
 
                         barsFake.selectAll("rect").call(resizeFakeBars);
 
-                        // markers.selectAll(".mark").call(resizeMark);
+                        markers.selectAll(".mark").call(resizeMark);
 
                         focus.selectAll("path").call(resizeLine);
                         focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", curSet.yearTick);
@@ -663,11 +705,18 @@
 
                     // Transitions
 
+                    function marksize(path, r) {
+                        path
+                            .transition("marksize")
+                            .duration(NFS)
+                            .attr("r", r);
+                    };
+
                     function resizeMark(path) {
                         path
                             .transition("resizeMark")
                             .duration(NFS)
-                            .attr("cx", function(d) { return x( parseTime(articleScript.marks[this.id][0]) ) });
+                            .attr("cx", function(d) { return x( parseTime(articleScript.marks[this.id][0]) )+bandWidth/2 });
                     };
 
                     function resizeLine(path) {
@@ -724,7 +773,14 @@
                             .attr("height", function(d) { 
                                 return d.weeksum*yScaler;
                             })
-                            .attr("y", function(d) { return y(d.weeksum); });
+                            .attr("y", function(d) { 
+                                let date = this.id.replace("b", "m");
+                                let m = markers.select("."+date);
+                                if (m.node()) {
+                                    m.call(moveMark, y(d.weeksum)-9);
+                                };
+                                return y(d.weeksum); 
+                            });
                     };
 
                     function pikColor(path, colorMode) {
@@ -747,15 +803,36 @@
                             .transition("pookZero")
                             .duration(NFS)
                             .attr("height", 0)
-                            .attr("y", y(0));
+                            .attr("y", function(d) {
+                                let date = this.id.replace("b", "m");
+                                let m = markers.select("."+date);
+                                if (m.node()) {
+                                    m.call(moveMark, y(0)-9);
+                                };
+                                return y(0);
+                            });
                     };
+
+                    function moveMark(path, h) {
+                        path
+                            .transition("moveMark")
+                            .duration(NFS)
+                            .attr("cy", h);
+                    }
 
                     function pook(path) {
                         path
                             .transition("pook")
                             .duration(NFS)
                             .attr("height", wurstH)
-                            .attr("y", height-wurstH);
+                            .attr("y", function(d) {
+                                let date = this.id.replace("b", "m");
+                                let m = markers.select("."+date);
+                                if (m.node()) {
+                                    m.call(moveMark, height-wurstH-9);
+                                };
+                                return height-wurstH;
+                            });
                     };
 
                     function pookColor(path) {
@@ -786,15 +863,15 @@
                         let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
 
                         scrolledSections.forEach(i => {
-                            if (sc == 1) {
+                            // if (sc == 1) {
                                 mainAct(
                                     activationFunctions[i]
                                 );
-                            }
+                            // }
                             
-                            if (H<W) {
-                                theCircle.call(navigate, i);
-                            }
+                            // if (H<W) {
+                                // theCircle.call(navigate, i);
+                            // }
                             
                         })
                         lastIndex = activeIndex;
@@ -803,5 +880,6 @@
 
             </script>
         </div>
+        <div id="tooltip"></div>
     </div>
 </body>

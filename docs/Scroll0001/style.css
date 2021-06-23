@@ -15,15 +15,12 @@ body::-webkit-scrollbar {
 }
 
 .step {
-    width: 100%;
+    width: 1vh;
     height: 100vh;
-    /* background-color: coral; */
 }
 
 .paragraph {
-    /* margin-top: 12%; */
-    /* margin-left: 5vw; */
-    max-width: 88vw;
+    width: 88vw;
     position: absolute;
     font-family: 'Lora', serif;
     font-weight:400;
@@ -51,17 +48,18 @@ body::-webkit-scrollbar {
 #sections {
     position: absolute;
     display: inline-block;
-    width: 95%;
+    width: 0px;
     height: 100%;
     margin-top: 0;
     z-index: 90;
 }
 
-/* .picture {
-    position: absolute;
-    width: 100vw;
-    opacity: 1;
-} */
+#tt {
+    position: fixed;
+    max-width: 25vw;
+    background-color: white;
+    z-index: 91;
+}
 
 #chartArea {
     position: fixed;
@@ -131,9 +129,8 @@ body::-webkit-scrollbar {
     .header1 {
         font-size: 36px
     }
-
     .paragraph {
-        margin-top: 18%;
+        margin-top: 18vw;
         margin-left: 25vw;
         width: 50vw;
         position: absolute;
