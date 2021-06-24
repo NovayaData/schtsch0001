@@ -415,7 +415,8 @@
                     }
 
                     addLine("#ffffff", bandWidth*2);
-                    addLine("#212226", bandWidth/2);
+                    // addLine("#212226", bandWidth/2);
+                    addLine("#00ace5", bandWidth/2);
 
                     function getFormatedDate(date) {
                         date = parseTime(date);
@@ -562,7 +563,7 @@
                                 .attr("x", leftB)
                                 .attr("y", 0)
                                 .attr("text-anchor", "start")
-                                .text( "Количество выстрелов за неделю" );
+                                .text( "Количество нарушений за неделю" );
 
                     legendSteps.forEach(
                         function(colorValue) {
