@@ -125,7 +125,8 @@
                         yearHeight : H*0.0275,
                         yearTick : 0,
                         legendPosP : 0.25,
-                        legendWP : 0.1
+                        legendWP : 0.1,
+                        NFS : 400
                     },
                 
                     mobileSettings = {
@@ -135,7 +136,8 @@
                         yearHeight : 0,
                         yearTick : H*0.015,
                         legendPosP : 0.125,
-                        legendWP : 0.15
+                        legendWP : 0.15,
+                        NFS : 0
                     };
 
                 if (H>W) {
@@ -169,14 +171,16 @@
                 var parseTime = d3.timeParse("%Y-%m-%d");
                 var bandWidth;
 
-                var wurstH = curSet.wurstH;
-                var NFS = 400;
+                var wurstH = curSet.wurstH,
+                    NFS = curSet.NFS;
+
 
                 var cleanDate = parseTime("2016-01-01");
 
                 Promise.all([
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
-                    d3.json('../data/Scroll0001/article_script.json'),
+                    //  Scroll data
+                    d3.json('../data/Scroll0001/article_script_3.json'),
                     d3.csv("../data/Scroll0001/google_search_index_Donbas.csv"),
                     d3.json("../data/settings/timeFormatRu.json"),
                     d3.json("../data/settings/formatRu.json")
@@ -277,7 +281,6 @@
                     });
 
                     var weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
-                    // var yScaler = (H*0.4)/weeksumMax;
                     var yScaler = H*curSet.yScalerP/weeksumMax;
 
                     var bandWidth = width/data.length+0.4;
@@ -481,74 +484,6 @@
                                 });
                         }
                     );
-
-                    // var navigatorX = activationFunctions.map(
-                    //     d => { return margin.bottom + height / (activationFunctions.length - 1) * activationFunctions.indexOf(d) }
-                    // );
-
-                    // var circlesContainer = svg.append("g");
-                    // var hTr = W-margin.right/2;
-
-                    // function addCircle(i, hPos, color) {
-                    //     circlesContainer
-                    //         .append("circle")
-                    //         .attr("id", function() { return "C"+i })
-                    //         .attr("r", "9px")
-                    //         .attr("fill", color)
-                    //         .attr("transform", 
-                    //             "translate(" + hTr + "," + hPos + ")");
-                    // };
-
-                    // var theCircle;
-
-                    // if (H<W) {
-                    //     var sectionsNodes = d3.select("#sections").selectAll(".step").nodes()
-                    
-                    //     sectionsNodes.forEach(
-                    //         function(d, i) {
-                    //             addCircle(d.id, navigatorX[i], "#ececec")
-                    //         }
-                    //     );
-
-                    //     var circlesNav = circlesContainer.selectAll("circle");
-
-                    //     circlesNav
-                    //         .on("mouseover", function(d) {
-                    //             d3.select(this)
-                    //                 .transition()
-                    //                 .duration(50)
-                    //                 .attr("fill", "#bf381d")
-                    //                 .attr("r", "9px");
-                    //     });
-
-                    //     circlesNav
-                    //         .on("mouseleave", function(d) {
-                    //             d3.select(this)
-                    //                 .transition()
-                    //                 .duration(50)
-                    //                 .attr("fill", "#ececec")
-                    //                 .attr("r", "9px");
-                    //             sc = 1;
-                    //         });
-
-                    //     circlesNav
-                    //         .on("click", function(d) {
-
-                    //             let curId = this.id.replace("C", "");
-                    //             let i = circlesNav.nodes().indexOf(this);
-
-                    //             sc = 0;
-                    //             document.getElementById(curId).scrollIntoView(
-                    //             );
-                    //             mainAct(
-                    //                 activationFunctions[i]
-                    //             )
-                    //         });
-
-                    //     addCircle("theCircle", navigatorX[0], "#b0b0b0");
-                    //     theCircle = circlesContainer.select("#CtheCircle");
-                    // };
-                    
 
                     let leftB = width*curSet.legendPosP,
                         wid = width*curSet.legendWP;
@@ -851,6 +786,8 @@
                                 "translate(" + hTr + "," + navigatorX[i] + ")")
                     };
 
+                    mainAct(activationFunctions[0]);
+
                     // Scroll
 
                     let scroll = scroller().container(d3.select('#graphic'));
@@ -864,16 +801,9 @@
                         let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
 
                         scrolledSections.forEach(i => {
-                            // if (sc == 1) {
-                                mainAct(
-                                    activationFunctions[i]
-                                );
-                            // }
-                            
-                            // if (H<W) {
-                                // theCircle.call(navigate, i);
-                            // }
-                            
+                            mainAct(
+                                activationFunctions[i]
+                            );
                         })
                         lastIndex = activeIndex;
                     });
