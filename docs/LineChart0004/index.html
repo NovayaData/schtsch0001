@@ -76,8 +76,8 @@
 
                     d3.formatDefaultLocale(locatRu);
 
-                    var incomesCum = 0,
-                        pricesCum = 0;
+                    var incomes = 0,
+                        prices = 0;
 
                     var yNums =[];
 
@@ -96,17 +96,12 @@
                     data.forEach(
                         function(d) {
                             d.date = parseTime(d.year);
+
                             d.incomes = parseFloat(d.incomes);
                             d.prices = parseFloat(d.prices);
 
-                            incomesCum += d.incomes;
-                            d.incomesCum = incomesCum;
-
-                            pricesCum += d.prices;
-                            d.pricesCum =  pricesCum;
-
-                            yNums.push(pricesCum)
-                            yNums.push(incomesCum)
+                            yNums.push(d.prices)
+                            yNums.push(d.incomes)
                         }
                     );
 
@@ -226,8 +221,8 @@
 
                     };
 
-                    addLine("incomesCum", "#bf381d");
-                    addLine("pricesCum", "#00ace5");
+                    addLine("incomes", "#bf381d");
+                    addLine("prices", "#00ace5");
 
                     function addXText(path, indicator, col, sW, sCol) {
 
@@ -238,7 +233,7 @@
                             .append("text")
                             .attr("class", indicator + " textSmaller dark")
                             .attr("x", d => x(d.date))
-                            .attr("y", d => y(d[indicator+"Cum"]))
+                            .attr("y", d => y(d[indicator]))
                             .attr("fill", col)
                             .attr("stroke-width", sW)
                             .attr("stroke", sCol)
