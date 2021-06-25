@@ -115,8 +115,6 @@
                         .attr("opacity", 1)
                         .call(d3.axisLeft(y).tickSize(0).tickFormat(d => { if (d!=0) { return d+"˚" } else if (d==yMax) { return d+"˚C" } }));
 
-                    // yx.selectAll("text").attr("opacity", 0)
-
                     focus.selectAll(".ax").selectAll("text").attr("class", "textSmaller dark")
                     focus.selectAll(".ax").selectAll("path").attr("opacity", 0)
 
@@ -142,53 +140,9 @@
 
                     };
 
-                    addLine("average", data, 2, "#e5381d", d3.curveCatmullRom);
-                    addLine("moving_average_10_years", data.filter(function(d) { if (d.moving_average_10_years) { return d; } }), 6, "#ffffff", d3.curveCatmullRom);
-                    addLine("moving_average_10_years", data.filter(function(d) { if (d.moving_average_10_years) { return d; } }), 2, "#212226", d3.curveCatmullRom);
-
-                    // function addXText(path, indicator, col, sW, sCol) {
-
-                    //     path
-                    //         .selectAll("text")
-                    //         .data(data)
-                    //         .enter()
-                    //         .append("text")
-                    //         .attr("class", indicator + " textSmaller dark")
-                    //         .attr("x", d => x(d.date))
-                    //         .attr("y", d => y(d[indicator+"Cum"]))
-                    //         .attr("fill", col)
-                    //         .attr("stroke-width", sW)
-                    //         .attr("stroke", sCol)
-                    //         .attr("stroke-linejoin", "round")
-                    //         .attr("stroke-linecap", "round")
-                    //         .attr("text-anchor", "start")
-                    //         .attr("alignment-baseline", "central")
-                    //         .text( function(d) {
-                    //             if (d[indicator]>0) {
-                    //                 return "+"+d3.format(",.2f")(d[indicator]);
-                    //             } else if (d[indicator]<0) {
-                    //                 return d3.format(",.2f")(d[indicator]);
-                    //             } 
-                    //         } );
-
-                    // };
-
-                    // numbersIncC.call(addXText,"incomes", "#bf381d", 6, "#ffffff");
-                    // numbersInc.call(addXText,"incomes", "#bf381d", 0, "none");
-                    // numbersPriC.call(addXText,"prices", "#00ace5", 6, "#ffffff");
-                    // numbersPri.call(addXText,"prices", "#00ace5", 0, "none");
-
-                    // function addXText(path, t, i, h, anc, ali) {
-                    //     path
-                    //         .append("text")
-                    //         .attr("class", "textSmaller")
-                    //         .attr("x", x(xMin-1))
-                    //         .attr("y", h)
-                    //         .attr("fill", "#F0F1F2")
-                    //         .attr("text-anchor", anc)
-                    //         .attr("alignment-baseline", ali)
-                    //         .text( t );
-                    // };
+                    addLine("average", data, 1, "#e5381d", d3.curveCatmullRom);
+                    addLine("moving_average_10_years", data.filter(function(d) { if (d.moving_average_10_years) { return d; } }), 5, "#ffffff", d3.curveCatmullRom);
+                    addLine("moving_average_10_years", data.filter(function(d) { if (d.moving_average_10_years) { return d; } }), 1, "#212226", d3.curveCatmullRom);
 
                 });
 
