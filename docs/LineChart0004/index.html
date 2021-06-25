@@ -85,7 +85,7 @@
 
                         data = data.filter(function(d, i) {
 
-                            if (i%2 != 0) {
+                            if (i%2 == 0) {
                                     return d;
                                 }
                             
@@ -243,9 +243,9 @@
                             .attr("alignment-baseline", "central")
                             .text( function(d) {
                                 if (d[indicator]>0) {
-                                    return "+"+d3.format(",.2f")(d[indicator]);
+                                    return "+"+d3.format(",.2f")(d[indicator]).replace(",00", "");
                                 } else if (d[indicator]<0) {
-                                    return d3.format(",.2f")(d[indicator]);
+                                    return d3.format(",.2f")(d[indicator]).replace(",00", "");
                                 } 
                             } );
 
