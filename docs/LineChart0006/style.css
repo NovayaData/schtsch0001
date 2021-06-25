@@ -1,0 +1,95 @@
+@-moz-document url-prefix() {
+html{
+    scrollbar-width: none;
+}
+}
+body {
+    margin: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: scroll;
+}
+body::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+#lid {
+    position: absolute;
+    margin-top: 63px;
+    color: #494a4d;
+}
+
+#header {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#soso {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    color: #979899;
+}
+
+.textBig {
+    font-size: 21px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+.dark {
+    color: #494a4d;
+}
+
+.ngblue {
+    color: #00ace5;
+}
+
+.ngred {
+    color: #BF381D;
+}
+
+.ngyellow {
+    color: #EE9100;
+}
+
+.nggreen {
+    color: #599C5D;
+}
+
+.textSmall {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 15px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+.textSmaller {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+@media (min-width: 700px) {
+    #lid {
+        margin-top: 42px;
+}
