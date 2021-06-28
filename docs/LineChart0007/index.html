@@ -173,11 +173,11 @@
                                 .y(d => y(d.mavg))
                         );
 
-                    function addText(xp, yp, tanc, sw, text) {
+                    function addText(cl, xp, yp, tanc, sw, text) {
                         focus
                             .append("text")
                             .attr("fill", "#494a4d")
-                            .attr("class", "textSmaller")
+                            .attr("class", cl)
                             .attr("x", xp)
                             .attr("y", yp)
                             .attr("alignment-baseline", "alphabetic")
@@ -189,8 +189,8 @@
                             .text(text)
                     }
 
-                    addText(x(xMin), y(0)+margin.xy, "start", 0, "2020");
-                    addText(x(new Date(2021, 0, 1)), y(0)+margin.xy, "start", 0, "2021");
+                    addText("textSmaller", x(xMin), y(0)+margin.xy, "start", 0, "2020");
+                    addText("textSmaller", x(new Date(2021, 0, 1)), y(0)+margin.xy, "start", 0, "2021");
 
                     Object.keys(ev).forEach(
                         function(d) {
@@ -208,8 +208,8 @@
                                 .attr("cx", x( parseTime(d) ))
                                 .attr("cy", y( ev[d].v ))
 
-                            addText(x( parseTime(d) )-4.5, y( ev[d].v )-4.5, "end", 4, ev[d].text)
-                            addText(x( parseTime(d) )-4.5, y( ev[d].v )-4.5, "end", 0, ev[d].text)
+                            addText("textSmall", x( parseTime(d) )-4.5, y( ev[d].v )-4.5, "end", 4, ev[d].text)
+                            addText("textSmall", x( parseTime(d) )-4.5, y( ev[d].v )-4.5, "end", 0, ev[d].text)
 
                         }
                     );
