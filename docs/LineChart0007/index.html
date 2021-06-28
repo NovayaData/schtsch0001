@@ -82,11 +82,16 @@
                     }
 
                     data = data.data;
+                    data = data.reverse();
 
                     data.forEach(
-                        function(d) {
+                        function(d, i) {
                             d.ddate = parseTime(d.date);
-                            d.deadTotal = parseInt(d.deadTdeadNewotal);
+                            d.deadTotal = parseInt(d.deadTotal);
+
+                            if (i!=0) {
+                                d.deathsNew = d.deadTotal - data[i-1].deadTotal;
+                            }
                         }
                     );
                     var xMax = new Date(2021, 5, 28);
