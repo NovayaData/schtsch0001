@@ -17,7 +17,7 @@
     </div>
 
     <div id="soso">
-        <span class="textSmall">Источник: Bloomberg</span>
+        <span class="textSmall">Источник: Bloomberg, расчёты «Новой»</span>
     </div>
     
     <div id="container">
@@ -137,6 +137,8 @@
                         .data(data)
                         .enter()
                         .append("circle")
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "#212226")
                         .attr("id", d => d.name)
                         .attr("fill", d => getColor(d.percent_per_day) )
                         .attr("r", d => d.percent_per_day*50)
