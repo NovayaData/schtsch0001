@@ -16,7 +16,7 @@ body::-webkit-scrollbar {
 
 #lid {
     position: absolute;
-    margin-top: 42px;
+    margin-top: 63px;
     color: #494a4d;
 }
 
@@ -55,14 +55,6 @@ body::-webkit-scrollbar {
 
 .ngred {
     color: #BF381D;
-}
-
-.ngyellow {
-    color: #EE9100;
-}
-
-.nggreen {
-    color: #599C5D;
 }
 
 .textSmall {

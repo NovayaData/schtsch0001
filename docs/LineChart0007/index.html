@@ -1,0 +1,224 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+    <div id="header">
+        <span class="textBig dark">Беглов и «тотальный нигилизм»</span>
+    </div>
+
+    <div id="lid">
+        <span class="textSmall dark">Скользящая средняя ежедневной смертности в Петербурге</span>
+    </div>
+
+    <div id="soso">
+        <span class="textSmall">Источник: Стопкоронавирус.рф</span>
+    </div>
+    
+    <div id="container">
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margins = {mobile : {
+                    top: 126, 
+                    bottom: 45, 
+                    right: 15,
+                    left: 20,
+                    xy:12
+                    },
+                    desktop : {
+                    top: 84, 
+                    bottom: 45, 
+                    right: 15,
+                    left: 20,
+                    xy:24
+                    }};
+
+                var margin;
+
+                if (H>W) {
+                    margin = margins.mobile;
+                } else {
+                    margin = margins.desktop;
+                }
+                
+
+                var width = W - margin.left - margin.right,
+                    height = H - margin.top - margin.bottom;
+
+                var parseTime = d3.timeParse("%Y-%m-%d");
+                
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                var focus = svg.append("g");
+                focus
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("transform", "translate("+margin.left+","+margin.top+")");
+
+                Promise.all([
+                    d3.json("https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=78"),
+                    d3.json("../data/settings/timeFormatRu.json")
+                ]).then(([data, localeRuTime]) => {
+
+                    d3.timeFormatDefaultLocale(localeRuTime);
+
+                    var ev = {
+                        "2021-06-01" : { v : 0, text : "ПМЭФ" },
+                        "2021-06-11" : { v : 0, text : "ЕВРО 2021" },
+                        "2021-06-25" : { v : 0, text : "Алые паруса" }
+                    }
+
+                    data = data.data;
+
+                    data.forEach(
+                        function(d) {
+                            d.ddate = parseTime(d.date);
+                            d.deadTotal = parseInt(d.deadTdeadNewotal);
+                        }
+                    );
+                    var xMax = new Date(2021, 5, 28);
+
+                    data = data.filter(d => {
+                        // return d.date >= xMin && d.date <= xMax;
+                        return d.ddate <= xMax;
+                    })
+
+                    data = data.sort((a, b) => a.ddate - b.ddate);
+
+                    var dataMean = data.slice(7, data.length)
+                    
+                    dataMean.forEach(
+                        function(d, i) {
+                            d.mavg = d3.mean(data.slice(i, i+7), d => d.deadNew);
+                        }
+                    );
+
+                    dataMean.forEach(
+                        function(d) {
+                            if (d.date == "2021-06-01") {
+                                ev["2021-06-01"].v = d.mavg;
+                            } else if (d.date == "2021-06-11") {
+                                ev["2021-06-11"].v = d.mavg;
+                            } else if (d.date == "2021-06-25") {
+                                ev["2021-06-25"].v = d.mavg;
+                            }
+                        }
+                    );
+
+                    var xMin = d3.min(dataMean, function(d) { return d.ddate; });
+
+                    console.log(xMax, xMin);
+
+                    var yMax = d3.max(dataMean, function(d) { return d.mavg; });
+                    var yMin = d3.min(dataMean, function(d) { return d.mavg; });
+
+                    var x = d3.scaleTime()
+                        .range([0, width])
+                        .domain([xMin, xMax]);
+
+                    var xx = focus
+                        .append("g")
+                        .attr("class", "ax")
+                        .attr("opacity", 1)
+                        .attr("transform", "translate(0," + height + ")");
+
+                    if (H<=W) {
+                        xx
+                            .call(d3.axisBottom(x).tickSize(0).ticks(d3.timeMonth.every()).tickFormat(d3.timeFormat('%b')));
+                    };
+                    
+                    xx.selectAll("text")
+                        .attr("alignment-baseline", "alphabetic")
+                        .attr("text-anchor", "start")
+
+                    var y = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([yMin, yMax]);
+
+                    var yx = focus
+                        .append("g")
+                        .attr("class", "ax")
+                        .attr("opacity", 1)
+                        .call(d3.axisLeft(y).tickSize(0));
+
+                    focus.selectAll(".ax").selectAll("text").attr("class", "textSmaller dark")
+                    focus.selectAll(".ax").selectAll("path").attr("opacity", 0)
+
+                    var lines = focus.append("g");
+                    
+                    lines
+                        .append("path")
+                        .datum(dataMean)
+                        .attr("stroke-width", 1.5)
+                        .attr("stroke-linejoin", "round")
+                        .attr("stroke-linecap", "round")
+                        .attr("stroke", "#e5381d")
+                        .attr("fill", "none")
+                        .attr(
+                            "d", 
+                            d3.line()
+                                .curve(d3.curveCatmullRom)
+                                .x(d => x(d.ddate))
+                                .y(d => y(d.mavg))
+                        );
+
+                    function addText(xp, yp, tanc, sw, text) {
+                        focus
+                            .append("text")
+                            .attr("fill", "#494a4d")
+                            .attr("class", "textSmaller")
+                            .attr("x", xp)
+                            .attr("y", yp)
+                            .attr("alignment-baseline", "alphabetic")
+                            .attr("text-anchor", tanc)
+                            .attr("stroke-width", sw)
+                            .attr("stroke", "#ffffff")
+                            .attr("stroke-linejoin", "round")
+                            .attr("stroke-linecap", "round")
+                            .text(text)
+                    }
+
+                    addText(x(xMin), y(0)+margin.xy, "start", 0, "2020");
+                    addText(x(new Date(2021, 0, 1)), y(0)+margin.xy, "start", 0, "2021");
+
+                    Object.keys(ev).forEach(
+                        function(d) {
+                            focus
+                                .append("circle")
+                                .attr("r", 6.5)
+                                .attr("fill", "#ffffff")
+                                .attr("cx", x( parseTime(d) ))
+                                .attr("cy", y( ev[d].v ))
+
+                            focus
+                                .append("circle")
+                                .attr("r", 4.5)
+                                .attr("fill", "#494a4d")
+                                .attr("cx", x( parseTime(d) ))
+                                .attr("cy", y( ev[d].v ))
+
+                            addText(x( parseTime(d) )-4.5, y( ev[d].v )-4.5, "end", 4, ev[d].text)
+                            addText(x( parseTime(d) )-4.5, y( ev[d].v )-4.5, "end", 0, ev[d].text)
+
+                        }
+                    );
+
+                });
+
+            </script>
+        </div>
+    </div>
+</body>
