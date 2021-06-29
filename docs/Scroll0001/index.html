@@ -137,7 +137,7 @@
                         yearTick : H*0.015,
                         legendPosP : 0.125,
                         legendWP : 0.15,
-                        NFS : 0
+                        NFS : 400
                     };
 
                 if (H>W) {
@@ -174,13 +174,20 @@
                 var wurstH = curSet.wurstH,
                     NFS = curSet.NFS;
 
-
                 var cleanDate = parseTime("2016-01-01");
+
+                var suf;
+
+                if (H>W) {
+                    suf = "_mobile";
+                } else {
+                    suf = "";
+                }
 
                 Promise.all([
                     d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
                     //  Scroll data
-                    d3.json('../data/Scroll0001/article_script_1.json'),
+                    d3.json("../data/Scroll0001/article_script"+suf+"_1.json"),
                     d3.csv("../data/Scroll0001/google_search_index_Donbas.csv"),
                     d3.json("../data/settings/timeFormatRu.json"),
                     d3.json("../data/settings/formatRu.json")
