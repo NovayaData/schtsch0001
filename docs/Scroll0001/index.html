@@ -193,6 +193,9 @@
                     d3.json("../data/settings/formatRu.json")
                 ]).then(([data, articleScript, googleData, localeRuTime, locatRu]) => {
 
+                    data = data.slice(310, data.length);
+                    // console.log(data.length);
+
                     d3.timeFormatDefaultLocale(localeRuTime);
                     d3.formatDefaultLocale(locatRu);
 
@@ -237,6 +240,7 @@
                     data.forEach(d => {
                         d.dateStr = d.date;
                         d.date = parseTime(d.date);
+                        d.weeksum = parseInt(d.weeksum);
                         d.episode = "episode ";
 
                         Object.keys(episodes).forEach( function(eKey) {
@@ -298,10 +302,10 @@
                         .range([0, width]);
 
                     var y = d3.scaleLinear()
-                        .range([height, height-Math.round(weeksumMax/10000)*10000*yScaler]);
+                        .range([height, height-weeksumMax*yScaler]);
 
                     var y2 = d3.scaleLinear()
-                        .range([height, height-Math.round(weeksumMax/10000)*10000*yScaler]);
+                        .range([height, height-weeksumMax*yScaler]);
 
                     x.domain([xMin, xMax]);
 
@@ -356,8 +360,8 @@
                                 });
                     };
 
-                    addY(y, 40000, 0, "textSmaller", "Y", "Y", "#b0b0b0", "end", 0);
-                    addY(y, 40000, 0, "textSmaller", "Y1", "Y", "colored", "end", 0);
+                    addY(y, weeksumMax, 0, "textSmaller", "Y", "Y", "#b0b0b0", "end", 0);
+                    addY(y, weeksumMax, 0, "textSmaller", "Y1", "Y", "colored", "end", 0);
                     addY(y2, 100, y2x, "textSmaller", "Y2", "Yg", "#212226", "start", 1);
 
                     function dropDomains() {
@@ -420,7 +424,7 @@
                             d3.line()
                             .curve(d3.curveCatmullRom)
                             .x(d => x(d.date))
-                            .y(d => y(d.search_index*40000))
+                            .y(d => y(d.search_index*weeksumMax))
                         );
                     }
 
@@ -669,7 +673,7 @@
                             .attr("d", d3.line()
                                 .curve(d3.curveCatmullRom)
                                 .x(function(d) { return x(d.date) })
-                                .y(function(d) { return y(d.search_index*40000) }))
+                                .y(function(d) { return y(d.search_index*weeksumMax) }))
                     };
 
                     function resizeBars(path) {
