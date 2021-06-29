@@ -193,7 +193,7 @@
                     d3.json("../data/settings/formatRu.json")
                 ]).then(([data, articleScript, googleData, localeRuTime, locatRu]) => {
 
-                    data = data.slice(310, data.length);
+                    data = data.slice(390, data.length);
                     // console.log(data.length);
 
                     d3.timeFormatDefaultLocale(localeRuTime);
@@ -428,9 +428,9 @@
                         );
                     }
 
-                    addLine("#ffffff", bandWidth*2);
+                    addLine("#ffffff", 5.5);
                     // addLine("#212226", bandWidth/2);
-                    addLine("#00ace5", bandWidth/2);
+                    addLine("#00ace5", 1.5);
 
                     function getFormatedDate(date) {
                         date = parseTime(date);
