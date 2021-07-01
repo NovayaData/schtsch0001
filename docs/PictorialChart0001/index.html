@@ -1,0 +1,260 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body bgcolor="#212226">
+    <div id="header">
+        <span class="textBig dark">Оружие возмездия</span>
+    </div>
+
+    <div id="lid">
+        <span class="textSmall dark">Сколько запустили</span>
+        <span class="textSmall ngblue">удачно</span>
+        <span class="textSmall dark"> и </span>
+        <span class="textSmall ngred">неудачно</span>
+    </div>
+
+    <div id="soso">
+        <span class="textSmaller">Источник: круги на полях</span>
+    </div>
+    
+    <div id="container">
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var W = document.getElementById('container').clientWidth,
+                    H = document.getElementById('container').clientHeight;
+
+                var margins = {
+                    mobile : {
+                        top: 84, 
+                        bottom: 45, 
+                        right: 15,
+                        left: 30,
+                        xy:12,
+                        sc:1.25
+                    },
+                        desktop : {
+                        top: 84, 
+                        bottom: 45, 
+                        right: 15,
+                        left: 30,
+                        xy:24,
+                        sc:1.5
+                    }};
+
+                var margin;
+
+                if (H>W) {
+                    margin = margins.mobile;
+                } else {
+                    margin = margins.desktop;
+                }
+
+                var width = W - margin.left - margin.right,
+                    height = H - margin.top - margin.bottom;
+
+                // var parseTime = d3.timeParse("%Y");
+                
+                var svg = d3.select("#chart").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g");
+
+                var defs = svg.append("defs");
+
+                var gradient = defs.append("linearGradient")
+                    .attr("id", "svgGradient")
+                    .attr("x1", "50%")
+                    .attr("x2", "50%")
+                    .attr("y1", "0%")
+                    .attr("y2", "450%");
+
+                gradient.append("stop")
+                    .attr('class', 'start')
+                    .attr("offset", "12%")
+                    .attr("stop-color", "#212226")
+                    .attr("stop-opacity", 1);
+
+                gradient.append("stop")
+                    .attr('class', 'end')
+                    .attr("offset", "100%")
+                    .attr("stop-color", "#006CE5")
+                    .attr("stop-opacity", 1);
+
+                svg
+                    .append("rect")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .attr("fill", "url(#svgGradient)");
+
+                var focus = svg.append("g");
+                focus
+                    .attr("width", width)
+                    .attr("height", height)
+                    
+                    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                Promise.all([
+                    d3.csv("../data/PictorialChart0001/rockets.csv"),
+                    d3.xml("../pics/v2.svg")
+                ]).then(([data, rocketPic]) => {
+
+                    var rocketsData = [];
+
+                    data.forEach(
+                        function(d) {
+                            d.year = d3.timeParse("%Y")(d.year);
+                            d.failed = parseInt(d.failed);
+                            d.successful = parseInt(d.successful);
+                            d.total = parseInt(d.total);
+
+                            for (let i = 0; i < d.failed; i++) {
+                                let rocket = {
+                                        year : d3.timeFormat("%Y")(d.year),
+                                        date : d.year,
+                                        id : i,
+                                        type : "failed"
+                                    };
+                                rocketsData.push( rocket );
+                            };
+
+                            for (let i = d.failed; i < d.failed+d.successful ; i++) {
+                                let rocket = {
+                                        year : d3.timeFormat("%Y")(d.year),
+                                        date : d.year,
+                                        id : i,
+                                        type : "successful"
+                                    };
+                                rocketsData.push( rocket );
+                            };
+                    });
+
+                    for (let i = 0; i < 50; i++) {
+                        svg
+                            .append("circle")
+                            .attr("r", Math.random() * (1 - 0.1) + 0.1)
+                            .attr("opacity", Math.random() * (0.75 - 0.1) + 0.1)
+                            .attr("fill", "#ffffff")
+                            .attr("cy", Math.random() * (H*0.5 - 0) + 0 )
+                            .attr("cx", Math.random() * (0 - W) + W );
+                    };
+
+                    var xMax = d3.max(rocketsData, function(d) { return d.date; });
+                    var xMin = d3.min(rocketsData, function(d) { return d.date; });
+
+                    var yMax = d3.max(data, function(d) { return d.total; });
+
+                    var x = d3.scaleTime()
+                        .range([0, width])
+                        .domain([xMin, xMax]);
+
+                    var xx = focus
+                        .append("g")
+                        .attr("class", "axP ax")
+                        .attr("opacity", 1)
+                        .attr("transform", `translate(0,${height})`)
+                        .call(d3.axisBottom(x).tickSize(0).ticks(d3.timeYear.every()).tickFormat(d3.timeFormat('%Y')));
+                    
+                    xx.selectAll("text")
+                        .attr("alignment-baseline", "alphabetic")
+                        .attr("text-anchor", "middle");
+
+                    var yG = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([0, yMax+1]);
+
+                    var y = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([-1, yMax]);
+
+                    var yx = focus
+                        .append("g")
+                        .attr("class", "axP ax")
+                        .attr("opacity", 1)
+                        .call(d3.axisLeft(y).tickSize(12.5).ticks(yMax).tickFormat(
+                            d => { if ( (d+1) % 5 == 0 && (d+1)!= 0 ) { return d+1 } }
+                        ));
+
+                    xx.selectAll("text").attr("class", "textSmaller dark");
+                    yx.selectAll("text").attr("class", "textSmaller dark");
+
+                    var yG = focus
+                        .append("g")	
+                        .attr("class", "axP axG")
+                        .call(d3.axisLeft(yG).ticks(5).tickSize(-width))
+
+                    yG.selectAll("text").attr("opacity", 0);
+                    yG.selectAll("line")
+                        .attr("stroke-width", 1)
+                        .attr("opacity", 0.08)
+                        .attr("stroke", function(d, i) { 
+                            if (i == 0) { 
+                                return "#212226";
+                            } else {
+                                return "#979899"
+                            }  
+                        });
+
+                    if (H>W) {
+                        xx.selectAll("text").filter( function(d, i) { if (i%2==0) { return d; } } ).attr("opacity", 0)
+                    }
+
+                    focus.selectAll(".axP").selectAll("path").attr("opacity", 0);
+                    focus.selectAll(".ax").selectAll("line").attr("opacity", 0);
+
+                    var rockets = focus.append("g");
+
+                    function getColor(type) {
+                        if (type=="failed") {
+                            return "#BF381D";
+                        } else {
+                            return "#00ace5";
+                        }
+                    };
+
+                    r = rocketPic.documentElement.getElementById("v2").getAttribute("d");
+
+                    rocketsData = rocketsData.reverse()
+
+                    function addRocket(path) {
+                        path.append("g")
+                            .selectAll(".point")
+                            .data(rocketsData)
+                            .enter()
+                            .append('path')
+                            .attr("class", "oneYear")
+                            .attr("d", r)
+                            .attr('transform', d => { 
+                                let xxx = x(d.date)-3; 
+                                let yyy = y(0)-6;
+                                return `translate(${xxx},${yyy}) scale(${margin.sc})`
+                            })
+                            .attr("fill", d => { return getColor(d.type) })
+                            .attr("opacity", 0)
+                            .transition()
+                            .duration( d => { return (d.id+1 * 25000) / (d.id+1 * 10) } )
+                            .delay( d => { return (d.id+1 * 10000) / (d.id+1 * 10) } )
+                            .attr('transform', d => { 
+                                let xxx = x(d.date)-3; 
+                                let yyy = y(d.id)-9;
+                                return `translate(${xxx},${yyy}) scale(${margin.sc})` 
+                            })
+                            .attr("opacity", 1)
+                    };
+
+                    rockets.call(addRocket)
+
+                });
+
+                
+
+            </script>
+        </div>
+    </div>
+</body>
