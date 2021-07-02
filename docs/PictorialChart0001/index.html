@@ -102,8 +102,9 @@
 
                 Promise.all([
                     d3.csv("../data/PictorialChart0001/rockets.csv"),
-                    d3.xml("../pics/rocket.svg")
-                ]).then(([data, rocketPic]) => {
+                    d3.xml("../pics/rocket.svg"),
+                    d3.xml("../pics/LogoGrey.svg")
+                ]).then(([data, rocketPic, logo]) => {
 
                     var rocketsData = [];
 
@@ -218,9 +219,22 @@
                         }
                     };
 
-                    r = rocketPic.documentElement.getElementById("v2").getAttribute("d");
+                    var logoIn = svg.append("g")
+                        .append('svg')
+                        .attr("id", "logo")
+                        // .attr('width', 18)
+                        .attr('height', 11)
+                        .attr('x', W/2-62)
+                        .attr('y', H-11)
+                        // .attr("fill", "#979899")
+                        .append(
+                            () => logo.documentElement
+                        );
 
-                    rocketsData = rocketsData.reverse()
+                    // logoIn.selectAll("polygon").attr("fill", "#979899");
+                    // logoIn.selectAll("path").attr("fill", "#979899");
+
+                    r = rocketPic.documentElement.getElementById("v2").getAttribute("d");
 
                     function addRocket(path) {
                         path.append("g")
