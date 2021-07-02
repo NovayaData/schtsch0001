@@ -16,14 +16,15 @@ body::-webkit-scrollbar {
 
 #lid {
     position: absolute;
-    margin-top: 32px;
+    margin-top: 42px;
+    margin-left: 10px;
     color: #494a4d;
 }
 
 #header {
     position: absolute;
-    top: 0px;
-    left: 0px;
+    margin-top: 10px;
+    margin-left: 10px;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -34,8 +35,8 @@ body::-webkit-scrollbar {
 
 #soso {
     position: absolute;
-    left: 0;
-    bottom: 0;
+    left: 10;
+    bottom: 26;
     color: #979899;
 }
 
@@ -54,7 +55,19 @@ body::-webkit-scrollbar {
 }
 
 .ngred {
-    color: #BF381D;
+    color: #E5381D;
+}
+
+.textSoso {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
 }
 
 .textSmall {
@@ -82,6 +95,22 @@ body::-webkit-scrollbar {
 }
 
 @media (min-width: 700px) {
+    #header {
+        margin-top: 20px;
+        margin-left: 30px;
+    }
+    
     #lid {
-        margin-top: 42px;
+        margin-top: 52px;
+        margin-left: 30px;
+    }
+
+    #soso {
+        left: 30px;
+        bottom: 20px;
+    }
+
+    .textSoso {
+        font-size: 15px;
+    }
 }
