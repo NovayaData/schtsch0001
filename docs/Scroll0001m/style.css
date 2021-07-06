@@ -1,0 +1,144 @@
+@-moz-document url-prefix() {
+html{
+    scrollbar-width: none;
+}
+}
+body {
+    margin: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: scroll;
+}
+body::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+.step {
+    width: 1vh;
+    height: 100vh;
+}
+
+.paragraph {
+    width: 88vw;
+    position: absolute;
+    font-family: 'Lora', serif;
+    font-weight:400;
+    font-size: 18px;
+    letter-spacing: .015em;
+    line-height: 25px;
+}
+
+.paragraphText {
+    color: #494a4d;
+}
+
+.paragraphFalseText {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: #ffffff;
+    color: #ffffff;
+    opacity: 0.8;
+}
+
+#sections {
+    position: absolute;
+    display: inline-block;
+    width: 0px;
+    height: 100%;
+    margin-top: 0;
+    z-index: 90;
+}
+
+#tt {
+    position: fixed;
+    max-width: 25vw;
+    background-color: white;
+    z-index: 91;
+}
+
+#chartArea {
+    position: fixed;
+    z-index: 1;
+    margin-left: 0;
+    
+    height: 100%;
+    width: 100%;
+}
+
+.textSmaller {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
+#headers {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    position: absolute;
+    z-index: 90;
+    padding-top: 3%;
+    width: 88%;
+    left: 6%;
+    margin: 0;
+}
+
+.header1 {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight:700;
+    font-size: 27px;
+    font-weight: bolder;
+    line-height: 30px;
+    color: #494a4d;
+    /* color: #F0F1F2; */
+}
+
+.axis {
+    font: 10px;
+    color: black;
+  }
+
+@media (min-width: 300px) {
+    .header1 {
+        font-size: 20px
+    }
+
+}
+
+@media (min-width: 700px) {
+    .header1 {
+        font-size: 36px
+    }
+    .paragraph {
+        margin-top: 18vw;
+        margin-left: 25vw;
+        width: 50vw;
+        position: absolute;
+    }
+    .textSmaller {
+        font-size: 12px;
+    }
+    .textSmaller2 {
+        font-size: 12px;
+    }
+}
