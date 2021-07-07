@@ -31,7 +31,7 @@
             <option value="52">Нижегородской области</option>
             <option value="91">Республике Крым</option>
             <option value="66">Свердловской области</option>
-            <option value="67">Смоленской области</options>
+            <!-- <option value="67">Смоленской области</options> -->
             <!-- <option value="39">Калининградской области</options> -->
         </select>
     </div>
@@ -270,9 +270,11 @@
                     let zero = parseTime(regData[rId]["waves"][curWave][ind]),
                         zeroMinus37 = d3.timeDay.offset(zero, -37),
                         zeroPlus120 = d3.timeDay.offset(zero, 120);
+                        // zeroPlus90 = d3.timeDay.offset(zero, 90);
 
                     var regionData = data.filter(d => {
                             return d.date>=zeroMinus37 && d.date<=zeroPlus120;
+                            // return d.date>=zero && d.date<=zeroPlus90;
                         })
 
                     regionData = regionData.sort(function(a, b) { return a.date - b.date});
@@ -284,21 +286,12 @@
 
                             let curSlice = regionData.slice(i-7, i);
 
-                            rd[indicator+"Mean"] = d3.mean(curSlice, d => d[indicator])+0.01;
+                            rd[indicator+"Mean"] = d3.mean(curSlice, d => d[indicator]);
 
                     });
-
-                    // var zeroMean = regionDataClean[30][indicator+"Mean"];
-
-                    // regionDataClean.forEach(
-                    //     function(rd, i) {
-                    //         rd[indicator+"Times"] = rd[indicator+"Mean"] / zeroMean;
-                            
-                    // });
-
-                    // console.log(regionDataClean);
-
-                    return regionDataClean;
+                    
+                    return [regionDataClean];
+                    // return [regionDataClean, d3.sum(regionData, d => d.deathsNew), d3.sum(regionData, d => d.casesNew), zero, zeroPlus90];
                 }
 
                 function getRedionWavesData(data, rId, mode) {
@@ -308,8 +301,16 @@
                     Object.keys(wavesColors).forEach(curWave => {
 
                         wavesData[curWave] = {};
-                        wavesData[curWave]["casesNewMean"] = getZeroData(curWave, data, 0, "casesNew", rId);
-                        wavesData[curWave]["deathsNewMean"] = getZeroData(curWave, data, 1, "deathsNew", rId);
+                        let CN = getZeroData(curWave, data, 0, "casesNew", rId);
+                        wavesData[curWave]["casesNewMean"] = CN[0];
+                        let DN =  getZeroData(curWave, data, 1, "deathsNew", rId);
+                        wavesData[curWave]["deathsNewMean"] = DN[0]
+
+                        // var letalnost = DN[1] / DN[2] * 100
+                        // console.log(
+                        //     `${regData[rId].name}\t${curWave}\t${DN[1]}\t${DN[2]}\t${d3.timeFormat("%d.%m.%Y")(DN[3])}\t${d3.timeFormat("%d.%m.%Y")(DN[4])}\t${d3.format(".2f")(letalnost)+"%"}`
+                            
+                        // );
                         
                     });
 
