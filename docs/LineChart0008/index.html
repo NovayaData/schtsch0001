@@ -194,8 +194,8 @@
                 var yCases = d3.scaleLinear().range([height, 0]),
                     yDeaths = d3.scaleLinear().range([height, 0]);
                 
-                var yAxisCases = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.0f")(d).replace(",", " ") }).scale(yCases),
-                    yAxisDeaths = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.0f")(d).replace(",", " ") }).scale(yDeaths);
+                var yAxisCases = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.1f")(d).replace(",", " ").replace(".0", "") }).scale(yCases),
+                    yAxisDeaths = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.1f")(d).replace(",", " ").replace(".0", "") }).scale(yDeaths);
 
                 svg.append("defs").append("clipPath")
                     .attr("id", "clip")
