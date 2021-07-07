@@ -160,17 +160,16 @@
                     bottom: H*0.03, 
                     right: W*0,
                     left: W*0,
-                    left2: W*0.04,
+                    left2: 40,
                     };
 
                 var adapt = {
                     desk : {
-
-                        width : W - margin.left - margin.right,
+                        width : W - margin.left - margin.right - 6,
                         height : H - margin.top - margin.bottom - H*0.25
                     },
                     mob : {
-                        width : W - margin.left - margin.right - margin.left2*2,
+                        width : W - margin.left - margin.right - margin.left2 - 12,
                         height : (H - margin.top - margin.bottom)/3
                     }
                 };
@@ -184,7 +183,7 @@
                 } else {
                     var width = adapt.desk.width,
                         height = adapt.desk.height;
-                    var oneWidth = width/2-margin.left2*2,
+                    var oneWidth = width/2-margin.left2-6,
                         tr = oneWidth+W*0.06,
                         th = 0;
                 };
