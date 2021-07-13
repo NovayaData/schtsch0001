@@ -1,0 +1,277 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+    <div id="header">
+        <span class="textBig dark">Сравнение скользких </span>
+        <span class="textBig ngblue">новых случаев зв день</span>
+        <span class="textBig dark"> и </span>
+        <span class="textBig ngred">активных случаев</span>
+    </div>
+    
+    <div id="lid">
+        <span class="textSmall">Динамика заболеваемости и смертности в </span>
+        <select id="selectObl">
+            <!-- <option value="100">России</option>
+            <option value="77">Москве</option>
+            <option value="78">Санкт-Петербурге</options>
+            <option value="3">Бурятии</options>
+            <option value="36">Воронежской области</options>
+            <option value="38">Иркутской области</options>
+            <option value="24">Красноярском крае</options>
+            <option value="50">Московской области</option>
+            <option value="52">Нижегородской области</option>
+            <option value="91">Республике Крым</option>
+            <option value="66">Свердловской области</option> -->
+            <!-- <option value="67">Смоленской области</options> -->
+            <!-- <option value="39">Калининградской области</options> -->
+        </select>
+    </div>
+
+    <div id="soso">
+        <span class="textSmall">Источник: Стопкоронавирус.рф</span>
+    </div>
+    
+    <div id="container">
+        <div id="chart" style = "width: 100%; height: 100%;">
+            <script>
+
+                var regData = {};
+                var selecterOptions = d3.select("#selectObl");
+                
+                d3.json("../data/settings/stopcorona_region_codes.json").then(data => {
+
+                    Object.keys(data).forEach(
+
+                        d => {
+                            regData[d.toString()] = { "name" :  data[d][2] }
+
+                            selecterOptions.append("option").attr("value", d.toString()).html(data[d][2])
+                        }
+
+                    )
+
+                    var W = document.getElementById('container').clientWidth,
+                        H = document.getElementById('container').clientHeight;
+
+                    var margin = {
+                        top: H*0.03, 
+                        bottom: H*0.03, 
+                        right: W*0,
+                        left: W*0,
+                        left2: 50,
+                        };
+
+                    var adapt = {
+                        desk : {
+                            width : W - margin.left - margin.right - 6,
+                            height : H - margin.top - margin.bottom - margin.top*4
+                        },
+                        mob : {
+                            width : W - margin.left - margin.right - margin.left2 - 6,
+                            height : (H - margin.top - margin.bottom)/3
+                        }
+                    };
+
+                    if (H>W) {
+                        var width = adapt.mob.width - margin.left2,
+                            height = adapt.mob.height;
+                    } else {
+                        var width = adapt.desk.width,
+                            height = adapt.desk.height;
+                    };
+                    
+                    var svg = d3.select("#chart").append("svg")
+                        .attr("width", W)
+                        .attr("height", H)
+                        .append("g");
+
+                    var parseTime = d3.timeParse("%Y-%m-%d");
+
+                    // new Date(2021, 0, 1))
+
+                    var x = d3.scaleTime().range([0, width])
+                        .domain([new Date(2020, 02, 1), new Date(2021, 07, 6)]);
+                    var y = d3.scaleLinear().range([height, 0]);
+                    
+                    var yAxis = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.1f")(d).replace(",", " ").replace(".0", "") }).scale(y);
+
+                    svg.append("defs").append("clipPath")
+                        .attr("id", "clip")
+                        .append("rect")
+                        .attr("width", width)
+                        .attr("height", height+50)
+                        .attr("transform", "translate(-50,-12)");
+
+                    var cases = svg.append("g").attr("opacity", 1).attr("clip-path", "url(#clip)");
+
+                    function addChart(path, type) {
+
+                        path
+                            .attr("width", width)
+                            .attr("height", height)
+                            .attr("transform", "translate("+margin.left2+","+margin.top*4+")");
+
+                        path
+                            .append("g")
+                            .attr("class", "X")
+                            .attr("opacity", 1)
+                            .attr("transform", "translate(0," + height + ")")
+                            .call(d3.axisBottom(x).tickSize(0))
+                            .selectAll("text")
+                            .attr("opacity", 0);
+
+                        path
+                            .append("g")
+                            .attr("opacity", 1)
+                            .attr("id","Y");
+                        path.call(addXText, "дней", 0, height+12, "start");
+                        path.call(addXText, "0", 29, height+12, "middle");
+                        path.call(addXText, "120", 149, height+12, "middle");
+                            
+                    };
+
+                    function addXText(path, t, i, h, anc) {
+                        path
+                            .append("text")
+                            .attr("class", "textSmaller")
+                            .attr("x", x(i))
+                            .attr("y", h)
+                            .attr("text-anchor", anc)
+                            .text( t );
+                    }
+
+                    cases.call(addChart);
+
+                    function getMeanData(data, ind, indicator, rId) {
+
+                        regionData = regionData.sort(function(a, b) { return a.date - b.date});
+                        var regionDataClean = regionData.slice(7, regionData.length);
+                        
+                        regionDataClean.forEach(
+                            function(rd, i) {
+                                i+=7;
+
+                                let curSlice = regionData.slice(i-7, i);
+
+                                rd[indicator+"Mean"] = d3.mean(curSlice, d => d[indicator]);
+
+                        });
+                        
+                        return regionDataClean;
+                    }
+                    
+                    function getRegionData(rId) {
+
+                        d3.json("https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId="+rId).then(data => {
+
+                            data = data.data;
+
+                            data.forEach(
+                                d => {
+                                    d.date = parseTime(d.date);
+                                    d.activeCases = d.casesTotal - (d.deadTotal + d.recoveryTotal);
+                                }
+                            );
+
+                            data = data.sort(function(a, b) { return a.date - b.date});
+
+                            var regionDataClean = data.slice(7, data.length);
+                        
+                            regionDataClean.forEach(
+                                function(rd, i) {
+                                    i+=7;
+
+                                    let curSlice = data.slice(i-7, i);
+
+                                    rd.casesNewMean = d3.mean(curSlice, d => d.casesNew);
+                                    rd.activeCasesMean = d3.mean(curSlice, d => d.activeCases);
+
+                            });
+
+                            regData[rId]["data"] = regionDataClean;
+
+                            builder(regData[rId]["data"]);
+                        });
+                    };
+
+                    function action(rId) {
+                        if (regData[rId]["data"]) {
+                            builder(regData[rId]["data"]);
+                        } else {
+                            getRegionData(rId);
+                        }
+                    };
+
+                    function builder(lineData) {
+                        var yMax = [];
+
+                        yMax.push(d3.max(lineData, function(d) { return d.casesNewMean; }));
+                        yMax.push(d3.max(lineData, function(d) { return d.activeCasesMean; }));
+
+                        y.domain([0, d3.max(yMax)]);
+                            
+                        svg.select("#Y")
+                            .transition()
+                            .duration(400)
+                            .call(yAxis)
+                            .selectAll("text").attr("class", "textSmaller");
+
+                        cases.call(curver, lineData, "casesNewMean", "#00ace5", 1.5);
+                        cases.call(curver, lineData, "activeCasesMean", "#ffffff", 5);
+                        cases.call(curver, lineData, "activeCasesMean", "#BF381D", 1.5);
+
+                    };
+
+                    function curver(path, lineData, indicator, col, wid) {
+
+                        // console.log(
+                        //     lineData
+                        // );
+
+                        var u = path.selectAll("#line"+indicator)
+                            .data([lineData]);
+
+                        u
+                            .enter()
+                            .append("path")
+                            .attr("id","line"+indicator)
+                            .attr("class", "line")
+                            .merge(u)
+                            .transition()
+                            .duration(400)
+                            .attr("d", d3.line()
+                                .curve(d3.curveCatmullRom)
+                                .x(function(d) { return x(d.date); })
+                                .y(function(d) { return y(d[indicator]); }))
+                                .attr("fill", "none")
+                                .attr("stroke-width", wid)
+                                .attr("stroke-linejoin", "round")
+                                .attr("stroke-linecap", "round")
+                                .attr("stroke", col)
+
+                    }
+
+                    var sel = d3.select("#selectObl");
+                    var curSel = sel.property("value");
+
+                    action(curSel);
+
+                    sel.on('change', function() {
+                        curSel = sel.property("value");
+                        action(curSel);
+                    });
+
+                });
+
+            </script>
+        </div>
+    </div>
+</body>
