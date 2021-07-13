@@ -56,7 +56,7 @@
 
                 var margin;
 
-                if (H>W) {
+                if (W<700) {
                     margin = margins.mobile;
                 } else {
                     margin = margins.desktop;
@@ -208,7 +208,7 @@
                             }  
                         });
 
-                    if (H>W) {
+                    if (W<700) {
                         xx.selectAll("text").filter( function(d, i) { if (i%2==0) { return d; } } ).attr("opacity", 0)
                     }
 
