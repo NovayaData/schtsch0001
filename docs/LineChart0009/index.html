@@ -83,7 +83,7 @@
                     var parseTime = d3.timeParse("%Y-%m-%d");
 
                     var x = d3.scaleTime().range([0, width])
-                        .domain([new Date(2020, 02, 12), new Date(2021, 07, 06)]);
+                        .domain([new Date(2020, 02, 19), new Date(2021, 07, 06)]);
                     var y = d3.scaleLinear().range([height, 0]);
                     
                     var yAxis = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.1f")(d).replace(",", " ").replace(".0", "") }).scale(y);
@@ -92,8 +92,8 @@
                         .attr("id", "clip")
                         .append("rect")
                         .attr("width", W)
-                        .attr("height", height+100)
-                        .attr("transform", "translate(-"+margin.left2+",0)");
+                        .attr("height", H)
+                        .attr("transform", "translate(-"+margin.left2+",-50)");
 
                     var cases = svg.append("g").attr("opacity", 1).attr("clip-path", "url(#clip)");
 
@@ -165,9 +165,7 @@
 
                             data = data.sort(function(a, b) { return a.date - b.date});
 
-                            var regionDataClean = data;
-
-                            // var regionDataClean = data.slice(7, data.length);
+                            var regionDataClean = data.slice(7, data.length);
                         
                             regionDataClean.forEach(
                                 function(rd, i) {
@@ -175,15 +173,14 @@
 
                                     let curSlice = data.slice(i-7, i);
 
-                                    rd.casesNewMean = rd.casesNew;
-                                    rd.activeCasesMean = rd.activeCases;
-
-                                    // rd.casesNewMean = d3.mean(curSlice, d => d.casesNew);
-                                    // rd.activeCasesMean = d3.mean(curSlice, d => d.activeCases);
+                                    rd.casesNewMean = d3.mean(curSlice, d => d.casesNew);
+                                    rd.activeCasesMean = d3.mean(curSlice, d => d.activeCases);
 
                             });
 
                             regData[rId]["data"] = regionDataClean;
+
+                            // egData[rId]["data"] = data;
 
                             builder(regData[rId]["data"]);
                         });
@@ -200,7 +197,7 @@
                     function builder(lineData) {
                         var yMax = [];
 
-                        yMax.push(d3.max(lineData, function(d) { return d.casesNewMean; }));
+                        yMax.push(d3.max(lineData, function(d) { return d.casesNew; }));
                         yMax.push(d3.max(lineData, function(d) { return d.activeCasesMean; }));
 
                         y.domain([0, d3.max(yMax)]);
@@ -211,9 +208,13 @@
                             .call(yAxis)
                             .selectAll("text").attr("class", "textSmaller");
 
-                        cases.call(curver, lineData, "casesNewMean", "#00ace5", 1.5);
-                        cases.call(curver, lineData, "activeCasesMean", "#ffffff", 5);
-                        cases.call(curver, lineData, "activeCasesMean", "#BF381D", 1.5);
+                        // cases.call(curver, lineData, "casesNewMean", "#00ace5", 1.5);
+                        // cases.call(curver, lineData, "activeCasesMean", "#ffffff", 5);
+                        // cases.call(curver, lineData, "activeCasesMean", "#BF381D", 1.5);
+
+                        cases.call(curver, lineData, "casesNew", "#00ace5", 1.5);
+                        cases.call(curver, lineData, "activeCases", "#ffffff", 5);
+                        cases.call(curver, lineData, "activeCases", "#BF381D", 1.5);
 
                     };
 
