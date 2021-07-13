@@ -83,7 +83,7 @@
                     var parseTime = d3.timeParse("%Y-%m-%d");
 
                     var x = d3.scaleTime().range([0, width])
-                        .domain([new Date(2020, 02, 19), new Date(2021, 07, 06)]);
+                        .domain([new Date(2020, 02, 12), new Date(2021, 07, 06)]);
                     var y = d3.scaleLinear().range([height, 0]);
                     
                     var yAxis = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.1f")(d).replace(",", " ").replace(".0", "") }).scale(y);
@@ -165,7 +165,9 @@
 
                             data = data.sort(function(a, b) { return a.date - b.date});
 
-                            var regionDataClean = data.slice(7, data.length);
+                            var regionDataClean = data;
+
+                            // var regionDataClean = data.slice(7, data.length);
                         
                             regionDataClean.forEach(
                                 function(rd, i) {
@@ -173,8 +175,11 @@
 
                                     let curSlice = data.slice(i-7, i);
 
-                                    rd.casesNewMean = d3.mean(curSlice, d => d.casesNew);
-                                    rd.activeCasesMean = d3.mean(curSlice, d => d.activeCases);
+                                    rd.casesNewMean = rd.casesNew;
+                                    rd.activeCasesMean = rd.activeCases;
+
+                                    // rd.casesNewMean = d3.mean(curSlice, d => d.casesNew);
+                                    // rd.activeCasesMean = d3.mean(curSlice, d => d.activeCases);
 
                             });
 
