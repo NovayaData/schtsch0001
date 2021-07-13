@@ -43,7 +43,7 @@ body::-webkit-scrollbar {
 .textBig {
     font-size: 21px;
     font-family: 'Roboto', sans-serif;
-    font-weight:400;
+    font-weight:500;
 }
 
 .dark {
@@ -56,18 +56,6 @@ body::-webkit-scrollbar {
 
 .ngred {
     color: #E5381D;
-}
-
-.textSoso {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    font-size: 12px;
-    font-family: 'Roboto', sans-serif;
-    font-weight:400;
 }
 
 .textSmall {
