@@ -19,19 +19,6 @@
     <div id="lid">
         <span class="textSmall">Динамика заболеваемости и смертности в </span>
         <select id="selectObl">
-            <!-- <option value="100">России</option>
-            <option value="77">Москве</option>
-            <option value="78">Санкт-Петербурге</options>
-            <option value="3">Бурятии</options>
-            <option value="36">Воронежской области</options>
-            <option value="38">Иркутской области</options>
-            <option value="24">Красноярском крае</options>
-            <option value="50">Московской области</option>
-            <option value="52">Нижегородской области</option>
-            <option value="91">Республике Крым</option>
-            <option value="66">Свердловской области</option> -->
-            <!-- <option value="67">Смоленской области</options> -->
-            <!-- <option value="39">Калининградской области</options> -->
         </select>
     </div>
 
@@ -95,10 +82,8 @@
 
                     var parseTime = d3.timeParse("%Y-%m-%d");
 
-                    // new Date(2021, 0, 1))
-
                     var x = d3.scaleTime().range([0, width])
-                        .domain([new Date(2020, 02, 1), new Date(2021, 07, 6)]);
+                        .domain([new Date(2020, 02, 19), new Date(2021, 07, 06)]);
                     var y = d3.scaleLinear().range([height, 0]);
                     
                     var yAxis = d3.axisLeft().tickSize(0).tickFormat(d => { return d3.format(",.1f")(d).replace(",", " ").replace(".0", "") }).scale(y);
@@ -106,9 +91,9 @@
                     svg.append("defs").append("clipPath")
                         .attr("id", "clip")
                         .append("rect")
-                        .attr("width", width)
-                        .attr("height", height+50)
-                        .attr("transform", "translate(-50,-12)");
+                        .attr("width", W)
+                        .attr("height", height+100)
+                        .attr("transform", "translate(-"+margin.left2+",0)");
 
                     var cases = svg.append("g").attr("opacity", 1).attr("clip-path", "url(#clip)");
 
@@ -124,29 +109,26 @@
                             .attr("class", "X")
                             .attr("opacity", 1)
                             .attr("transform", "translate(0," + height + ")")
-                            .call(d3.axisBottom(x).tickSize(0))
-                            .selectAll("text")
-                            .attr("opacity", 0);
+                            .call(d3.axisBottom(x).ticks(d3.timeMonth.every(1)).tickSize(0));
+                            // .selectAll("text")
+                            // .attr("opacity", 0);
 
                         path
                             .append("g")
                             .attr("opacity", 1)
                             .attr("id","Y");
-                        path.call(addXText, "дней", 0, height+12, "start");
-                        path.call(addXText, "0", 29, height+12, "middle");
-                        path.call(addXText, "120", 149, height+12, "middle");
                             
                     };
 
-                    function addXText(path, t, i, h, anc) {
-                        path
-                            .append("text")
-                            .attr("class", "textSmaller")
-                            .attr("x", x(i))
-                            .attr("y", h)
-                            .attr("text-anchor", anc)
-                            .text( t );
-                    }
+                    // function addXText(path, t, i, h, anc) {
+                    //     path
+                    //         .append("text")
+                    //         .attr("class", "textSmaller")
+                    //         .attr("x", x(i))
+                    //         .attr("y", h)
+                    //         .attr("text-anchor", anc)
+                    //         .text( t );
+                    // }
 
                     cases.call(addChart);
 
