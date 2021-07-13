@@ -20,7 +20,7 @@
     </div>
 
     <div id="soso">
-        <span class="textSmall textSoso">Источник: круги на полях</span>
+        <span class="textSmall textSoso">Источник: Роскосмос</span>
     </div>
     
     <div id="container">
@@ -56,7 +56,7 @@
 
                 var margin;
 
-                if (W<700) {
+                if (H>W) {
                     margin = margins.mobile;
                 } else {
                     margin = margins.desktop;
@@ -208,7 +208,7 @@
                             }  
                         });
 
-                    if (W<700) {
+                    if (H>W) {
                         xx.selectAll("text").filter( function(d, i) { if (i%2==0) { return d; } } ).attr("opacity", 0)
                     }
 
