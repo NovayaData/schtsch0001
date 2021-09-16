@@ -20,20 +20,30 @@ const stars = {
 var W = container.node().getBoundingClientRect().width,
     H = container.node().getBoundingClientRect().height;
 
-var width = W - W*0.1,
-    height = H - H*0.1;
-
-var radius = 4,
-    color = "#ff00ff",
-    centerScale = d3.scalePoint().range([0, height]).domain([5,4,3,2,1]).padding(2),
-    forceStrength = 0.5;
-
-// console.log(centerScale.domain())
+var width = W,
+    height = H;
 
 const svg = container
     .append('svg')
         .attr('width', width)
         .attr('height', height);
+
+var centerScale = d3.scalePoint().domain(d3.range(5)).range([0, height]).padding(2),
+    forceStrength = 0.5;
+
+// var axis = d3.axisRight(centerScale).ticks(d3.range(5));
+
+// var gAxis = svg.append("g")
+//     .attr("transform", "translate(" + width / 2 + ",0)")
+//     .attr("class", "axis axis--y")
+//     .call(axis);
+
+// var ticks = d3.selectAll('.tick').selectAll('line')
+//     .style("stroke", "#ffffff");
+
+// console.log(centerScale.domain())
+
+
 
 var simulation = d3.forceSimulation()
     .force("collide", d3.forceCollide( d => {
@@ -79,7 +89,7 @@ d3.csv("data.csv").then( function(data){
             .style("stroke-width", 1)
             .style("pointer-events", "all");
 
-    console.log( d3.selectAll("circle").nodes().length )
+    // console.log( d3.selectAll("circle").nodes().length )
     
     circles = circles.merge(circlesEnter);
 
@@ -93,44 +103,58 @@ d3.csv("data.csv").then( function(data){
         .nodes(data)
         .on("tick", ticked);
 
-    // function groupBubbles() {
-    //     hideTitles();
+    function groupBubbles() {
+        hideTitles();
 
-    //     simulation.force('y', d3.forceY().strength(forceStrength).y(width / 2));
-    //     simulation.alpha(1).restart();
-    // }
+        simulation.force('y', d3.forceY().strength(forceStrength).y(height / 2));
+        // simulation.force('y', d3.forceY().strength(forceStrength).y(height / 2));
+        simulation.alpha(2).restart();
+    }
 
     function splitBubbles(byVar, a) {
         
         centerScale.domain(data.map(function(d){ return d[byVar]; }).sort(d3.ascending).reverse());
         
-        showTitles(byVar, centerScale);
+        showTitles(centerScale);
         
         simulation.force('y', d3.forceY().strength(forceStrength).y(d => { 
         	return centerScale( d[byVar] );
         }));
 
         simulation.alpha(a).restart();
+
+        // circles.nodes().forEach(
+        //     function(d) {
+        //         console.log(d.getBBox().x, d.getBBox().y)
+        //     }
+        // )
+
+        // centerScale.domain().forEach(
+        //     function(d) {
+        //         console.log(centerScale(d))
+        //     }
+        // )
     }
 
     function hideTitles() {
         svg.selectAll('.title').remove();
     }
 
-    function showTitles(byVar, scale) {
-    var titles = svg.selectAll('.title')
-        .data(scale.domain());
-    
-    titles.enter().append('text')
-        .attr('class', 'title')
-        .merge(titles)
-        .attr('x', 20)
-        .attr('y', function (d) { return scale(d); })
-        .attr('text-anchor', 'middle')
-        .text(d => { return stars[d]; });
-    
-    titles.exit().remove() 
-    }
+    function showTitles(scale) {
+        var titles = svg.selectAll('.title')
+            .data(scale.domain());
+        
+        titles.enter().append('text')
+            .attr('class', 'title')
+            .merge(titles)
+            .attr('x', 20)
+            .attr('y', function (d) { return scale(d); })
+            .attr('text-anchor', 'middle')
+            .text(d => { return stars[d]; });
+        
+        titles.exit().remove() 
+    };
+
 
     function setupButtons() {
         d3.selectAll('.button')
@@ -147,6 +171,7 @@ d3.csv("data.csv").then( function(data){
     }
     
     setupButtons();
+    // groupBubbles();
     splitBubbles("allIn_rank", 2);
 
 })
