@@ -71,7 +71,7 @@ var points = ["5", "4", "3", "2", "1"]
 //     return force;
 // };
 
-var centerScale = d3.scalePoint().domain( points ).range([0, height]).padding(1),
+var centerScale = d3.scalePoint().domain( points ).range([0, height]).padding(5),
     forceStrength = 0.5;
 
 var simulation = d3.forceSimulation()
