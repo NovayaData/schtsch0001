@@ -5,6 +5,13 @@
     border: 0;
 }
 
+#tt {
+    position: fixed;
+    max-width: 25vw;
+    background-color: white;
+    z-index: 91;
+}
+
 .active {
     background-color: white;
     color: #00ace5;

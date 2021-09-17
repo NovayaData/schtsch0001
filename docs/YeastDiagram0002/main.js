@@ -95,6 +95,9 @@ d3.csv("data.csv").then( function(data){
             .attr("class", d => { return d.allIn_rank; })
 
             .attr("display", "none")
+            .attr("text", d => {
+                return `${d.deputy_name}<br><b>Созывов:</b> ${d.times}<br><b>Дней в Думе:</b> ${d.days}`
+            })
 
             // .attr("cx", width / 2)
             // .attr("cy", height / 2)
@@ -104,7 +107,28 @@ d3.csv("data.csv").then( function(data){
 
             .style("fill", d => { return colors[d.party_name_clean]; })
             .style("stroke", "#ffffff")
-            .style("stroke-width", 1);
+            .style("stroke-width", 1)
+            
+            .on("mouseover", function(d) {
+                tooltip
+                    .html(this.getAttribute("text"))
+                    .style("opacity", 1)
+                    .style("top", this.getBBox().y - 12 + "px");
+                if (this.getBBox().x <= width*0.5) {
+                    tooltip
+                        .style("left", this.getBBox().x + 40 + "px");
+                } else {
+                        strLen  = document.getElementById("tt").clientWidth;
+
+                    tooltip
+                        .style("left", this.getBBox().x - strLen + "px");
+                }
+            })
+            .on("mouseleave", function(d) {
+                tooltip
+                    .html("")
+                    .style("opacity", 0);
+            });
     
     circles = circles.merge(circlesEnter);
 
@@ -165,6 +189,12 @@ d3.csv("data.csv").then( function(data){
                 )
         });
     };
+
+    const tooltip = d3.select("#tooltip")
+                        .append("div")
+                        .attr("id", "tt")
+                        .style("opacity", 0)
+                        .attr("class", "textSmall");
     
     setupButtons();
     
