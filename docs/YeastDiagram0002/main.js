@@ -96,7 +96,9 @@ d3.csv("data.csv").then( function(data){
 
             .attr("display", "none")
             .attr("text", d => {
-                return `${d.deputy_name}<br><b>Созывов:</b> ${d.times}<br><b>Дней в Думе:</b> ${d.days}`
+                var name = d.deputy_name.replace(" ", "&#160;");
+                console.log(name);
+                return `${name}<br><b>Созывов:</b> ${d.times}<br><b>Дней в Думе:</b> ${d.days}`
             })
 
             // .attr("cx", width / 2)
@@ -110,6 +112,7 @@ d3.csv("data.csv").then( function(data){
             .style("stroke-width", 1)
             
             .on("mouseover", function(d) {
+                d3.select(this).style("stroke", "#212226")
                 tooltip
                     .html(this.getAttribute("text"))
                     .style("opacity", 1)
@@ -125,6 +128,7 @@ d3.csv("data.csv").then( function(data){
                 }
             })
             .on("mouseleave", function(d) {
+                d3.select(this).style("stroke", "#ffffff")
                 tooltip
                     .html("")
                     .style("opacity", 0);
@@ -191,7 +195,7 @@ d3.csv("data.csv").then( function(data){
     };
 
     const tooltip = d3.select("#tooltip")
-                        .append("div")
+                        .append("span")
                         .attr("id", "tt")
                         .style("opacity", 0)
                         .attr("class", "textSmall");

@@ -7,7 +7,7 @@
 
 #tt {
     position: fixed;
-    max-width: 25vw;
+    max-width: 50vw;
     background-color: white;
     z-index: 91;
 }
@@ -50,7 +50,20 @@
     font-size: 16px;
 }
 
+.textBig {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+    font-size: 42pt;
+}
+
 #sb {
+    
     background-color: white;
     color: #212226;
     border: none;
@@ -110,10 +123,6 @@
 #lol {
     position: fixed;
     display: none;
-}
-
-.lol {
-    font-size: 42pt;
 }
 
 .textSmall {
