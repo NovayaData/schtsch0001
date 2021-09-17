@@ -5,10 +5,22 @@
     border: 0;
 }
 
-button {
+.button {
     font-size: 21px;
+}
+
+#toolbar {
+    display: none;
 }
 
 .active {
     color: brown;
+}
+
+#lol {
+    display: none;
+}
+
+.lol {
+    font-size: 42pt;
 }

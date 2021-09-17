@@ -10,49 +10,76 @@ const colors = {
 };
 
 const stars = {
-    "1": "*",
-    "2": "**",
-    "3": "***",
-    "4": "****",
-    "5": "*****",
+    "1.5": "*",
+    "2.5": "**",
+    "3.5": "***",
+    "4.5": "****",
+    "5.5": "*****",
 };
 
 var W = container.node().getBoundingClientRect().width,
     H = container.node().getBoundingClientRect().height;
 
 var width = W,
-    height = H;
+    height = H,
+    pw = 100 / W,
+    ph = 100 / H;
 
 const svg = container
     .append('svg')
         .attr('width', width)
         .attr('height', height);
 
-var centerScale = d3.scalePoint().domain(d3.range(5)).range([0, height]).padding(2),
+var points = ["5", "4", "3", "2", "1"]
+
+// function centroid(nodes) {
+//     let x = 0;
+//     let y = 0;
+//     let z = 0;
+//     for (const d of nodes) {
+//         let k = (d.times * 0.9 + 4) ** 2;
+//         x += d.x * k;
+//         y += d.y * k;
+//         z += k;
+//     }
+//     return {x: x / z, y: y / z};
+// };
+
+// function forceCluster() {
+//     const strength = 0.2;
+//     let nodes;
+
+//     console.log( centroid );
+
+//     function force(alpha) {
+
+//         const centroids = d3.rollup(nodes, centroid, d => {
+//             return d.party_name_clean;
+//         });
+//         const l = alpha * strength;
+
+//         for (const d of nodes) {
+//             // console.log(centroids.get(d.party_name_clean));
+//             const {x: cx, y: cy} = centroids.get(d.party_name_clean);
+//             d.vx -= (d.x - cx) * l;
+//             d.vy -= (d.y - cy) * l;
+//         }
+//     }
+
+//     force.initialize = _ => nodes = _;
+
+//     return force;
+// };
+
+var centerScale = d3.scalePoint().domain( points ).range([0, height]).padding(1),
     forceStrength = 0.5;
 
-// var axis = d3.axisRight(centerScale).ticks(d3.range(5));
-
-// var gAxis = svg.append("g")
-//     .attr("transform", "translate(" + width / 2 + ",0)")
-//     .attr("class", "axis axis--y")
-//     .call(axis);
-
-// var ticks = d3.selectAll('.tick').selectAll('line')
-//     .style("stroke", "#ffffff");
-
-// console.log(centerScale.domain())
-
-
-
 var simulation = d3.forceSimulation()
-    .force("collide", d3.forceCollide( d => {
-            return d.r }).iterations(4) 
-    )
-    .force("charge", d3.forceManyBody())
-    .force("y", d3.forceY().y( height / 2 ))
-    // .force("y", d3.forceY().y( d => { return centerScale(d.allIn_rank); } ))
-    .force("x", d3.forceX().x(width / 2));
+    .force("collide", d3.forceCollide(d => { return d.times * 0.9 + 4; }))
+    .force("y", d3.forceY().y( d => { return centerScale(d.allIn_rank); } ))
+    .force("x", d3.forceX().x( width / 2 ))
+    .force("charge", d3.forceManyBody());
+    // .force("cluster", forceCluster());
 
 d3.csv("data.csv").then( function(data){
 
@@ -64,32 +91,31 @@ d3.csv("data.csv").then( function(data){
         });
 
     data.forEach(function(d){
-        d.times;
         d.x = width / 2;
         d.y = height / 2;
-    })
-
-    // console.log(data);
+    });
 
     var circles = svg.selectAll("circle")
-        .data(data, d => { return d.ID; });
+        .data(data);
           
     var circlesEnter = circles.enter()
         .append("circle")
             .attr("r", function(d, i){ return d.times * 0.9 + 3; })
 
-            .attr("cx", 0)
-            // .attr("cx", function(d, i) { return 175 + 25 * i + 2 * i ** 2; })
-            .attr("cy", height / 2)
+            .attr("id", d => { return `c${d.deputy_id}`; })
+            .attr("class", d => { return d.allIn_rank; })
 
-            // .attr("cy", d => { return centerScale(d.allIn_rank); })
+            .attr("display", "none")
 
-            .style("fill", d => { return colors[d.party_name_clean] })
+            // .attr("cx", width / 2)
+            // .attr("cy", height / 2)
+
+            // .attr("cx", d => { return parseFloat(d.start_x) * pw + width / 2; })
+            // .attr("cy", d => { return parseFloat(d.start_y) * ph + centerScale(d.allIn_rank); })
+
+            .style("fill", d => { return colors[d.party_name_clean]; })
             .style("stroke", "#ffffff")
-            .style("stroke-width", 1)
-            .style("pointer-events", "all");
-
-    // console.log( d3.selectAll("circle").nodes().length )
+            .style("stroke-width", 1);
     
     circles = circles.merge(circlesEnter);
 
@@ -103,58 +129,15 @@ d3.csv("data.csv").then( function(data){
         .nodes(data)
         .on("tick", ticked);
 
-    function groupBubbles() {
-        hideTitles();
-
-        simulation.force('y', d3.forceY().strength(forceStrength).y(height / 2));
-        // simulation.force('y', d3.forceY().strength(forceStrength).y(height / 2));
-        simulation.alpha(2).restart();
-    }
-
     function splitBubbles(byVar, a) {
         
-        centerScale.domain(data.map(function(d){ return d[byVar]; }).sort(d3.ascending).reverse());
-        
-        showTitles(centerScale);
-        
         simulation.force('y', d3.forceY().strength(forceStrength).y(d => { 
-        	return centerScale( d[byVar] );
+            return centerScale( d[byVar] );
         }));
 
-        simulation.alpha(a).restart();
-
-        // circles.nodes().forEach(
-        //     function(d) {
-        //         console.log(d.getBBox().x, d.getBBox().y)
-        //     }
-        // )
-
-        // centerScale.domain().forEach(
-        //     function(d) {
-        //         console.log(centerScale(d))
-        //     }
-        // )
+        simulation.alpha(a).restart()
+        // simulation.force("charge", d3.forceManyBody(1));
     }
-
-    function hideTitles() {
-        svg.selectAll('.title').remove();
-    }
-
-    function showTitles(scale) {
-        var titles = svg.selectAll('.title')
-            .data(scale.domain());
-        
-        titles.enter().append('text')
-            .attr('class', 'title')
-            .merge(titles)
-            .attr('x', 20)
-            .attr('y', function (d) { return scale(d); })
-            .attr('text-anchor', 'middle')
-            .text(d => { return stars[d]; });
-        
-        titles.exit().remove() 
-    };
-
 
     function setupButtons() {
         d3.selectAll('.button')
@@ -163,17 +146,72 @@ d3.csv("data.csv").then( function(data){
                 var button = d3.select(this);
 
                 button.classed('active', true);
-
                 var buttonId = button.attr('id');
 
                 splitBubbles(buttonId, 0.5);
         });
-    }
+
+        d3.selectAll('#sb')
+            .on('click', function () {
+
+                document.getElementById("lol").style.display = 'inline';
+
+                setTimeout(
+                    _ => {
+                        d3.selectAll("circle").attr("display", "");
+                        document.getElementById("lol").style.display = 'none';
+                        document.getElementById("sb").style.display = 'none';
+                        document.getElementById("toolbar").style.display = 'inline';
+                    }, 5000
+                )
+
+                // get_start_pos();
+        });
+    };
     
     setupButtons();
-    // groupBubbles();
-    splitBubbles("allIn_rank", 2);
+    
+    setTimeout(
+        _ => {
+            splitBubbles("allIn_rank", 2);
+        }, 500
+    )
+    
+    // setTimeout(
+    //     _ => {
+    //         d3.selectAll("circle").attr("display", "")
+    //     }, 1000
+    // );
 
-})
+    function get_start_pos() {
+        var start_pos = [];
 
-// d3.json("./data.json").then(data => {})
+        allc = d3.selectAll("circle");
+
+        allc.nodes().forEach(
+            d => {
+
+                var bbd = d.getBBox();
+
+                var x = bbd.x,
+                    y = bbd.y,
+                    cid = d.id,
+                    cclass = d.getAttribute("class");
+                
+                var gh = (y - centerScale(cclass)) / (100 / width),
+                    gw = (x - width / 2) / (100 / height);
+                
+                starts = {
+                    "deputy_id" : cid.replace("c", ""),
+                    "start_y" : gh,
+                    "start_x" : gw
+                };
+
+                start_pos.push(starts);
+            }
+        );
+
+        console.log(JSON.stringify(start_pos));
+    };
+
+});
