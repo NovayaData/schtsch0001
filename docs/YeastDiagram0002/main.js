@@ -84,6 +84,23 @@ var simulation = d3.forceSimulation()
     .force("charge", d3.forceManyBody() );
     // .force("cluster", forceCluster());
 
+function addLeg(pos, text) {
+    svg.append("text")
+        .attr("y", d => {
+            return centerScale(pos);
+        })
+        .attr("x", width / 2)
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
+        .text(text)
+};
+
+// addLeg("1", "*");
+// addLeg("2", "**");
+// addLeg("3", "***");
+// addLeg("4", "****");
+// addLeg("5", "*****");
+
 d3.csv("data.csv").then( function(data){
 
     data = data.filter(
@@ -185,50 +202,42 @@ d3.csv("data.csv").then( function(data){
     };
     
     setupButtons();
-
-    // splitBubbles("allIn_rank", 2);
     
     setTimeout(
         _ => {
             splitBubbles("allIn_rank", 2);
         }, 500
-    )
-    
-    // setTimeout(
-    //     _ => {
-    //         d3.selectAll("circle").attr("display", "")
-    //     }, 1000
-    // );
+    );
 
-    function get_start_pos() {
-        var start_pos = [];
+    // function get_start_pos() {
+    //     var start_pos = [];
 
-        allc = d3.selectAll("circle");
+    //     allc = d3.selectAll("circle");
 
-        allc.nodes().forEach(
-            d => {
+    //     allc.nodes().forEach(
+    //         d => {
 
-                var bbd = d.getBBox();
+    //             var bbd = d.getBBox();
 
-                var x = bbd.x,
-                    y = bbd.y,
-                    cid = d.id,
-                    cclass = d.getAttribute("class");
+    //             var x = bbd.x,
+    //                 y = bbd.y,
+    //                 cid = d.id,
+    //                 cclass = d.getAttribute("class");
                 
-                var gh = (y - centerScale(cclass)) / (100 / width),
-                    gw = (x - width / 2) / (100 / height);
+    //             var gh = (y - centerScale(cclass)) / (100 / width),
+    //                 gw = (x - width / 2) / (100 / height);
                 
-                starts = {
-                    "deputy_id" : cid.replace("c", ""),
-                    "start_y" : gh,
-                    "start_x" : gw
-                };
+    //             starts = {
+    //                 "deputy_id" : cid.replace("c", ""),
+    //                 "start_y" : gh,
+    //                 "start_x" : gw
+    //             };
 
-                start_pos.push(starts);
-            }
-        );
+    //             start_pos.push(starts);
+    //         }
+    //     );
 
-        console.log(JSON.stringify(start_pos));
-    };
+    //     console.log(JSON.stringify(start_pos));
+    // };
 
 });

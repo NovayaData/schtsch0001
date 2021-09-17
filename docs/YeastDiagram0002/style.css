@@ -5,13 +5,19 @@
     border: 0;
 }
 
-.button {
+.active {
     background-color: white;
+    color: #00ace5;
+}
+
+.button {
     border: none;
     padding: 2px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    display: block;
+    background-color: white;
+    color: #212226;
     font-size: 15px;
 }
 
@@ -26,15 +32,24 @@
     bottom: 0;
 }
 
+#legend {
+    position: fixed;
+    text-align: right;
+    /* display: none; */
+    bottom: 0;
+    right: 0;
+    font-size: 15px;
+}
+
 #sb {
     background-color: white;
+    color: #212226;
     border: none;
     padding: 2px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     margin: 0;
-    position: absolute;
+    position: relative;
     top: 50%;
     left: 50%;
     -ms-transform: translate(-50%, -50%);
@@ -46,11 +61,37 @@
     color: white;
 }
 
+#ldpr {
+    background-color: #ffed26;
+    color: #212226;
+}
+
+#kprf {
+    background-color: #bf381d;
+    color: white;
+}
+
+#er {
+    background-color: #00ace5;
+    color: white;
+}
+
+#sr {
+    background-color: #ee9100;
+    color: white;
+}
+
+#ost {
+    background-color: #e3e4e5;
+    color: #212226;
+}
+
 .active {
     color: #00ace5;
 }
 
 #lol {
+    position: fixed;
     display: none;
 }
 
@@ -58,7 +99,19 @@
     font-size: 42pt;
 }
 
+.textSmall {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+}
+
 @media (min-width: 700px) {
+
     .button {
         font-size: 21px;
     }
