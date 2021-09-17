@@ -27,8 +27,10 @@ var width = W,
 
 const svg = container
     .append('svg')
+        .attr("viewBox", "0 0 " + width + " " + height )
         .attr('width', width)
-        .attr('height', height);
+        .attr('height', height)
+        .attr("preserveAspectRatio", "xMidYMid meet");
 
 var points = ["5", "4", "3", "2", "1"]
 
@@ -120,9 +122,19 @@ d3.csv("data.csv").then( function(data){
     circles = circles.merge(circlesEnter);
 
     function ticked() {
+
         circles
-            .attr("cx", function(d){ return d.x; })
-            .attr("cy", function(d){ return d.y; });
+            .attr("cx", function(d) { 
+                var radius = d.times * 0.9 + 3;
+                return d.x = Math.max(radius, Math.min(width - radius, d.x)); 
+            })
+            .attr("cy", function(d) { 
+                var radius = d.times * 0.9 + 3;
+                return d.y = Math.max(radius, Math.min(height - radius, d.y)); 
+            });
+
+            // .attr("cx", function(d){ return d.x; })
+            // .attr("cy", function(d){ return d.y; });
     }
 
     simulation
