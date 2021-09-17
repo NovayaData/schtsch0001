@@ -12,7 +12,7 @@
 
 .button {
     border: none;
-    padding: 2px;
+    padding: 0px;
     text-align: center;
     text-decoration: none;
     display: block;
@@ -29,13 +29,15 @@
 #toolbar {
     position: fixed;
     display: none;
+    left: 0;
     bottom: 0;
+    font-size: 15px;
 }
 
 #legend {
     position: fixed;
     text-align: right;
-    /* display: none; */
+    display: none;
     bottom: 0;
     right: 0;
     font-size: 15px;
@@ -111,6 +113,10 @@
 }
 
 @media (min-width: 700px) {
+
+    #toolbar {
+        font-size: 21px;
+    }
 
     .button {
         font-size: 21px;

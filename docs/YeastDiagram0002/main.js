@@ -196,6 +196,7 @@ d3.csv("data.csv").then( function(data){
                         d3.selectAll("circle").attr("display", "");
                         document.getElementById("lol").style.display = 'none';
                         document.getElementById("toolbar").style.display = 'inline';
+                        document.getElementById("legend").style.display = 'inline';
                     }, 2500
                 )
         });
