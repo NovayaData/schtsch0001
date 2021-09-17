@@ -172,12 +172,12 @@ d3.csv("data.csv").then( function(data){
             .on('click', function () {
 
                 document.getElementById("lol").style.display = 'inline';
+                document.getElementById("sb").style.display = 'none';
 
                 setTimeout(
                     _ => {
                         d3.selectAll("circle").attr("display", "");
                         document.getElementById("lol").style.display = 'none';
-                        document.getElementById("sb").style.display = 'none';
                         document.getElementById("toolbar").style.display = 'inline';
                     }, 2500
                 )
