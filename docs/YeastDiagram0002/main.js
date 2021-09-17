@@ -21,7 +21,7 @@ var W = container.node().getBoundingClientRect().width,
     H = container.node().getBoundingClientRect().height;
 
 var width = W,
-    height = H - H * 0.1,
+    height = H,
     pw = 100 / W,
     ph = 100 / H;
 
@@ -73,14 +73,15 @@ var points = ["5", "4", "3", "2", "1"]
 //     return force;
 // };
 
-var centerScale = d3.scalePoint().domain( points ).range([0, height]).padding(5),
+var centerScale = d3.scalePoint().domain( points ).range([0, height-H*0.1]).padding(3),
     forceStrength = 0.5;
 
 var simulation = d3.forceSimulation()
     .force("collide", d3.forceCollide(d => { return d.times * 0.9 + 4; }))
-    .force("y", d3.forceY().y( d => { return centerScale(d.allIn_rank); } ))
-    .force("x", d3.forceX().x( width / 2 ))
-    .force("charge", d3.forceManyBody());
+    .force("y", d3.forceY().y( d => { return centerScale(d.allIn_rank); } ).strength(0.1))
+    .force("x", d3.forceX().x( width / 2 ).strength(0.4))
+    // .force('center', d3.forceY().y( d => { return centerScale(d.allIn_rank); } ))
+    .force("charge", d3.forceManyBody() );
     // .force("cluster", forceCluster());
 
 d3.csv("data.csv").then( function(data){
@@ -147,6 +148,10 @@ d3.csv("data.csv").then( function(data){
             return centerScale( d[byVar] );
         }));
 
+        // simulation.force('center', d3.forceY().strength(forceStrength).center( d => {
+        //      return centerScale( d[byVar] );
+        // }));
+
         simulation.alpha(a).restart()
         // simulation.force("charge", d3.forceManyBody(1));
     }
@@ -176,12 +181,12 @@ d3.csv("data.csv").then( function(data){
                         document.getElementById("toolbar").style.display = 'inline';
                     }, 2500
                 )
-
-                // get_start_pos();
         });
     };
     
     setupButtons();
+
+    // splitBubbles("allIn_rank", 2);
     
     setTimeout(
         _ => {
