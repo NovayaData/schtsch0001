@@ -18,6 +18,7 @@ const stars = {
 };
 
 const expl = {
+    "allIn_rank": "Каждая точка ● — один депутат<br>Размер ⬤ ● — количество созывов в Госдуме",
     "vist_rank": "Число выступлений на заседаниях, их длительность в минутах, а также артистизм — восклицания, реакции публики",
     "golos_rank": "Присутствие на решающих голосованиях",
     "zakon_rank": "Число внесенных законопроектов и доля принятых"
@@ -142,7 +143,7 @@ d3.csv("data.csv").then( function(data){
                 button.classed('active', true);
                 var buttonId = button.attr('id');
 
-                document.getElementById("expl").textContent = expl[buttonId];
+                document.getElementById("expl").innerHTML = expl[buttonId];
 
                 splitBubbles(buttonId, 0.5);
         });
