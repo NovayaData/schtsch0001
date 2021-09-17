@@ -162,7 +162,7 @@ d3.csv("data.csv").then( function(data){
                         document.getElementById("lol").style.display = 'none';
                         document.getElementById("sb").style.display = 'none';
                         document.getElementById("toolbar").style.display = 'inline';
-                    }, 5000
+                    }, 2500
                 )
 
                 // get_start_pos();
