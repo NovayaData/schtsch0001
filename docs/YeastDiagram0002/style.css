@@ -10,7 +10,12 @@
 }
 
 #toolbar {
+    position: fixed;
     display: none;
+}
+
+#sb {
+    position: fixed;
 }
 
 .active {

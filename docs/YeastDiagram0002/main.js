@@ -21,7 +21,7 @@ var W = container.node().getBoundingClientRect().width,
     H = container.node().getBoundingClientRect().height;
 
 var width = W,
-    height = H,
+    height = H - H * 0.1,
     pw = 100 / W,
     ph = 100 / H;
 
