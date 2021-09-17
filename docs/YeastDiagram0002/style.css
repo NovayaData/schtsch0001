@@ -63,6 +63,14 @@
     color: white;
 }
 
+#expl {
+    position: fixed;
+    display: none;
+    font-size: 15px;
+    left: 0;
+    top: 0;
+}
+
 #ldpr {
     background-color: #ffed26;
     color: #212226;
