@@ -72,11 +72,12 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
             .style("stroke-width", 1)
             
             .on("mouseover", function(d) {
-                d3.select(this).style("stroke", "#212226")
-                console.log( this.getAttribute("class") );
+                var curE = d3.select(this)
+                curE.style("stroke", "#212226")
+                var curCl = curE.attr("class").split(" ")[0];
                 tooltip
                     .html(
-                        this.getAttribute("text") + `<br><b>Балл: </b>${this.getAttribute("class").replace("r", "")}`
+                        this.getAttribute("text") + `<br><b>Балл: </b>${curCl.replace("r", "")}`
                         )
                     .style("opacity", 1)
                     .style("top", this.getBBox().y - 12 + "px");
