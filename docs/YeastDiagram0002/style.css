@@ -155,14 +155,3 @@
     font-weight:400;
     font-size: 12px;
 }
-
-@media (min-width: 700px) {
-
-    #toolbar {
-        font-size: 21px;
-    }
-
-    .button {
-        font-size: 21px;
-    }
-}
