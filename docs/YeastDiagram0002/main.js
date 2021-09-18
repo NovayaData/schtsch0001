@@ -11,9 +11,9 @@ const colors = {
 
 const stars = [
     ["r1l", "*"],
-    ["r2l", "**"],
-    ["r3l", "***"],
-    ["r4l", "****"]
+    ["r2l", "* низкая вовлеченность *"],
+    ["r3l", "* * *"],
+    ["r4l", "* * * *"]
     // [".r5", "*****"],
 ];
 
@@ -42,7 +42,8 @@ const svg = container
 function addLeg(sid, pos, text) {
     svg.append("text")
         .attr("id", sid)
-        .attr("class", "legline")
+        .attr("class", "legline textSmall")
+        .attr("fill", "#979899")
 
         // .attr("width", width / 2)
         // .attr("height", 1)
@@ -55,6 +56,7 @@ function addLeg(sid, pos, text) {
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .text(text)
+        .attr("opacity", 0)
 };
 
 function addStars() {
