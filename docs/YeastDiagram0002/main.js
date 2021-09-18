@@ -9,16 +9,16 @@ const colors = {
     "Без или др": "#e3e4e5"
 };
 
-const stars = {
-    "1.5": "*",
-    "2.5": "**",
-    "3.5": "***",
-    "4.5": "****",
-    "5.5": "*****",
-};
+const stars = [
+    ["r1l", "*"],
+    ["r2l", "**"],
+    ["r3l", "***"],
+    ["r4l", "****"]
+    // [".r5", "*****"],
+];
 
 const expl = {
-    "allIn_rank": "Каждая точка ● — один депутат<br>Размер ⬤ ● — количество созывов в Госдуме",
+    "allIn_rank": "Каждая ● — один депутат<br>Размер ⬤ ● — количество созывов в Госдуме",
     "vist_rank": "Число выступлений на заседаниях, их длительность в минутах, а также артистизм — восклицания, реакции публики",
     "golos_rank": "Присутствие на решающих голосованиях",
     "zakon_rank": "Число внесенных законопроектов и доля принятых"
@@ -39,6 +39,34 @@ const svg = container
         .attr('height', height)
         .attr("preserveAspectRatio", "xMidYMid meet");
 
+function addLeg(sid, pos, text) {
+    svg.append("text")
+        .attr("id", sid)
+        .attr("class", "legline")
+
+        // .attr("width", width / 2)
+        // .attr("height", 1)
+        // .attr("cy", `${pos}px`)
+        // .attr("x", width / 4 + "px")
+        // .style("fill", "#000000");
+
+        .attr("y", `${pos}px`)
+        .attr("x", width / 2)
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
+        .text(text)
+};
+
+function addStars() {
+    stars.forEach(
+        s => {
+            addLeg(s[0], 0, s[1])
+        }
+    )
+};
+
+addStars();
+
 var points = ["5", "4", "3", "2", "1"]
 
 var centerScale = d3.scalePoint()
@@ -52,17 +80,6 @@ var simulation = d3.forceSimulation()
     .force("y", d3.forceY().y( d => { return centerScale(d.allIn_rank); } ).strength(0.1))
     .force("x", d3.forceX().x( width / 2 ).strength(0.4))
     .force("charge", d3.forceManyBody() );
-
-// function addLeg(pos, text) {
-//     svg.append("text")
-//         .attr("y", d => {
-//             return centerScale(pos);
-//         })
-//         .attr("x", width / 2)
-//         .attr("text-anchor", "middle")
-//         .attr("alignment-baseline", "middle")
-//         .text(text)
-// };
 
 // addLeg("1", "*");
 // addLeg("2", "**");
@@ -92,12 +109,12 @@ d3.csv("data.csv").then( function(data){
             .attr("r", function(d, i){ return d.times * 0.9 + 3; })
 
             .attr("id", d => { return `c${d.deputy_id}`; })
-            .attr("class", d => { return d.allIn_rank; })
+            .attr("class", d => { return `r${d.allIn_rank}`; })
 
             .attr("display", "none")
             .attr("text", d => {
                 var name = d.deputy_name.replace(" ", "&#160;");
-                console.log(name);
+                // console.log(name);
                 return `${name}<br><b>Созывов:</b> ${d.times}<br><b>Дней в Думе:</b> ${d.days}`
             })
 
@@ -153,13 +170,51 @@ d3.csv("data.csv").then( function(data){
         .nodes(data)
         .on("tick", ticked);
 
+    function moveStarsPos(starClass) {
+        var poss = [];
+
+        d3.selectAll( `.${starClass.replace("l", "")}` )
+            .nodes()
+            .forEach(
+                d => {
+                    poss.push( d.getBBox().y );
+                }
+            );
+
+        minpos = d3.min(poss) - 10;
+
+        d3.select( `#${starClass}` )
+            .attr("y", minpos)
+            .attr("opacity", 1)
+    }
+
+    function starsAct() {
+        stars.forEach(
+            d => {
+                moveStarsPos(d[0])
+            }
+        )
+    };
+
     function splitBubbles(byVar, a) {
-        
+        d3.selectAll('.legline').attr("opacity", 0);
+
         simulation.force('y', d3.forceY().strength(forceStrength).y(d => { 
+            d3.select( `#c${d.deputy_id}` ).attr("class", `r${d[byVar]}`);
             return centerScale( d[byVar] );
         }));
 
-        simulation.alpha(a).restart();
+        simulation.alpha(a).restart()
+            .on("end", function (){
+                starsAct();
+            });
+
+        setTimeout(
+            function() {
+                simulation.stop();
+                starsAct();
+            }, 5000
+        )
     }
 
     function setupButtons() {
