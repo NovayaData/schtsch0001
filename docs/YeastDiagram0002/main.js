@@ -149,7 +149,7 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
                 setTimeout(
                     _ => {
                         d3.selectAll("circle").attr("display", "");
-                        document.getElementById("lol").style.display = 'none';
+                        document.getElementById("lol").remove();
                         document.getElementById("toolbar").style.display = 'inline';
                         document.getElementById("legend").style.display = 'inline';
                         document.getElementById("expl").style.display = 'inline';
