@@ -18,6 +18,7 @@
 }
 
 .button {
+    cursor: pointer;
     border: none;
     padding: 0px;
     text-align: center;
@@ -63,7 +64,7 @@
 }
 
 #sb {
-    
+    cursor: pointer;
     background-color: white;
     color: #212226;
     border: none;

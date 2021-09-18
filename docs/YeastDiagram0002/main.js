@@ -9,14 +9,6 @@ const colors = {
     "Без или др": "#e3e4e5"
 };
 
-const stars = [
-    ["r1l", "*"],
-    ["r2l", "* низкая вовлеченность *"],
-    ["r3l", "* * *"],
-    ["r4l", "* * * *"]
-    // [".r5", "*****"],
-];
-
 const expl = {
     "allIn_rank": "Каждая ● — один депутат<br>Размер ⬤ ● — количество созывов в Госдуме",
     "vist_rank": "Число выступлений на заседаниях, их длительность в минутах, а также артистизм — восклицания, реакции публики",
@@ -39,36 +31,6 @@ const svg = container
         .attr('height', height)
         .attr("preserveAspectRatio", "xMidYMid meet");
 
-function addLeg(sid, pos, text) {
-    svg.append("text")
-        .attr("id", sid)
-        .attr("class", "legline textSmall")
-        .attr("fill", "#979899")
-
-        // .attr("width", width / 2)
-        // .attr("height", 1)
-        // .attr("cy", `${pos}px`)
-        // .attr("x", width / 4 + "px")
-        // .style("fill", "#000000");
-
-        .attr("y", `${pos}px`)
-        .attr("x", width / 2)
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
-        .text(text)
-        .attr("opacity", 0)
-};
-
-function addStars() {
-    stars.forEach(
-        s => {
-            addLeg(s[0], 0, s[1])
-        }
-    )
-};
-
-addStars();
-
 var points = ["5", "4", "3", "2", "1"]
 
 var centerScale = d3.scalePoint()
@@ -83,20 +45,7 @@ var simulation = d3.forceSimulation()
     .force("x", d3.forceX().x( width / 2 ).strength(0.4))
     .force("charge", d3.forceManyBody() );
 
-// addLeg("1", "*");
-// addLeg("2", "**");
-// addLeg("3", "***");
-// addLeg("4", "****");
-// addLeg("5", "*****");
-
-d3.csv("data.csv").then( function(data){
-
-    data = data.filter(
-        d => { 
-            if (d.season == "7") { 
-                return d; 
-            } 
-        });
+d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
 
     data.forEach(function(d){
         d.x = width / 2;
@@ -116,15 +65,8 @@ d3.csv("data.csv").then( function(data){
             .attr("display", "none")
             .attr("text", d => {
                 var name = d.deputy_name.replace(" ", "&#160;");
-                // console.log(name);
                 return `${name}<br><b>Созывов:</b> ${d.times}<br><b>Дней в Думе:</b> ${d.days}`
             })
-
-            // .attr("cx", width / 2)
-            // .attr("cy", height / 2)
-
-            // .attr("cx", d => { return parseFloat(d.start_x) * pw + width / 2; })
-            // .attr("cy", d => { return parseFloat(d.start_y) * ph + centerScale(d.allIn_rank); })
 
             .style("fill", d => { return colors[d.party_name_clean]; })
             .style("stroke", "#ffffff")
@@ -133,7 +75,9 @@ d3.csv("data.csv").then( function(data){
             .on("mouseover", function(d) {
                 d3.select(this).style("stroke", "#212226")
                 tooltip
-                    .html(this.getAttribute("text"))
+                    .html(
+                        this.getAttribute("text") + `<br><b>Балл: </b>${this.getAttribute("class").replace("r", "")}`
+                        )
                     .style("opacity", 1)
                     .style("top", this.getBBox().y - 12 + "px");
                 if (this.getBBox().x <= width*0.5) {
@@ -172,51 +116,14 @@ d3.csv("data.csv").then( function(data){
         .nodes(data)
         .on("tick", ticked);
 
-    function moveStarsPos(starClass) {
-        var poss = [];
-
-        d3.selectAll( `.${starClass.replace("l", "")}` )
-            .nodes()
-            .forEach(
-                d => {
-                    poss.push( d.getBBox().y );
-                }
-            );
-
-        minpos = d3.min(poss) - 10;
-
-        d3.select( `#${starClass}` )
-            .attr("y", minpos)
-            .attr("opacity", 1)
-    }
-
-    function starsAct() {
-        stars.forEach(
-            d => {
-                moveStarsPos(d[0])
-            }
-        )
-    };
-
     function splitBubbles(byVar, a) {
-        d3.selectAll('.legline').attr("opacity", 0);
 
         simulation.force('y', d3.forceY().strength(forceStrength).y(d => { 
             d3.select( `#c${d.deputy_id}` ).attr("class", `r${d[byVar]}`);
             return centerScale( d[byVar] );
         }));
 
-        simulation.alpha(a).restart()
-            .on("end", function (){
-                starsAct();
-            });
-
-        setTimeout(
-            function() {
-                simulation.stop();
-                starsAct();
-            }, 5000
-        )
+        simulation.alpha(a).restart();
     }
 
     function setupButtons() {
