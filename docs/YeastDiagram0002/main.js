@@ -1,12 +1,11 @@
 const container = d3.select('#container')
 
 const colors = {
-    "единая россия": "#00ace5",
-    "лдпр": "#ffed26",
-    "кпрф": "#bf381d",
-    "справедливая россия": "#ee9100",
-    "яблоко": "#25d818",
-    "Без или др": "#e3e4e5"
+    "er": "#00ace5",
+    "ldpr": "#ffed26",
+    "kprf": "#bf381d",
+    "sr": "#ee9100",
+    "ost": "#e3e4e5"
 };
 
 const expl = {
@@ -60,7 +59,7 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
             .attr("r", function(d, i){ return d.times * 0.9 + 3; })
 
             .attr("id", d => { return `c${d.deputy_id}`; })
-            .attr("class", d => { return `r${d.allIn_rank}`; })
+            .attr("class", d => { return `r${d.allIn_rank} ${d.party_name_clean}`; })
 
             .attr("display", "none")
             .attr("text", d => {
@@ -74,6 +73,7 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
             
             .on("mouseover", function(d) {
                 d3.select(this).style("stroke", "#212226")
+                console.log( this.getAttribute("class") );
                 tooltip
                     .html(
                         this.getAttribute("text") + `<br><b>Балл: </b>${this.getAttribute("class").replace("r", "")}`
@@ -119,7 +119,7 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
     function splitBubbles(byVar, a) {
 
         simulation.force('y', d3.forceY().strength(forceStrength).y(d => { 
-            d3.select( `#c${d.deputy_id}` ).attr("class", `r${d[byVar]}`);
+            d3.select( `#c${d.deputy_id}` ).attr("class", `r${d[byVar]} ${d.party_name_clean}`);
             return centerScale( d[byVar] );
         }));
 
@@ -157,6 +157,37 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
                 )
         });
     };
+
+    function setupPButtons() {
+        d3.selectAll('.pbutton')
+            .on('click', function () {
+
+                var pbutton = d3.select(this);
+
+                if (pbutton.classed("pactive")) {
+
+                    d3.selectAll("circle").attr("opacity", 1)
+                    pbutton.classed('pactive', false);
+                    d3.selectAll('.pbutton').classed('opactive', false);
+
+                } else {
+
+                    d3.selectAll('.pbutton').classed('pactive', false);
+                    d3.selectAll('.pbutton').classed('opactive', true);
+                    var pbutton = d3.select(this);
+
+                    pbutton.classed('pactive', true);
+                    pbutton.classed('opactive', false);
+                    var pbuttonId = pbutton.attr('id');
+
+                    d3.selectAll("circle").attr("opacity", 0.2)
+                    d3.selectAll(`.${pbuttonId}`).attr("opacity", 1)
+
+                }
+        });
+    };
+
+    setupPButtons();
 
     const tooltip = d3.select("#tooltip")
                         .append("span")
