@@ -15,8 +15,8 @@ const expl = {
     "zakon_rank": "Число внесенных законопроектов и доля принятых"
 };
 
-var W = window.innerWidth,
-    H = window.innerHeight;
+var W = container.node().getBoundingClientRect().width,
+    H = container.node().getBoundingClientRect().height;
 
 var width = W,
     height = H,
