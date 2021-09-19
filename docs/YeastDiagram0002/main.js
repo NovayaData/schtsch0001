@@ -12,7 +12,8 @@ const expl = {
     "allIn_rank": "Каждая ● — один депутат<br>Размер ⬤ ● — количество созывов в Госдуме",
     "vist_rank": "Число выступлений на заседаниях, их длительность в минутах, а также артистизм — восклицания, реакции публики",
     "golos_rank": "Присутствие на решающих голосованиях",
-    "zakon_rank": "Число внесенных законопроектов и доля принятых"
+    "zakon_rank": "Число внесенных законопроектов и доля принятых",
+    "allIn_rank2": "Среднее по трём другим показателям",
 };
 
 var W = container.node().getBoundingClientRect().width,
@@ -25,23 +26,90 @@ var width = W,
 
 const svg = container
     .append('svg')
-        .attr("viewBox", "0 0 " + width + " " + height )
+        // .attr("viewBox", "0 0 " + width + " " + height )
         .attr('width', width)
         .attr('height', height)
         .attr("preserveAspectRatio", "xMidYMid meet");
 
+const descr = svg.append("g").attr("id", "descr")
+
 var points = ["5", "4", "3", "2", "1"]
+
+var scaleBotH = 0.1,
+    scaleTopH = 0.05,
+    forceXStrength = 0.21;
+
+if (width < 650) {
+    scaleBotH = 0.2;
+    forceXStrength = 0.4;
+    scaleTopH = 0.1;
+
+    descr.append("text")
+        .attr("x", width)
+        .attr("class", "textSmaller")
+        .attr("fill", "#979899")
+        .attr("alignment-baseline", "alphabetic")
+        .attr("text-anchor", "end")
+        .attr("y", H*scaleTopH)
+        .text("макс. KPI");
+
+    descr.append("text")
+        .attr("x", width)
+        .attr("fill", "#979899")
+        .attr("class", "textSmaller")
+        .attr("alignment-baseline", "mathematical")
+        .attr("text-anchor", "end")
+        .attr("y", height-H*scaleBotH)
+        .text("мин. KPI");
+} else {
+    var arrowPoints = [[0, 0], [20, 10]];
+
+    descr.append("svg:defs").append("svg:marker")
+        .attr("id", "triangle")
+        .attr("refX", 6)
+        .attr("refY", 6)
+        .attr("markerWidth", 30)
+        .attr("markerHeight", 30)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 12 0 9 6 12 12 0 6")
+        .style("fill", "#979899");
+
+    descr.append('path')
+        .attr('d', d3.line()([[20, H*0.25], [20, height-H*0.25]]))
+        .attr('stroke', "#979899")
+        .attr('marker-start', 'url(#triangle)')
+        .attr('fill', 'none');
+
+    descr.append("text")
+        .attr("class", "textSmaller")
+        .attr("transform", "translate(20," + height / 2 + ") rotate(270)")
+        .attr("fill", "#979899")
+        .attr("alignment-baseline", "central")
+        .attr("text-anchor", "middle")
+        .text("KPI")
+        .attr('stroke', "white")
+        .attr('stroke-width', "8px")
+    
+    descr.append("text")
+        .attr("class", "textSmaller")
+        .attr("transform", "translate(20," + height / 2 + ") rotate(270)")
+        .attr("fill", "#979899")
+        .attr("alignment-baseline", "central")
+        .attr("text-anchor", "middle")
+        .text("KPI")
+}
 
 var centerScale = d3.scalePoint()
     .domain( points )
-    .range([H*0.1, height-H*0.15])
+    .range([H*scaleTopH, height-H*scaleBotH])
     .padding(3),
     forceStrength = 0.5;
 
 var simulation = d3.forceSimulation()
     .force("collide", d3.forceCollide(d => { return d.times * 0.9 + 4; }))
     .force("y", d3.forceY().y( d => { return centerScale(d.allIn_rank); } ).strength(0.1))
-    .force("x", d3.forceX().x( width / 2 ).strength(0.4))
+    .force("x", d3.forceX().x( width / 2 ).strength(forceXStrength))
     .force("charge", d3.forceManyBody() );
 
 d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
@@ -64,7 +132,7 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
             .attr("display", "none")
             .attr("text", d => {
                 var name = d.deputy_name.replace(" ", "&#160;");
-                return `${name}<br><b>Созывов:</b> ${d.times}<br><b>Дней в Думе:</b> ${d.days}`
+                return `${name}<br><b>Созывов:</b> ${d.times}`
             })
 
             .style("fill", d => { return colors[d.party_name_clean]; })
@@ -77,7 +145,7 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
                 var curCl = curE.attr("class").split(" ")[0];
                 tooltip
                     .html(
-                        this.getAttribute("text") + `<br><b>Балл: </b>${curCl.replace("r", "")}`
+                        this.getAttribute("text") + `<br><b>Балл по показателю: </b>${curCl.replace("r", "")}`
                         )
                     .style("opacity", 1)
                     .style("top", this.getBBox().y - 12 + "px");
@@ -139,7 +207,30 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
                 document.getElementById("expl").innerHTML = expl[buttonId];
 
                 splitBubbles(buttonId, 0.5);
-        });
+            })
+
+            .on("mouseover", function() {
+                if (width > 650) {
+                    var button = d3.select(this)
+                    var buttonId = button.attr('id');
+
+                    if (buttonId === "allIn_rank") {
+                        buttonId = buttonId + "2";
+                    };
+
+                    tooltip
+                        .html( expl[buttonId] )
+                        .style("opacity", 1)
+                        .style("top", event.pageY - 40 + "px")
+                        .style("left", event.pageX + 20 + "px");
+                };
+            })
+
+            .on("mouseleave", function() {
+                tooltip
+                    .html("")
+                    .style("opacity", 0);
+            });
 
         d3.selectAll('#sb')
             .on('click', function () {
@@ -151,6 +242,7 @@ d3.csv("../data/YeastDiagram0002/data.csv").then( function(data){
                     _ => {
                         d3.selectAll("circle").attr("display", "");
                         document.getElementById("lol").remove();
+                        document.getElementById("descr").style.display = 'inline';
                         document.getElementById("toolbar").style.display = 'inline';
                         document.getElementById("legend").style.display = 'inline';
                         document.getElementById("expl").style.display = 'inline';
