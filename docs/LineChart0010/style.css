@@ -1,8 +1,8 @@
 #container {
     /* position: relative; */
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 2px;
+    grid-template-columns: 1fr 1fr;
+    /* grid-gap: 2px; */
 }
 
 .textSmaller {
@@ -31,7 +31,8 @@
     color: #494a4d;
 }
 
-/* .subContainer { */
-    /* height: 100px; */
-    /* background-color: violet; */
-/* } */
+@media (min-width: 700px) {
+    #container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

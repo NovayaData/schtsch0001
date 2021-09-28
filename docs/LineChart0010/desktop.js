@@ -32,6 +32,7 @@ function addChart(subContainer, regId, curData) {
         }
 
         function addLine(path, data, sw, col) {
+
             path
                 .append("path")
                 .datum(data)
@@ -44,7 +45,9 @@ function addChart(subContainer, regId, curData) {
                     "d", 
                     d3.line()
                         .curve(d3.curveCatmullRom)
-                        .x(function(_, i) { return x(i); })
+                        .x(function(_, i) { 
+                            return x(i); 
+                        })
                         .y(d => y(d.normMean))
                 )
                 .attr("transform", "translate(14,12)");
@@ -56,7 +59,11 @@ function addChart(subContainer, regId, curData) {
 
         data.forEach(
             function(d, i) {
-                d.norm = d.casesNew * 100000 / curData.pop;
+                d.norm = d.casesNew * 100000 / curData.population;
+
+                // console.log(curData);
+
+                // console.log(d.norm);
 
                 if (d.date == curData.wave2) {
                     w2i = i;
@@ -88,6 +95,8 @@ function addChart(subContainer, regId, curData) {
         var y = d3.scaleLinear()
             .range([subHeight, 0])
             .domain([0, yMax]);
+
+        // console.log([w2i, w3i, w4i]);
 
         [[w2i, "#ffed26"], [w3i, "#ee9100"], [w4i, "#bf381d"]].forEach(
             function(d) {
@@ -125,20 +134,24 @@ function addChart(subContainer, regId, curData) {
     });
 };
 
-d3.json("../data/LineChart0010/waves.json").then( function(data){
-    Object.keys(data).forEach(
+d3.csv("../data/LineChart0010/waves.csv").then( function(data){
+    // Object.keys(data).forEach(
+
+    data.forEach(
 
         // Add subconteiners
         d => {
-            var curData = data[d];
+
+            regId = d.regId
+            // var curData = data[regId];
 
             var subContainer = container.append("div")
-                .attr("id", `reg${d}`)
+                .attr("id", `reg${regId}`)
                 .attr("class", "subContainer")
                 .attr("width", "100%")
                 .attr("height", "20vh");
 
-            addChart(subContainer, d, curData);
+            addChart(subContainer, regId, d);
         }
     )
 });
