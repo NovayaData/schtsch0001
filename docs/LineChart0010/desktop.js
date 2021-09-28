@@ -1,12 +1,12 @@
 const container = d3.select('#container');
 
 
-const containerH;
+var containerH;
 
 if (container.node().getBoundingClientRect().width < 600) {
-    containerH = container.node().getBoundingClientRect().height * 0.25;
-} else {
     containerH = container.node().getBoundingClientRect().height * 0.125;
+} else {
+    containerH = container.node().getBoundingClientRect().height * 0.25;
 }
 
 const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=";
