@@ -1,7 +1,13 @@
 const container = d3.select('#container');
-const containerH = container.node().getBoundingClientRect().height * 0.25;
 
-// console.log(container.node().getBoundingClientRect().height, containerH);
+
+const containerH;
+
+if (container.node().getBoundingClientRect().width < 600) {
+    containerH = container.node().getBoundingClientRect().height * 0.25;
+} else {
+    containerH = container.node().getBoundingClientRect().height * 0.125;
+}
 
 const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=";
 
@@ -16,7 +22,6 @@ function addChart(path, regId, curData) {
 
     var subWidth = svg.node().getBoundingClientRect().width - 24,
         subHeight = containerH-42;
-        // subHeight2 = subHeight + 12;
 
     d3.json(mainUrl + regId).then( function(rdata){
 
@@ -62,10 +67,6 @@ function addChart(path, regId, curData) {
             function(d, i) {
                 d.norm = d.casesNew * 100000 / curData.population;
 
-                // console.log(curData);
-
-                // console.log(d.norm);
-
                 if (d.date == curData.wave2) {
                     w2i = i;
                 } else if (d.date == curData.wave3) {
@@ -83,10 +84,6 @@ function addChart(path, regId, curData) {
                 data[i].normMean = d3.mean(curSlice, d => d.norm);
         });
 
-        // var data2 = data.slice(w2i-10, w2i+91),
-        //     data3 = data.slice(w3i-10, w3i+91),
-        //     data4 = data.slice(w4i-10, w4i+91);
-
         var yMax = d3.max(data, function(d) { return d.normMean; });
 
         var x = d3.scaleLinear()
@@ -97,8 +94,6 @@ function addChart(path, regId, curData) {
             .range([subHeight, 0])
             .domain([0, 35]);
 
-        // console.log([w2i, w3i, w4i]);
-
         [[w2i, "#b0b0b0"], [w3i, "#787878"], [w4i, "#00ACE5"]].forEach(
             function(d) {
                 let w = d[0],
@@ -106,7 +101,7 @@ function addChart(path, regId, curData) {
                 content.call(addLine, data.slice(w-10, w+91), 6, "#ffffff");
                 content.call(addLine, data.slice(w-10, w+91), 1.25, c);
 
-                content.call(addXText, "textSmaller", "дней", 0, 0, 10, "start");
+                content.call(addXText, "textSmaller", "дней", 56, 0, 10, "middle");
                 content.call(addXText, "textSmaller", "0", 11, 0, 10, "middle");
                 content.call(addXText, "textSmaller", "90", 101, 0, 10, "middle");
 
@@ -137,18 +132,13 @@ function addChart(path, regId, curData) {
             .call(d3.axisLeft(y).tickSize(0).ticks(35 / 5));
 
         content.selectAll(".axis").selectAll("text").attr("class", "textSmaller");
-        content.selectAll(".axis").selectAll("path").attr("stroke", "#cfcfcf")
-        // .attr("opacity", 0);
+        content.selectAll(".axis").selectAll("path").attr("stroke", "#cfcfcf");
         
     });
 };
 
 d3.csv("../data/LineChart0010/waves.csv").then( function(data){
-    // Object.keys(data).forEach(
-
     data.forEach(
-
-        // Add subconteiners
         d => {
 
             regId = d.regId
