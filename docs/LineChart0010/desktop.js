@@ -1,32 +1,34 @@
-const container = d3.select('#container')
+const container = d3.select('#container');
+const containerH = container.node().getBoundingClientRect().height * 0.25;
+
+// console.log(container.node().getBoundingClientRect().height, containerH);
 
 const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=";
 
-// var parseTime = d3.timeParse("%Y-%m-%d");
+function addChart(path, regId, curData) {
 
-function addChart(subContainer, regId, curData) {
-
-    var svg = subContainer.append("svg")
+    var svg = path.append("svg")
             .attr("width", "100%")
-            .attr("height", "100%");
+            .attr("height", containerH);
+
+    var content = svg.append("g")
+        .attr("transform", "translate(14,21)");
 
     var subWidth = svg.node().getBoundingClientRect().width - 24,
-        subHeight = svg.node().getBoundingClientRect().height - 24,
-        subHeight2 = subHeight + 12;
+        subHeight = containerH-42;
+        // subHeight2 = subHeight + 12;
 
     d3.json(mainUrl + regId).then( function(rdata){
 
         data = rdata.data;
 
-        // console.log(data);
-
-        function addXText(path, cl, t, xi, yi, anc) {
+        function addXText(path, cl, t, xi, yi, ytr, anc) {
             path
                 .append("text")
                 .attr("class", cl)
-                .attr("fill", "#494a4d")
-                .attr("x", x(xi)+14)
-                .attr("y", y(yi)+24)
+                .attr("fill", "#cfcfcf")
+                .attr("x", x(xi))
+                .attr("y", y(yi)+ytr)
                 .attr("text-anchor", anc)
                 .text( t );
         }
@@ -49,8 +51,7 @@ function addChart(subContainer, regId, curData) {
                             return x(i); 
                         })
                         .y(d => y(d.normMean))
-                )
-                .attr("transform", "translate(14,12)");
+                );
         };
 
         data = data.reverse();
@@ -94,42 +95,50 @@ function addChart(subContainer, regId, curData) {
         
         var y = d3.scaleLinear()
             .range([subHeight, 0])
-            .domain([0, yMax]);
+            .domain([0, 35]);
 
         // console.log([w2i, w3i, w4i]);
 
-        [[w2i, "#ffed26"], [w3i, "#ee9100"], [w4i, "#bf381d"]].forEach(
+        [[w2i, "#b0b0b0"], [w3i, "#787878"], [w4i, "#00ACE5"]].forEach(
             function(d) {
                 let w = d[0],
                     c = d[1];
-                svg.call(addLine, data.slice(w-10, w+91), 6, "#ffffff");
-                svg.call(addLine, data.slice(w-10, w+91), 1.25, c);
+                content.call(addLine, data.slice(w-10, w+91), 6, "#ffffff");
+                content.call(addLine, data.slice(w-10, w+91), 1.25, c);
 
-                // svg.call(addXText, x, "дней", 0, subHeight2+12, "start");
-                svg.call(addXText, "textSmaller", "0", 11, 0, "middle");
-                svg.call(addXText, "textSmaller", "90", 101, 0, "middle");
-                svg.call(addXText, "textSmall", curData.name, 1, yMax, "start");
-                
+                content.call(addXText, "textSmaller", "дней", 0, 0, 10, "start");
+                content.call(addXText, "textSmaller", "0", 11, 0, 10, "middle");
+                content.call(addXText, "textSmaller", "90", 101, 0, 10, "middle");
+
+                d3.select(`#reg${regId}`).html(curData.name)
         });
 
-        var xx = svg
+        var xx = content
             .append("g")
             .attr("class", "axis")
             .attr("opacity", 1)
-            .attr("transform", "translate(14," + subHeight2 + ")")
+            .attr("transform", "translate(0," + subHeight + ")")
             .call(d3.axisBottom(x).tickSize(0));
 
         xx.selectAll("text").remove();
 
-        var yx = svg
+        var ticksnum;
+        
+        if (yMax > 35) { 
+            ticksnum = yMax / 10; } 
+        else { 
+            ticksnum = yMax / 5; } 
+
+        content
             .append("g")
             .attr("class", "axis")
             .attr("opacity", 1)
-            .attr("transform", "translate(14,12)")
-            .call(d3.axisLeft(y).tickSize(0));
+            .attr("transform", "translate(0,0)")
+            .call(d3.axisLeft(y).tickSize(0).ticks(35 / 5));
 
-        svg.selectAll(".axis").selectAll("text").attr("class", "textSmaller");
-        // svg.selectAll(".axis").selectAll("path").attr("opacity", 0);
+        content.selectAll(".axis").selectAll("text").attr("class", "textSmaller");
+        content.selectAll(".axis").selectAll("path").attr("stroke", "#cfcfcf")
+        // .attr("opacity", 0);
         
     });
 };
@@ -143,15 +152,17 @@ d3.csv("../data/LineChart0010/waves.csv").then( function(data){
         d => {
 
             regId = d.regId
-            // var curData = data[regId];
 
             var subContainer = container.append("div")
-                .attr("id", `reg${regId}`)
                 .attr("class", "subContainer")
                 .attr("width", "100%")
-                .attr("height", "20vh");
+                .attr("height", containerH);
 
-            addChart(subContainer, regId, d);
+            subContainer.append("div")
+                .attr("id", `reg${regId}`)
+                .attr("class", "regTitle textSmall");
+
+            subContainer.call(addChart, regId, d);
         }
     )
 });

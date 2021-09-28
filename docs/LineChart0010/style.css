@@ -1,8 +1,38 @@
 #container {
     /* position: relative; */
+    width: 100%;
+    height: 95%;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    /* background-color: tomato; */
     /* grid-gap: 2px; */
+}
+
+#h1 {
+    height: 5%;
+}
+
+.g1 {
+    color: #b0b0b0;
+}
+
+.g2 {
+    color: #787878;
+}
+
+.bl {
+    color: #00ACE5;
+}
+
+.subContainer{
+    position: relative;
+    /* background-color: wheat; */
+}
+
+.regTitle {
+    position: absolute;
+    left: 14;
+    top: 0;
 }
 
 .textSmaller {
@@ -15,7 +45,7 @@
     font-size: 10px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
-    color: #494a4d;
+    color: #cfcfcf;
 }
 
 .textSmall {
@@ -28,7 +58,20 @@
     font-size: 15px;
     font-family: 'Roboto', sans-serif;
     font-weight:400;
-    color: #494a4d;
+    color: #212226;
+}
+
+.textBig {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: 21px;
+    font-family: 'Roboto', sans-serif;
+    font-weight:400;
+    color: #212226;
 }
 
 @media (min-width: 700px) {
