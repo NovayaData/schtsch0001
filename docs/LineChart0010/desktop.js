@@ -2,12 +2,15 @@ const container = d3.select('#container');
 
 
 var containerH = container.node().getBoundingClientRect().height,
-    containerW = container.node().getBoundingClientRect().width;
+    containerW = container.node().getBoundingClientRect().width,
+    subContainerW;
 
-if (container.node().getBoundingClientRect().width < 600) {
+if (container.node().getBoundingClientRect().width < 700) {
     containerH = containerH * 0.125;
+    subContainerW = containerW / 2;
 } else {
     containerH = containerH * 0.25;
+    subContainerW = containerW / 4;
 }
 
 const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=";
@@ -15,7 +18,7 @@ const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?r
 function addChart(path, regId, curData) {
 
     var svg = path.append("svg")
-            .attr("width", "100%")
+            .attr("width", subContainerW)
             .attr("height", containerH);
 
     var content = svg.append("g")
@@ -85,7 +88,7 @@ function addChart(path, regId, curData) {
                 data[i].normMean = d3.mean(curSlice, d => d.norm);
         });
 
-        var yMax = d3.max(data, function(d) { return d.normMean; });
+        // var yMax = d3.max(data, function(d) { return d.normMean; });
 
         var x = d3.scaleLinear()
             .range([0, subWidth])
