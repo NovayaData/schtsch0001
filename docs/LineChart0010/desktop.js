@@ -13,7 +13,7 @@ if (container.node().getBoundingClientRect().width < 700) {
     subContainerW = containerW / 4;
 }
 
-const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=";
+const mainUrl = "https://novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=";
 
 function addChart(path, regId, curData) {
 
