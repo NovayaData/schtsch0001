@@ -1,12 +1,13 @@
 const container = d3.select('#container');
 
 
-var containerH;
+var containerH = container.node().getBoundingClientRect().height,
+    containerW = container.node().getBoundingClientRect().width;
 
 if (container.node().getBoundingClientRect().width < 600) {
-    containerH = container.node().getBoundingClientRect().height * 0.125;
+    containerH = containerH * 0.125;
 } else {
-    containerH = container.node().getBoundingClientRect().height * 0.25;
+    containerH = containerH * 0.25;
 }
 
 const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?regionId=";
@@ -119,17 +120,17 @@ function addChart(path, regId, curData) {
 
         var ticksnum;
         
-        if (yMax > 35) { 
-            ticksnum = yMax / 10; } 
+        if (containerW < 700) { 
+            ticksnum = 35 / 10; } 
         else { 
-            ticksnum = yMax / 5; } 
+            ticksnum = 35 / 5; } 
 
         content
             .append("g")
             .attr("class", "axis")
             .attr("opacity", 1)
             .attr("transform", "translate(0,0)")
-            .call(d3.axisLeft(y).tickSize(0).ticks(35 / 5));
+            .call(d3.axisLeft(y).tickSize(0).ticks(ticksnum));
 
         content.selectAll(".axis").selectAll("text").attr("class", "textSmaller");
         content.selectAll(".axis").selectAll("path").attr("stroke", "#cfcfcf");
