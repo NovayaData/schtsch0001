@@ -18,6 +18,7 @@ const mainUrl = "https://dev.novayagazeta.ru/api/v1/dashboard/get/region/stats?r
 function addChart(path, regId, curData) {
 
     var svg = path.append("svg")
+            .attr("viewBox", `0 0 ${subContainerW} ${containerH}`)
             .attr("width", subContainerW)
             .attr("height", containerH);
 
