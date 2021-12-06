@@ -193,7 +193,7 @@
                     d3.json("../data/settings/formatRu.json")
                 ]).then(([data, articleScript, googleData, localeRuTime, locatRu]) => {
 
-                    data = data.slice(390, data.length);
+                    // data = data.slice(390, data.length);
                     // console.log(data.length);
 
                     d3.timeFormatDefaultLocale(localeRuTime);
@@ -466,12 +466,12 @@
                                 .attr("cx", x(parseTime(date))+bandWidth/2)
                                 .attr("cy", y(0)-9)
                                 .on("mouseover", function(d) {
-                                    d3.select(this).attr("r", 10.5)
+                                    d3.select(this).attr("r", 12)
 
                                     tooltip
                                         .html(articleScript.marks[this.id][1])
                                         .style("opacity", 1)
-                                        .style("top", this.getBBox().y + margin.top - 10.5 + "px");
+                                        .style("top", this.getBBox().y + margin.top - 12 + "px");
 
                                     if (this.getBBox().x <= W*0.75) {
                                         tooltip
@@ -488,7 +488,7 @@
 
                                 })
                                 .on("mouseleave", function(d) {
-                                    d3.select(this).attr("r", 6);
+                                    d3.select(this).attr("r", 9);
                                     tooltip
                                         .html("")
                                         .style("opacity", 0);
@@ -556,7 +556,7 @@
 
                         markers.selectAll(".mark").filter(function() {
                                 return marks.includes(this.id);
-                        }).call(wurstOpaciter, 1).call(marksize, 6);
+                        }).call(wurstOpaciter, 1).call(marksize, 9);
 
                         if (episodes.length>0 && mode=="real") {
                             getReal(args.episode, color)
@@ -651,6 +651,13 @@
                     };
 
                     // Transitions
+
+                    // function marksize(path, r) {
+                    //     path
+                    //         .transition("marksize")
+                    //         .duration(NFS)
+                    //         .attr("r", r);
+                    // };
 
                     function marksize(path, r) {
                         path
@@ -803,8 +810,8 @@
 
                     let scroll = scroller().container(d3.select('#graphic'));
                         scroll();
-                    let lastIndex, activeIndex = 0;
 
+                    let lastIndex, activeIndex = 0;
                     scroll.on('active', function(index){
 
                         activeIndex = index
