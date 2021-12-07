@@ -1,0 +1,834 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style> body { margin: 0; } </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+    <div id="graphic">
+
+        <div id="sections">
+        </div>
+
+        <div id="chartArea">
+            <script>
+
+                function scroller(){
+                    let container = d3.select('body')
+                    let dispatch = d3.dispatch('active', 'progress');
+                    let sections = d3.selectAll('.step')
+                    let sectionPositions
+                    let currentIndex = -1
+                    let containerStart = 0;
+
+                    function scroll(){
+                        d3.select(window)
+                        .on('scroll.scroller', position)
+                        .on('resize.scroller', resize)
+                        resize();
+                        let timer = d3.timer(function() {
+                        position();
+                        timer.stop();
+                        });
+                    }
+
+                    function resize(){
+                        sectionPositions = [];
+                        let startPos;
+                        sections.each(function(d, i) {
+                            let top = this.getBoundingClientRect().top;
+
+                            if (i === 0 ){
+                                startPos = top;
+                            }
+
+                            sectionPositions.push(top - startPos);
+                        });
+                    }
+
+                    function position() {
+                        let pos = window.pageYOffset - 300 - containerStart;
+                        let sectionIndex = d3.bisect(sectionPositions, pos);
+                        sectionIndex = Math.min(sections.size()-1, sectionIndex);
+                        if (currentIndex !== sectionIndex){
+                        dispatch.call('active', this, sectionIndex);
+                        currentIndex = sectionIndex;
+                        }
+                        let prevIndex = Math.max(sectionIndex - 1, 0);
+                        let prevTop = sectionPositions[prevIndex]
+                        let progress = (pos - prevTop) / (sectionPositions[sectionIndex]   - prevTop);
+                        dispatch.call('progress', this, currentIndex, progress)
+                    }
+
+                    scroll.container = function(value) {
+                        if (arguments.legth === 0){
+                        return container
+                        }
+                        container = value
+                        return scroll
+                    }
+                    scroll.on = function(action, callback){
+                        dispatch.on(action, callback)
+                    };
+                    return scroll;
+                };
+
+                colorSteps = [2350, 4580, 6100, 7810];
+                // var colorSteps = [1391.60, 3554.20, 5611.60, 7598.80];
+
+                function getColor(v) {
+                    if (colorSteps[0]>v && v>=0){
+                        return "#ffed26"
+                    } else if (colorSteps[1]>v && v>=colorSteps[0]){
+                        return "#fbbf00"
+                    } else if (colorSteps[2]>v && v>=colorSteps[1]){
+                        return "#ee9100"
+                    } else if (colorSteps[3]>v && v>=colorSteps[2]){
+                        return "#da6513"
+                    } else if (v>=colorSteps[3]){
+                        return "#bf381d"
+                    }
+                }
+
+                function getColorG(v) {
+                    if (colorSteps[0]>v && v>=0){
+                        return "#ececec"
+                    } else if (colorSteps[1]>v && v>=colorSteps[0]){
+                        return "#cfcfcf"
+                    } else if (colorSteps[2]>v && v>=colorSteps[1]){
+                        return "#b0b0b0"
+                    } else if (colorSteps[3]>v && v>=colorSteps[2]){
+                        return "#949494"
+                    } else if (v>=colorSteps[3]){
+                        return "#787878"
+                    }
+                }
+
+                const W = document.getElementById('chartArea').clientWidth,
+                    H = document.getElementById('chartArea').clientHeight,
+                    margin = {top: H*0.06, right: W*0.06, bottom: H*0.06, left: W*0.06},
+                    width = W - margin.left - margin.right,
+                    height = H - margin.top - margin.bottom;
+
+                // var sc = 1; 
+                var curS = 0;
+                var curSet;
+
+                var desktopSettings = {
+                        yScalerP : 0.75,
+                        wurstH : H*0.035,
+                        monthFormat : "%b",
+                        yearHeight : H*0.0275,
+                        yearTick : 0,
+                        legendPosP : 0.25,
+                        legendWP : 0.1,
+                        NFS : 400
+                    },
+                
+                    mobileSettings = {
+                        yScalerP : 0.4,
+                        wurstH : H*0.02,
+                        monthFormat : "%-",
+                        yearHeight : 0,
+                        yearTick : H*0.015,
+                        legendPosP : 0.125,
+                        legendWP : 0.15,
+                        NFS : 400
+                    };
+
+                if (H>W) {
+                    curSet = mobileSettings;
+                } else {
+                    curSet = desktopSettings;
+                }
+
+                var svg = d3.select("#chartArea").append("svg")
+                    .attr("width", W)
+                    .attr("height", H)
+                    .append("g")
+                        
+
+                svg.append("defs").append("clipPath")
+                        .attr("id", "clip")
+                    .append("rect")
+                        .attr("width", width)
+                        .attr("height", H);
+
+                var focusCenter = -height/6;
+                var curFocusPosition = 0;
+
+                var focus = svg.append("g")
+                    .attr("class", "focus")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("transform", 
+                            "translate(" + margin.left + "," + margin.top + ")");
+
+                var parseTime = d3.timeParse("%Y-%m-%d");
+                var bandWidth;
+
+                var wurstH = curSet.wurstH,
+                    NFS = curSet.NFS;
+
+                var cleanDate = parseTime("2016-01-01");
+
+                var suf;
+
+                if (H>W) {
+                    suf = "_mobile";
+                } else {
+                    suf = "";
+                }
+
+                Promise.all([
+                    d3.csv("../data/Scroll0001/osce_violations_Ukraine.csv"),
+                    //  Scroll data
+                    d3.json("../data/Scroll0001/article_script"+suf+"_3.json"),
+                    d3.csv("../data/Scroll0001/google_search_index_Donbas.csv"),
+                    d3.json("../data/settings/timeFormatRu.json"),
+                    d3.json("../data/settings/formatRu.json")
+                ]).then(([data, articleScript, googleData, localeRuTime, locatRu]) => {
+
+                    // data = data.slice(390, data.length);
+                    // console.log(data.length);
+
+                    d3.timeFormatDefaultLocale(localeRuTime);
+                    d3.formatDefaultLocale(locatRu);
+
+                    const sections = d3.select("#sections");
+                    var activationFunctions = [];
+                    var episodes = {};
+
+                    // Finish page
+
+                    articleScript.paragraphs.forEach(
+                        function(p, i) {
+                            i+=1
+
+                            let pSet = p[0],
+                                pText = p[1];
+
+                            if (pSet.episodes.length>0) {
+                                episodes["e"+i] = pSet.episodes;
+                                pSet["episode"] = "e"+i
+                            }
+
+                            activationFunctions.push(pSet);
+                            
+                            let curSection = sections.append("section")
+                                .attr("class", "step")
+                                .attr("id", p+"_"+i);
+
+                            curSection
+                                .append("span")
+                                .attr("class", "paragraph paragraphFalseText")
+                                .html(pText);
+                            
+                            curSection
+                                .append("span")
+                                .attr("class", "paragraph paragraphText")
+                                .html(pText);
+                        }
+                    );
+
+                    // Transform data
+
+                    data.forEach(d => {
+                        d.dateStr = d.date;
+                        d.date = parseTime(d.date);
+                        d.weeksum = parseInt(d.weeksum);
+                        d.episode = "episode ";
+
+                        Object.keys(episodes).forEach( function(eKey) {
+
+                            let eList = episodes[eKey];
+
+                            eList.forEach(function(e) {
+
+                                let minDate = parseTime(e[0]),
+                                    maxDate = parseTime(e[1]);
+
+                                if (d.date >= minDate && d.date <= maxDate) {
+                                    d.episode += eKey+" ";
+                                };
+
+                            })
+                        });
+
+                    });
+
+                    var fakeBars = [];
+                    
+                    Object.keys(episodes).forEach( function(eKey) {
+
+                        let eList = episodes[eKey];
+
+                        eList.forEach(function(e) {
+                            let minDate = parseTime(e[0]),
+                                maxDate = parseTime(e[1]);
+
+                            fakeBars.push([eKey, minDate, maxDate])
+                        })
+                    });
+
+                    googleData.forEach(d => {
+                        d.date = parseTime(d.date),
+                        d.search_index = parseFloat(d.search_index)
+                    });
+
+                    // Draw
+
+                    var xMin = d3.min(data, function(d) { return d.date; });
+                    var xMax = d3.max(data, function(d) { return d.date; });
+
+                    const locale = d3.formatLocale({
+                        decimal: ",",
+                        thousands: "\u00a0",
+                        grouping: [3],
+                    });
+
+                    var weeksumMax = d3.max(data, function(d) { return parseInt(d.weeksum); });
+                    var yScaler = H*curSet.yScalerP/weeksumMax;
+
+                    var bandWidth = width/data.length+0.4;
+
+                    Math.round(weeksumMax/10000)*10000
+
+                    var x = d3.scaleTime()
+                        .range([0, width]);
+
+                    var y = d3.scaleLinear()
+                        .range([height, height-weeksumMax*yScaler]);
+
+                    var y2 = d3.scaleLinear()
+                        .range([height, height-weeksumMax*yScaler]);
+
+                    x.domain([xMin, xMax]);
+
+                    function addXAx(i, o, h, t, f, ts) {
+                        focus.append("g")
+                            .attr("clip-path", "url(#clip)")
+                            .attr("id", i)
+                            .attr("opacity", o)
+                            .attr("transform", "translate(0," + h + ")")
+                            .call(
+                                d3.axisBottom(x)
+                                    .tickSize(ts)
+                                    .ticks( t )
+                                    .tickFormat(f)
+                                )
+                            .selectAll("text")
+                                .attr('text-anchor', 'start')
+                                .attr("class", "textSmaller");
+                    };
+                    
+                    addXAx("Xmonths", 1, height, d3.timeMonth, d3.timeFormat("%-"), H*0.005);
+                    addXAx("Xseasons", 1, height, d3.timeMonth.every(3), d3.timeFormat(curSet.monthFormat), H*0.01);
+                    addXAx("X", 1, height+curSet.yearHeight, d3.timeYear, d3.timeFormat("%Y"), curSet.yearTick);
+
+                    var y2x = bandWidth*2+width;
+
+                    function addY(aY, domainR, tranlateX, textClass, i, axClass, textColor, anc, o) {
+                        aY.domain([0, domainR]);
+                        focus.append("g")
+                            .attr("id", i)
+                            .attr("class", axClass)
+                            .attr("opacity", o)
+                            .attr("transform", "translate("+tranlateX+",0)")
+                            .call(d3.axisLeft(aY)
+                                .tickSize(0)
+                                .tickFormat(d => {  
+                                    if (H<W) {
+                                        return d3.format(",.0f")(d);
+                                    } else {
+                                        return d3.format(",.0f")(d).replace("\u0020000", 'k');
+                                    }
+                                } ))
+                            .selectAll("text")
+                                .attr('text-anchor', anc)
+                                .attr("class", textClass)
+                                .attr("fill", function(d) {
+                                    if (textColor=="colored") {
+                                        return getColor(d);
+                                    } else {
+                                        return textColor;
+                                    }
+                                });
+                    };
+
+                    addY(y, weeksumMax, 0, "textSmaller", "Y", "Y", "#b0b0b0", "end", 0);
+                    addY(y, weeksumMax, 0, "textSmaller", "Y1", "Y", "colored", "end", 0);
+                    addY(y2, 100, y2x, "textSmaller", "Y2", "Yg", "#00ace5", "start", 1);
+
+                    function dropDomains() {
+                        focus.selectAll(".domain")
+                            .remove()
+                    };
+
+                    dropDomains();
+
+                    var barsFake = focus.append("g");
+                    barsFake.attr("clip-path", "url(#clip)");
+
+                    fakeBars.forEach( function(fb) {
+                        barsFake.append("rect")
+                            .attr("class", fb[0])
+                            .attr("fill", "#f7f7f7")
+                            .attr("x", x(fb[1]))
+                            .attr("width", x(fb[2])-x(fb[1])+bandWidth)
+                            .attr("height", H-(H-y(0)))
+                            .attr("y", 0)
+                            .attr("opacity", 0);
+                    });
+
+                    var bars = focus.append("g");
+
+                    bars.attr("clip-path", "url(#clip)");
+                    bars.selectAll("bar")
+                    .data(data)
+                    .enter()
+                        .append("rect")
+                        .attr("class", function(d) { return d.episode + " wurst"; })
+                        .attr("fill", "#494a4d")
+                        .attr("id", function(d) { return "b"+d.dateStr; })
+                        .attr("x", function(d) { return x(d.date); })
+                        .attr("width", bandWidth)
+                        .attr("height", 0*yScaler)
+                        .attr("y", y(0))
+                        .attr("opacity", 1);
+
+                    function colorise(date, value) {
+                        if (date < cleanDate) {
+                            return getColorG(value);
+                        } else {
+                            return getColor(value);
+                        }
+                    };
+
+                    function addLine(color, lineWidth) {
+                        focus.append("g").attr("clip-path", "url(#clip)")
+                        .append("path")
+                        .datum(googleData)
+                        .attr("fill", "none")
+                        .attr("opacity", 1)
+                        .attr("stroke-width", lineWidth)
+                        .attr("stroke", color)
+                        .attr("stroke-linejoin", "round")
+                        .attr("stroke-linecap", "round")
+                        .attr(
+                            "d", 
+                            d3.line()
+                            .curve(d3.curveCatmullRom)
+                            .x(d => x(d.date))
+                            .y(d => y(d.search_index*weeksumMax))
+                        );
+                    }
+
+                    addLine("#ffffff", 5.5);
+                    // addLine("#212226", bandWidth/2);
+                    addLine("#00ace5", 1.5);
+
+                    function getFormatedDate(date) {
+                        date = parseTime(date);
+                        let mo = new Intl.DateTimeFormat('ru', { month: 'short' }).format(date);
+                        let da = new Intl.DateTimeFormat('ru', { day: 'numeric' }).format(date);
+                        return `${da} ${mo}`;
+                    };
+
+                    markers = focus
+                        .append("g")
+                        .attr("clip-path", "url(#clip)");
+                        // .style("z-index", 2);
+
+                    const tooltip = d3.select("#tooltip")
+                        .append("div")
+                        .attr("id", "tt")
+                        .style("opacity", 0)
+                        .attr("class", "textSmaller");
+                        
+                    Object.keys(articleScript.marks).forEach(
+                        function(m) {
+                            let date = articleScript.marks[m][0],
+                                text = articleScript.marks[m][1];
+                            
+                            markers
+                                .append("circle")
+                                .attr("id", m)
+                                .attr("class", "mark" + " m" + date)
+                                .attr("r", 0)
+                                .attr("opacity", 0)
+                                .attr("stroke-width", 3)
+                                .attr("stroke", "#ffffff")
+                                .attr("cx", x(parseTime(date))+bandWidth/2)
+                                .attr("cy", y(0)-9)
+                                .on("mouseover", function(d) {
+                                    d3.select(this).attr("r", 12)
+
+                                    tooltip
+                                        .html(articleScript.marks[this.id][1])
+                                        .style("opacity", 1)
+                                        .style("top", this.getBBox().y + margin.top - 12 + "px");
+
+                                    if (this.getBBox().x <= W*0.75) {
+                                        tooltip
+                                            .style("left", this.getBBox().x + margin.left + bandWidth/2 + 21 + "px");
+                                            // .style("text-anchor", "start");
+                                    } else {
+                                            strLen  = document.getElementById("tt").clientWidth;
+
+                                        tooltip
+                                            .style("left", this.getBBox().x + margin.left + bandWidth/2 - strLen + "px");
+                                            // .style("text-anchor", "end");
+                                    }
+                                        
+
+                                })
+                                .on("mouseleave", function(d) {
+                                    d3.select(this).attr("r", 9);
+                                    tooltip
+                                        .html("")
+                                        .style("opacity", 0);
+                                });
+                        }
+                    );
+
+                    let leftB = width*curSet.legendPosP,
+                        wid = width*curSet.legendWP;
+
+                    var colorLegend = focus.append("g")
+                        .attr("id", "colorLegend")
+                        .attr("opacity", 0),
+                        legendSteps = [0].concat(colorSteps);
+
+                    colorLegend.append("text")
+                                .attr("class", "textSmaller")
+                                .attr("x", leftB)
+                                .attr("y", 0)
+                                .attr("text-anchor", "start")
+                                .text( "Количество нарушений за неделю" );
+
+                    legendSteps.forEach(
+                        function(colorValue) {
+                            curG = colorLegend.append("g");
+                            curG.append("rect")
+                                .attr("y", wurstH/4)
+                                .attr("x", leftB)
+                                .attr("width", wid)
+                                .attr("height", wurstH/3)
+                                .attr("fill", function() {return getColor(colorValue) });
+                            curG.append("g")
+                                .append("text")
+                                .attr("class", "textSmaller")
+                                .attr("x", leftB)
+                                .attr("y", wurstH/4+wurstH/3+12)
+                                .attr("text-anchor", "middle")
+                                .text( function() {
+                                    if (colorValue==0) {
+                                        return "";
+                                    } else {
+                                        return d3.format(",.0f")(colorValue);
+                                    }
+                                } );
+
+                            leftB+=wid;
+                        }
+                    )
+                    
+                    // Actions
+
+                    function mainAct(args) {
+
+                        let mode = args.mode,
+                            color = args.color,
+                            episodes = args.episodes,
+                            marks = args.marks,
+                            size = args.size;
+                        
+                        if (curS!=size) {
+                            getSize(size);
+                        }
+
+                        markers.selectAll(".mark").call(wurstOpaciter, 0).call(marksize, 0);
+
+                        markers.selectAll(".mark").filter(function() {
+                                return marks.includes(this.id);
+                        }).call(wurstOpaciter, 1).call(marksize, 9);
+
+                        if (episodes.length>0 && mode=="real") {
+                            getReal(args.episode, color)
+                        } else if (episodes.length==0 && mode=="real") {
+                            getReal("wurst", color)
+                        } else if (mode=="wurst") {
+                            getWurst();
+                        } else if (mode=="zero") {
+                            colorLegend.call(wurstOpaciter, 0);
+                            getZero();
+                        };
+                       
+                    };
+
+                    function getReal(eid, colorMode) {
+                        bars.selectAll("rect").filter(function() {
+                                return !this.classList.contains(eid);
+                        }).call(pookColor).call(pook).call(wurstOpaciter, 0.5)
+
+                        barsFake.selectAll("rect").filter(function() {
+                                return !this.classList.contains(eid)
+                        }).call(wurstOpaciter, 0)
+
+                        barsFake.selectAll("."+eid).call(wurstOpaciter, 1)
+
+                        let curReal = bars.selectAll("."+eid)
+
+                        if (colorMode == "black") {
+                            colorLegend.call(wurstOpaciter, 0);
+                            focus.select("#Y1").call(wurstOpaciter, 0);
+                            focus.select("#Y").call(wurstOpaciter, 1);
+                        } else {
+                            colorLegend.call(wurstOpaciter, 1);
+                            focus.select("#Y").call(wurstOpaciter, 0);
+                            focus.select("#Y1").call(wurstOpaciter, 1);
+                        };
+
+                        curReal.call(pik).call(pikColor, colorMode).call(wurstOpaciter, 1);
+                        
+                    };
+
+                    function getSize(sizeCondition) {
+
+                        if (sizeCondition==1) {
+                            resizer(cleanDate);
+                        } else {
+                            resizer(xMin);
+                        };
+
+                        curS = sizeCondition;
+                    };
+
+                    function getWurst() {
+                        focus.select(".Y").call(wurstOpaciter, 0);
+                        barsFake.selectAll("rect").call(wurstOpaciter, 0)
+
+                        bars.selectAll(".wurst")
+                            .call(wurstOpaciter, 1)
+                            .call(pookColor)
+                            .call(pook)
+                    };
+
+                    function getZero() {
+                        focus.selectAll(".Y").call(wurstOpaciter, 0);
+                        barsFake.selectAll("rect").call(wurstOpaciter, 0)
+
+                        bars.selectAll(".wurst")
+                            .call(wurstOpaciter, 1)
+                            .call(pookZero)
+                        
+                    };
+
+                    function resizer(leftDate) {
+
+                        var s = Array(leftDate, xMax);
+
+                        bandWidth = width/data.filter(function(d) { return d.date > leftDate; }).length+0.4;
+                        x.domain(s);
+
+                        bars.selectAll("rect").call(resizeBars);
+
+                        barsFake.selectAll("rect").call(resizeFakeBars);
+
+                        markers.selectAll(".mark").call(resizeMark);
+
+                        focus.selectAll("path").call(resizeLine);
+                        focus.select("#X").call(resizeAx, x, d3.timeYear, "%Y", curSet.yearTick);
+                        focus.select("#Xseasons").call(resizeAx, x, d3.timeMonth.every(3), d3.timeFormat(curSet.monthFormat), H*0.01);
+                        focus.select("#Xmonths").call(resizeAx, x, d3.timeMonth, "%-", H*0.005);
+                        dropDomains();
+
+                    };
+
+                    // Transitions
+
+                    // function marksize(path, r) {
+                    //     path
+                    //         .transition("marksize")
+                    //         .duration(NFS)
+                    //         .attr("r", r);
+                    // };
+
+                    function marksize(path, r) {
+                        path
+                            .transition("marksize")
+                            .duration(NFS)
+                            .attr("r", r);
+                    };
+
+                    function resizeMark(path) {
+                        path
+                            .transition("resizeMark")
+                            .duration(NFS)
+                            .attr("cx", function(d) { return x( parseTime(articleScript.marks[this.id][0]) )+bandWidth/2 });
+                    };
+
+                    function resizeLine(path) {
+                        path
+                            .transition("resizeLine")
+                            .duration(NFS)
+                            .attr("d", d3.line()
+                                .curve(d3.curveCatmullRom)
+                                .x(function(d) { return x(d.date) })
+                                .y(function(d) { return y(d.search_index*weeksumMax) }))
+                    };
+
+                    function resizeBars(path) {
+                        path
+                            .transition("resizeBars")
+                            .duration(NFS)
+                            .attr("width", bandWidth)
+                            .attr("x", function(d) { return x(d.date); });
+                    };
+
+                    function resizeFakeBars(path) {
+                        path
+                            .transition("resizeFakeBars")
+                            .duration(NFS)
+                            .attr("x", function(d, i) {return x(fakeBars[i][1]); })
+                            .attr("width", function(d, i) { return x(fakeBars[i][2])-x(fakeBars[i][1])+bandWidth ; });
+                    };
+
+                    function resizeAx(path, a, t, f, ts) {
+                        path
+                            .transition("resizeAx")
+                            .duration(NFS)
+                            .call(d3.axisBottom(a)
+                                .tickSize(ts)
+                                .ticks(t)
+                                .tickFormat(d3.timeFormat(f))
+                            )
+                        .selectAll("text")
+                            .attr('text-anchor', 'start')
+                            .attr("class", "textSmaller");
+                    };
+
+                    function wurstOpaciter(path, v) {
+                        path
+                            .transition("wurstOpaciter")
+                            .duration(NFS)
+                            .attr("opacity", v);
+                    };
+
+                    function pik(path) {
+                        path
+                            .transition("pik")
+                            .duration(NFS)
+                            .attr("height", function(d) { 
+                                return d.weeksum*yScaler;
+                            })
+                            .attr("y", function(d) { 
+                                let date = this.id.replace("b", "m");
+                                let m = markers.select("."+date);
+                                if (m.node()) {
+                                    m.call(moveMark, y(d.weeksum)-9);
+                                };
+                                return y(d.weeksum); 
+                            });
+                    };
+
+                    function pikColor(path, colorMode) {
+                        path
+                            .transition("pikColor")
+                            .duration(NFS)
+                            .attr("fill", function(d) {
+
+                                if (colorMode == "black") {
+                                    return "#b0b0b0";
+                                } else if (colorMode == "colored") {
+                                    return colorise(d.date, d.weeksum);
+                                }
+
+                            });
+                    };
+
+                    function pookZero(path) {
+                        path
+                            .transition("pookZero")
+                            .duration(NFS)
+                            .attr("height", 0)
+                            .attr("y", function(d) {
+                                let date = this.id.replace("b", "m");
+                                let m = markers.select("."+date);
+                                if (m.node()) {
+                                    m.call(moveMark, y(0)-9);
+                                };
+                                return y(0);
+                            });
+                    };
+
+                    function moveMark(path, h) {
+                        path
+                            .transition("moveMark")
+                            .duration(NFS)
+                            .attr("cy", h);
+                    }
+
+                    function pook(path) {
+                        path
+                            .transition("pook")
+                            .duration(NFS)
+                            .attr("height", wurstH)
+                            .attr("y", function(d) {
+                                let date = this.id.replace("b", "m");
+                                let m = markers.select("."+date);
+                                if (m.node()) {
+                                    m.call(moveMark, height-wurstH-9);
+                                };
+                                return height-wurstH;
+                            });
+                    };
+
+                    function pookColor(path) {
+                        path
+                            .transition("pookColor")
+                            .duration(NFS)
+                            .attr("fill", function(d) { return colorise(d.date, d.weeksum) });
+                    };
+
+                    function navigate(path, i) {
+                        path
+                            .transition("navigate")
+                            .duration(NFS)
+                            .attr("transform", 
+                                "translate(" + hTr + "," + navigatorX[i] + ")")
+                    };
+
+                    mainAct(activationFunctions[0]);
+
+                    // Scroll
+
+                    let scroll = scroller().container(d3.select('#graphic'));
+                        scroll();
+
+                    let lastIndex, activeIndex = 0;
+                    scroll.on('active', function(index){
+
+                        activeIndex = index
+                        let sign = (activeIndex - lastIndex) < 0 ? -1 : 1;
+                        let scrolledSections = d3.range(lastIndex + sign, activeIndex + sign, sign);
+
+                        scrolledSections.forEach(i => {
+                            mainAct(
+                                activationFunctions[i]
+                            );
+                        })
+                        lastIndex = activeIndex;
+                    });
+                });
+
+            </script>
+        </div>
+        <div id="tooltip"></div>
+    </div>
+</body>
