@@ -266,7 +266,7 @@ a:hover {
     }
     #slidecontainer {
         bottom: 52px;
-        width: 99%;
+        width: 95%;
     }
     #sliderYear::-webkit-slider-thumb {
         width: 20px;
